@@ -42,7 +42,6 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { ColorModeContext } from './ThemeRegistry';
 
 interface GuestPageProps {
   guests: Guest[];

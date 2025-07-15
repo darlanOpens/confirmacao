@@ -3,12 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-interface RouteParams {
-  params: { id: string };
-}
-
 // Editar um convidado
-export async function PUT(request: Request, { params }: RouteParams) {
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const id = parseInt(params.id, 10);
     const body = await request.json();
@@ -36,7 +35,10 @@ export async function PUT(request: Request, { params }: RouteParams) {
 }
 
 // Excluir um convidado
-export async function DELETE(request: Request, { params }: RouteParams) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const id = parseInt(params.id, 10);
 
