@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 // Editar um convidado
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const id = parseInt(params.id, 10);
+    const id = parseInt(context.params.id, 10);
     const body = await request.json();
     const { nome, email, telefone, empresa, cargo, convidado_por } = body;
 
@@ -37,10 +37,10 @@ export async function PUT(
 // Excluir um convidado
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const id = parseInt(params.id, 10);
+    const id = parseInt(context.params.id, 10);
 
     await prisma.guest.delete({
       where: { id },
