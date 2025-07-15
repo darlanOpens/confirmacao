@@ -11,7 +11,7 @@ async function getGuests() {
       },
     });
     return guests;
-  } catch (error) {
+  } catch {
     console.log("Database not available during build, returning empty list");
     return [];
   }
