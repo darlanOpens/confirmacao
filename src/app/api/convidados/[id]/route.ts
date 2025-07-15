@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// Força a re-compilação
 // Editar um convidado
 export async function PUT(
   request: NextRequest,
