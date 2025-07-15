@@ -1,0 +1,9 @@
+@tailwind components;
+@tailwind utilities;
+
+/*
+  A diretiva `@tailwind base` foi removida.
+  O `CssBaseline` do Material-UI agora é o único responsável
+  pelos estilos base do documento, incluindo a cor de fundo do body,
+  para evitar conflitos.
+*/
