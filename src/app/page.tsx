@@ -4,12 +4,17 @@ import GuestPage from "@/components/GuestPage";
 const prisma = new PrismaClient();
 
 async function getGuests() {
-  const guests = await prisma.guest.findMany({
-    orderBy: {
-      data_cadastro: "desc",
-    },
-  });
-  return guests;
+  try {
+    const guests = await prisma.guest.findMany({
+      orderBy: {
+        data_cadastro: "desc",
+      },
+    });
+    return guests;
+  } catch (error) {
+    console.log("Database not available during build, returning empty list");
+    return [];
+  }
 }
 
 export default async function Home() {
