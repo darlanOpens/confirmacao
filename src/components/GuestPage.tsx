@@ -42,9 +42,6 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { useTheme } from '@mui/material/styles';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
 import { ColorModeContext } from './ThemeRegistry';
 
 interface GuestPageProps {
@@ -126,9 +123,6 @@ export default function GuestPage({ guests }: GuestPageProps) {
     guest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     guest.empresa.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const theme = useTheme();
-  const colorMode = React.useContext(ColorModeContext);
 
   return (
     <>
