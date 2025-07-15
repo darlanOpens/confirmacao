@@ -5,8 +5,8 @@ import {
   Box,
   TextField,
   Button,
+  Stack,
 } from "@mui/material";
-import Grid from '@mui/material/Grid';
 import { useRouter } from "next/navigation";
 import { Guest } from "@prisma/client";
 
@@ -65,29 +65,15 @@ export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGues
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-      <Grid container spacing={2} direction="column">
-        <Grid item xs={12}>
-          <TextField name="nome" label="Nome Completo" value={formData.nome} onChange={handleChange} fullWidth required />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField name="email" label="Email" type="email" value={formData.email} onChange={handleChange} fullWidth required />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField name="telefone" label="Telefone" value={formData.telefone} onChange={handleChange} fullWidth required />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField name="empresa" label="Empresa" value={formData.empresa} onChange={handleChange} fullWidth required />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField name="cargo" label="Cargo" value={formData.cargo} onChange={handleChange} fullWidth required />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField name="convidado_por" label="Convidado Por" value={formData.convidado_por} onChange={handleChange} fullWidth required />
-        </Grid>
-        <Grid item xs={12} sx={{ mt: 2 }}>
-          <Button type="submit" variant="contained" color="primary" fullWidth>Salvar Alterações</Button>
-        </Grid>
-      </Grid>
+      <Stack spacing={2}>
+        <TextField name="nome" label="Nome Completo" value={formData.nome} onChange={handleChange} fullWidth required />
+        <TextField name="email" label="Email" type="email" value={formData.email} onChange={handleChange} fullWidth required />
+        <TextField name="telefone" label="Telefone" value={formData.telefone} onChange={handleChange} fullWidth required />
+        <TextField name="empresa" label="Empresa" value={formData.empresa} onChange={handleChange} fullWidth required />
+        <TextField name="cargo" label="Cargo" value={formData.cargo} onChange={handleChange} fullWidth required />
+        <TextField name="convidado_por" label="Convidado Por" value={formData.convidado_por} onChange={handleChange} fullWidth required />
+        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>Salvar Alterações</Button>
+      </Stack>
     </Box>
   );
 } 
