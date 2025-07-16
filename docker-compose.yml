@@ -1,7 +1,6 @@
 services:
   app:
     build: .
-    command: sh -c "npx prisma migrate deploy && npm start"
     expose:
       - "3000"
     depends_on:
