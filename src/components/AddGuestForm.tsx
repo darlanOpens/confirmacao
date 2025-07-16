@@ -7,14 +7,12 @@ import {
   Button,
   Stack,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
 
 interface AddGuestFormProps {
     showSnackbar: (message: string, severity: "success" | "error") => void;
 }
 
 export default function AddGuestForm({ showSnackbar }: AddGuestFormProps) {
-  const router = useRouter();
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
@@ -48,7 +46,10 @@ export default function AddGuestForm({ showSnackbar }: AddGuestFormProps) {
         cargo: "",
         convidado_por: "",
       });
-      router.refresh();
+      // Force a complete page reload to refresh server-side data
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500); // Delay to show the success message
     } else {
       showSnackbar(result.error || "Ocorreu um erro.", "error");
     }

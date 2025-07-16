@@ -7,7 +7,6 @@ import {
   Button,
   Stack,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
 import { Guest } from "@prisma/client";
 
 interface EditGuestFormProps {
@@ -17,7 +16,6 @@ interface EditGuestFormProps {
 }
 
 export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGuestFormProps) {
-  const router = useRouter();
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
@@ -56,8 +54,11 @@ export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGues
 
     if (result.success) {
       showSnackbar("Convidado atualizado com sucesso!", "success");
-      router.refresh();
       onClose(); // Fecha o modal
+      // Force a complete page reload to refresh server-side data
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500); // Delay to show the success message
     } else {
       showSnackbar(result.error || "Ocorreu um erro.", "error");
     }

@@ -3,14 +3,12 @@
 import { useRef } from "react";
 import { Button, Box, Typography, List, ListItem, ListItemText } from "@mui/material";
 import Papa from "papaparse";
-import { useRouter } from "next/navigation";
 
 interface CsvImportProps {
     showSnackbar: (message: string, severity: "success" | "error") => void;
 }
 
 export default function CsvImport({ showSnackbar }: CsvImportProps) {
-  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +26,10 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
           const result = await response.json();
           if (result.success) {
             showSnackbar(`${result.importedCount} convidados importados com sucesso!`, "success");
-            router.refresh();
+            // Force a complete page reload to refresh server-side data
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500); // Delay to show the success message
           } else {
             showSnackbar(result.error || "Falha na importação.", "error");
           }

@@ -106,11 +106,15 @@ export default function GuestPage({ guests }: GuestPageProps) {
     const response = await fetch(`/api/convidados/${selectedGuest.id}`, { method: 'DELETE' });
     if (response.ok) {
         showSnackbar("Convidado excluído com sucesso!", "success");
-        router.refresh();
+        handleCloseDeleteModal();
+        // Force a complete page reload to refresh server-side data
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500); // Delay to show the success message
     } else {
         showSnackbar("Falha ao excluir o convidado.", "error");
+        handleCloseDeleteModal();
     }
-    handleCloseDeleteModal();
   };
 
   const totalGuests = guests.length;
