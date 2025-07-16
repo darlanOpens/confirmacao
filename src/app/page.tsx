@@ -1,30 +1,61 @@
 import GuestPage from "@/components/GuestPage";
-import { prisma } from "@/lib/prisma";
+import { headers } from 'next/headers';
 
 async function getGuests() {
   try {
-    console.log("🔄 Connecting to database...");
-    console.log("📊 DATABASE_URL:", process.env.DATABASE_URL ? "✅ Set" : "❌ Not set");
+    console.log("🔄 Fetching guests via API route...");
     
-    const guests = await prisma.guest.findMany({
-      orderBy: {
-        data_cadastro: "desc",
+    // Get the current host from headers
+    const headersList = await headers();
+    const host = headersList.get('host') || 'localhost:3000';
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    
+    const apiUrl = `${protocol}://${host}/api/convidados/list`;
+    console.log("🌐 API URL:", apiUrl);
+    
+    const response = await fetch(apiUrl, {
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
       },
     });
     
-    console.log("✅ Successfully fetched", guests.length, "guests from database");
-    return guests;
+    if (!response.ok) {
+      console.error("❌ API response not OK:", response.status, response.statusText);
+      throw new Error(`API Error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      console.error("❌ API returned error:", data.error);
+      throw new Error(data.error || "API returned error");
+    }
+    
+    console.log("✅ Successfully fetched", data.guests?.length || 0, "guests via API");
+    return data.guests || [];
     
   } catch (error) {
-    console.error("❌ Database error in page.tsx:", error);
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : String(error),
-      code: error && typeof error === 'object' && 'code' in error ? error.code : 'unknown',
-      name: error instanceof Error ? error.name : 'unknown'
-    });
+    console.error("❌ Error fetching guests via API:", error);
     
-    // Retorna lista vazia mas com erro logado
-    return [];
+    // Fallback: try direct database connection
+    try {
+      console.log("🔄 Trying direct database fallback...");
+      const { prisma } = await import("@/lib/prisma");
+      
+      const guests = await prisma.guest.findMany({
+        orderBy: {
+          data_cadastro: "desc",
+        },
+      });
+      
+      console.log("✅ Fallback successful, fetched", guests.length, "guests");
+      return guests;
+      
+    } catch (fallbackError) {
+      console.error("❌ Fallback also failed:", fallbackError);
+      return [];
+    }
   }
 }
 

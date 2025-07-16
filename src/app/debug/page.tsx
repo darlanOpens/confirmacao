@@ -24,9 +24,28 @@ async function debugInfo() {
   try {
     console.log("🔍 Debug: Testing database connection...");
     
-    // Test basic connection
-    await prisma.$queryRaw`SELECT 1 as test`;
-    info.connectionTest = 'Success ✅';
+    // Add delay to ensure database is fully ready
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Test basic connection with retry
+    let retries = 3;
+    let connected = false;
+    
+    while (retries > 0 && !connected) {
+      try {
+        await prisma.$queryRaw`SELECT 1 as test`;
+        connected = true;
+        info.connectionTest = 'Success ✅';
+      } catch (error) {
+        retries--;
+        if (retries > 0) {
+          console.log(`Retrying connection... ${retries} attempts left`);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        } else {
+          throw error;
+        }
+      }
+    }
     
     // Test table existence
     const tableCheck = await prisma.$queryRaw`
