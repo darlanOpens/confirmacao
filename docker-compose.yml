@@ -1,6 +1,8 @@
 services:
   app:
     build: .
+    environment:
+      - DATABASE_URL=postgresql://elga_user:elga_pass@db:5432/elga_db
     command: sh -c "npx prisma migrate deploy && npm start"
     expose:
       - "3000"
