@@ -3,7 +3,16 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . .
+
+# Copia somente os arquivos necessários para o build
+COPY next.config.ts ./
+COPY tsconfig.json ./
+COPY postcss.config.mjs ./
+COPY tailwind.config.js ./
+COPY public ./public
+COPY src ./src
+COPY prisma ./prisma
+
 RUN npx prisma generate
 RUN npm run build
 
