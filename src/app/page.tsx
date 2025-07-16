@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import GuestPage from "@/components/GuestPage";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 async function getGuests() {
   try {
