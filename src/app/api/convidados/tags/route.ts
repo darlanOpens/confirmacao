@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const tags = await prisma.convidado.findMany({
+        const tags = await prisma.guest.findMany({
       select: {
         convidadoPor: true,
       },
