@@ -3,19 +3,19 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-        const tags = await prisma.guest.findMany({
+    const tags = await prisma.convidado.findMany({
       select: {
-        convidado_por: true,
+        convidadoPor: true,
       },
-      distinct: ['convidado_por'],
+      distinct: ['convidadoPor'],
       where: {
-        convidado_por: {
-          not: null,
+        NOT: {
+          convidadoPor: null,
         },
       },
     });
 
-    const uniqueTags = tags.map((tag) => tag.convidado_por).filter(Boolean) as string[];
+    const uniqueTags = tags.map((tag: { convidadoPor: string | null }) => tag.convidadoPor).filter(Boolean) as string[];
 
     return NextResponse.json(uniqueTags);
   } catch (error) {
