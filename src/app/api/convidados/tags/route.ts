@@ -8,14 +8,9 @@ export async function GET() {
         convidado_por: true,
       },
       distinct: ['convidado_por'],
-      where: {
-        convidado_por: {
-          not: null,
-        },
-      },
     });
 
-    const uniqueTags = tags.map((tag: { convidadoPor: string | null }) => tag.convidadoPor).filter(Boolean) as string[];
+    const uniqueTags = tags.map((tag: { convidado_por: string }) => tag.convidado_por).filter(Boolean) as string[];
 
     return NextResponse.json(uniqueTags);
   } catch (error) {
