@@ -5,17 +5,17 @@ export async function GET() {
   try {
         const tags = await prisma.guest.findMany({
       select: {
-        convidadoPor: true,
+        convidado_por: true,
       },
-      distinct: ['convidadoPor'],
+      distinct: ['convidado_por'],
       where: {
-        convidadoPor: {
+        convidado_por: {
           not: null,
         },
       },
     });
 
-    const uniqueTags = tags.map((tag: { convidadoPor: string | null }) => tag.convidadoPor).filter(Boolean) as string[];
+    const uniqueTags = tags.map((tag) => tag.convidado_por).filter(Boolean) as string[];
 
     return NextResponse.json(uniqueTags);
   } catch (error) {
