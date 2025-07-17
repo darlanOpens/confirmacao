@@ -9,8 +9,8 @@ export async function GET() {
       },
       distinct: ['convidado_por'],
       where: {
-        NOT: {
-          convidado_por: null,
+        convidado_por: {
+          not: null,
         },
       },
     });
