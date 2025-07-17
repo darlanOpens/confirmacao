@@ -3,14 +3,14 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const tags = await prisma.convidado.findMany({
+    const tags = await prisma.guest.findMany({
       select: {
-        convidadoPor: true,
+        convidado_por: true,
       },
-      distinct: ['convidadoPor'],
+      distinct: ['convidado_por'],
       where: {
         NOT: {
-          convidadoPor: null,
+          convidado_por: null,
         },
       },
     });
