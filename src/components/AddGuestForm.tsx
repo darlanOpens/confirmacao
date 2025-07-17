@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   TextField,
   Button,
   Stack,
+  Autocomplete,
+  createFilterOptions,
 } from "@mui/material";
 
 interface AddGuestFormProps {
     showSnackbar: (message: string, severity: "success" | "error") => void;
 }
+
+const filter = createFilterOptions<string>();
 
 export default function AddGuestForm({ showSnackbar }: AddGuestFormProps) {
   const [formData, setFormData] = useState({
@@ -21,9 +25,32 @@ export default function AddGuestForm({ showSnackbar }: AddGuestFormProps) {
     cargo: "",
     convidado_por: "",
   });
+  const [tags, setTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetch('/api/convidados/tags');
+        const data = await response.json();
+        setTags(data);
+      } catch (error) {
+        console.error('Failed to fetch tags', error);
+      }
+    };
+
+    fetchTags();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleConvidadoPorChange = (event: React.SyntheticEvent, newValue: string | null) => {
+    let finalValue = newValue;
+    if (newValue && newValue.startsWith('Adicionar "')) {
+      finalValue = newValue.substring('Adicionar "'.length, newValue.length - 1);
+    }
+    setFormData({ ...formData, convidado_por: finalValue || "" });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,6 +65,12 @@ export default function AddGuestForm({ showSnackbar }: AddGuestFormProps) {
 
     if (result.success) {
       showSnackbar("Convidado adicionado com sucesso!", "success");
+
+      // Add the new tag to the list if it's not already there
+      if (formData.convidado_por && !tags.includes(formData.convidado_por)) {
+        setTags([...tags, formData.convidado_por]);
+      }
+
       setFormData({
         nome: "",
         email: "",
@@ -46,10 +79,6 @@ export default function AddGuestForm({ showSnackbar }: AddGuestFormProps) {
         cargo: "",
         convidado_por: "",
       });
-      // Force a complete page reload to refresh server-side data
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500); // Delay to show the success message
     } else {
       showSnackbar(result.error || "Ocorreu um erro.", "error");
     }
@@ -63,7 +92,35 @@ export default function AddGuestForm({ showSnackbar }: AddGuestFormProps) {
         <TextField name="telefone" label="Telefone" value={formData.telefone} onChange={handleChange} fullWidth required />
         <TextField name="empresa" label="Empresa" value={formData.empresa} onChange={handleChange} fullWidth required />
         <TextField name="cargo" label="Cargo" value={formData.cargo} onChange={handleChange} fullWidth required />
-        <TextField name="convidado_por" label="Convidado Por" value={formData.convidado_por} onChange={handleChange} fullWidth required />
+        <Autocomplete
+          value={formData.convidado_por}
+          onChange={handleConvidadoPorChange}
+          filterOptions={(options, params) => {
+            const filtered = filter(options, params);
+            const { inputValue } = params;
+            const isExisting = options.some((option) => inputValue === option);
+            if (inputValue !== '' && !isExisting) {
+              filtered.push(`Adicionar "${inputValue}"`);
+            }
+            return filtered;
+          }}
+          selectOnFocus
+          clearOnBlur
+          handleHomeEndKeys
+          id="convidado-por-autocomplete"
+          options={tags}
+          getOptionLabel={(option) => {
+            if (typeof option === 'string') {
+              return option;
+            }
+            return '';
+          }}
+          renderOption={(props, option) => <li {...props}>{option}</li>}
+          freeSolo
+          renderInput={(params) => (
+            <TextField {...params} label="Convidado Por" required />
+          )}
+        />
         <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
           Adicionar Convidado
         </Button>

@@ -35,7 +35,7 @@ import { Guest } from "@prisma/client";
 import AddGuestForm from "./AddGuestForm";
 import CsvImport from "./CsvImport";
 import EditGuestForm from "./EditGuestForm";
-import { useRouter } from "next/navigation";
+
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import Image from 'next/image';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -67,7 +67,7 @@ export default function GuestPage({ guests }: GuestPageProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" } | null>(null);
-  const router = useRouter();
+  
 
   const showSnackbar = (message: string, severity: "success" | "error") => {
     setSnackbar({ open: true, message, severity });

@@ -1,5 +1,18 @@
 import { prisma } from "@/lib/prisma";
 
+interface Guest {
+  id: number;
+  nome: string;
+  email: string;
+  data_cadastro: Date;
+}
+
+interface ErrorInfo {
+  message: string;
+  code: unknown;
+  name: string;
+}
+
 interface DebugInfo {
   timestamp: string;
   environment: string | undefined;
@@ -8,8 +21,8 @@ interface DebugInfo {
   connectionTest?: string;
   guestTableExists?: string;
   guestCount?: number;
-  latestGuest?: any;
-  error?: any;
+  latestGuest?: Guest | string;
+  error?: ErrorInfo;
 }
 
 async function debugInfo() {
