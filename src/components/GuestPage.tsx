@@ -59,7 +59,8 @@ const style = {
   p: 4,
 } as const;
 
-export default function GuestPage({ guests }: GuestPageProps) {
+export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
+  const [guests, setGuests] = useState<Guest[]>(initialGuests);
   const [searchQuery, setSearchQuery] = useState("");
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
@@ -75,6 +76,11 @@ export default function GuestPage({ guests }: GuestPageProps) {
 
   const handleCloseSnackbar = () => {
     setSnackbar(null);
+  };
+
+  const handleGuestAdded = (newGuest: Guest) => {
+    setGuests(prevGuests => [newGuest, ...prevGuests]);
+    setAddModalOpen(false);
   };
 
   const handleOpenAddModal = () => setAddModalOpen(true);
@@ -266,7 +272,7 @@ export default function GuestPage({ guests }: GuestPageProps) {
               <Typography id="add-guest-modal-title" variant="h6" component="h2">
                 Adicionar novo convite
               </Typography>
-              <AddGuestForm showSnackbar={showSnackbar} />
+              <AddGuestForm showSnackbar={showSnackbar} onGuestAdded={handleGuestAdded} />
             </Box>
           </Modal>
 

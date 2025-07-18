@@ -9,14 +9,16 @@ import {
   Autocomplete,
   createFilterOptions,
 } from "@mui/material";
+import { Guest } from "@prisma/client";
 
 interface AddGuestFormProps {
     showSnackbar: (message: string, severity: "success" | "error") => void;
+    onGuestAdded?: (newGuest: Guest) => void;
 }
 
 const filter = createFilterOptions<string>();
 
-export default function AddGuestForm({ showSnackbar }: AddGuestFormProps) {
+export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFormProps) {
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
@@ -55,32 +57,46 @@ export default function AddGuestForm({ showSnackbar }: AddGuestFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await fetch("/api/convidados/add", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showSnackbar("Convidado adicionado com sucesso!", "success");
-
-      // Add the new tag to the list if it's not already there
-      if (formData.convidado_por && !tags.includes(formData.convidado_por)) {
-        setTags([...tags, formData.convidado_por]);
-      }
-
-      setFormData({
-        nome: "",
-        email: "",
-        telefone: "",
-        empresa: "",
-        cargo: "",
-        convidado_por: "",
+    console.log("Formulário sendo enviado...", formData);
+    
+    try {
+      const response = await fetch("/api/convidados/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
-    } else {
-      showSnackbar(result.error || "Ocorreu um erro.", "error");
+
+      console.log("Resposta da API:", response.status);
+      const result = await response.json();
+      console.log("Resultado:", result);
+
+      if (result.success) {
+        showSnackbar("Convidado adicionado com sucesso!", "success");
+
+        // Add the new tag to the list if it's not already there
+        if (formData.convidado_por && !tags.includes(formData.convidado_por)) {
+          setTags([...tags, formData.convidado_por]);
+        }
+
+        // Call the callback to update the parent component
+        if (onGuestAdded && result.guest) {
+          onGuestAdded(result.guest);
+        }
+
+        setFormData({
+          nome: "",
+          email: "",
+          telefone: "",
+          empresa: "",
+          cargo: "",
+          convidado_por: "",
+        });
+      } else {
+        showSnackbar(result.error || "Ocorreu um erro.", "error");
+      }
+    } catch (error) {
+      console.error("Erro ao enviar formulário:", error);
+      showSnackbar("Erro de conexão. Tente novamente.", "error");
     }
   };
 
