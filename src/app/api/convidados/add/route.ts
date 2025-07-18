@@ -24,18 +24,33 @@ export async function POST(request: Request) {
       },
     });
 
+    // Enviar dados para o webhook
+    console.log("Enviando dados para o webhook...", newGuest);
+    
     try {
-      await fetch("https://n8n.opens.com.br/webhook/elga-guests", {
+      const webhookResponse = await fetch("https://n8n.opens.com.br/webhook/elga-guests", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "User-Agent": "elga-guests-app/1.0",
         },
-        body: JSON.stringify(newGuest),
+        body: JSON.stringify({
+          ...newGuest,
+          timestamp: new Date().toISOString(),
+          action: "guest_created"
+        }),
       });
+
+      console.log("Status do webhook:", webhookResponse.status);
+      
+      if (!webhookResponse.ok) {
+        const errorText = await webhookResponse.text();
+        console.error("Erro no webhook - Status:", webhookResponse.status, "Resposta:", errorText);
+      } else {
+        console.log("Webhook enviado com sucesso!");
+      }
     } catch (webhookError) {
       console.error("Erro ao enviar webhook:", webhookError);
-      // Opcional: Adicionar lógica para lidar com falha no webhook,
-      // mas sem bloquear a resposta principal.
     }
 
     return NextResponse.json({ success: true, guest: newGuest }, { status: 201 });
