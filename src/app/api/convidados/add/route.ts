@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendGuestAddedWebhook } from "@/lib/webhook";
 
 export async function POST(request: Request) {
   try {
@@ -24,34 +25,10 @@ export async function POST(request: Request) {
       },
     });
 
-    // Enviar dados para o webhook
-    console.log("Enviando dados para o webhook...", newGuest);
-    
-    try {
-      const webhookResponse = await fetch("https://n8n.opens.com.br/webhook/elga-guests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "User-Agent": "elga-guests-app/1.0",
-        },
-        body: JSON.stringify({
-          ...newGuest,
-          timestamp: new Date().toISOString(),
-          action: "guest_created"
-        }),
-      });
-
-      console.log("Status do webhook:", webhookResponse.status);
-      
-      if (!webhookResponse.ok) {
-        const errorText = await webhookResponse.text();
-        console.error("Erro no webhook - Status:", webhookResponse.status, "Resposta:", errorText);
-      } else {
-        console.log("Webhook enviado com sucesso!");
-      }
-    } catch (webhookError) {
-      console.error("Erro ao enviar webhook:", webhookError);
-    }
+    // Dispara webhook de forma assíncrona (não bloqueia a resposta)
+    sendGuestAddedWebhook(newGuest).catch(error => {
+      console.error('Erro ao enviar webhook:', error);
+    });
 
     return NextResponse.json({ success: true, guest: newGuest }, { status: 201 });
   } catch (error) {
