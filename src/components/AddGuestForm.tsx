@@ -9,7 +9,19 @@ import {
   Autocomplete,
   createFilterOptions,
 } from "@mui/material";
-import { Guest } from "@prisma/client";
+
+interface Guest {
+  id: number;
+  nome: string;
+  email: string;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  convidado_por: string;
+  status: string;
+  data_cadastro: Date;
+  data_confirmacao: Date | null;
+}
 
 interface AddGuestFormProps {
     showSnackbar: (message: string, severity: "success" | "error") => void;
