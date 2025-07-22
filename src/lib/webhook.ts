@@ -16,11 +16,13 @@ interface WebhookPayload {
 
 export async function sendGuestAddedWebhook(guestData: any): Promise<void> {
   console.log('🔍 Iniciando verificação de webhook...');
+  console.log('📋 Dados do convidado recebidos:', JSON.stringify(guestData, null, 2));
   
   // Usar a URL do webhook da variável de ambiente ou fallback para a URL existente
   const webhookUrl = process.env.WEBHOOK_URL || "https://n8n.opens.com.br/webhook/elga-guests";
   
   console.log('🌐 WEBHOOK_URL configurada:', webhookUrl);
+  console.log('🔧 Variável de ambiente WEBHOOK_URL:', process.env.WEBHOOK_URL || 'NÃO CONFIGURADA');
   
   const payload: WebhookPayload = {
     event: 'guest_added',
@@ -69,4 +71,6 @@ export async function sendGuestAddedWebhook(guestData: any): Promise<void> {
     // Log do erro mas não falha a operação principal
     console.error('❌ Erro ao enviar webhook:', error);
   }
+  
+  console.log('🏁 Finalizando função sendGuestAddedWebhook');
 } 

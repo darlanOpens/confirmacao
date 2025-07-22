@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendGuestAddedWebhook } from "@/lib/webhook";
 
+console.log('📦 API de adição de convidado carregada, webhook importado:', typeof sendGuestAddedWebhook);
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -14,6 +16,7 @@ export async function POST(request: Request) {
       );
     }
 
+    console.log('📝 Criando convidado no banco...');
     const newGuest = await prisma.guest.create({
       data: {
         nome,
@@ -24,11 +27,14 @@ export async function POST(request: Request) {
         convidado_por,
       },
     });
+    console.log('✅ Convidado criado com sucesso:', newGuest.id);
 
     // Dispara webhook de forma assíncrona (não bloqueia a resposta)
+    console.log('🚀 Iniciando disparo do webhook...');
     sendGuestAddedWebhook(newGuest).catch(error => {
-      console.error('Erro ao enviar webhook:', error);
+      console.error('❌ Erro ao enviar webhook:', error);
     });
+    console.log('📤 Webhook disparado (assíncrono)');
 
     return NextResponse.json({ success: true, guest: newGuest }, { status: 201 });
   } catch (error) {
