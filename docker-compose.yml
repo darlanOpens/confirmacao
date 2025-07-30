@@ -2,7 +2,7 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "3001:3000"
     expose:
       - "3000"
     depends_on:
@@ -18,4 +18,4 @@ services:
       - db_data:/var/lib/postgresql/data
 
 volumes:
-  db_data: 
+  db_data:
