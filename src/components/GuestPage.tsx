@@ -54,8 +54,8 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
-  borderRadius: 2,
-  boxShadow: 24,
+  borderRadius: '24px',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
   p: 4,
 } as const;
 
@@ -134,12 +134,15 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   );
 
   return (
-    <>
-      <AppBar position="static" color="default" elevation={1}>
+    <Box sx={{ minHeight: '100vh', background: '#463888' }}>
+      <AppBar position="static" sx={{ 
+        background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.10)'
+      }}>
         <Toolbar sx={{ justifyContent: 'center', py: 1 }}>
           <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
             <Image 
-              src="/elga-logo.png" 
+              src="/logo-esquenta.png" 
               alt="ELGA Logo" 
               width={150} 
               height={40} 
@@ -149,45 +152,52 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
         </Toolbar>
       </AppBar>
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ mb: 4, p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
-          <Typography variant="h5" component="h1" gutterBottom>
+        <Box sx={{ 
+          mb: 4, 
+          p: 3, 
+          background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
+          borderRadius: '24px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
+          color: 'white'
+        }}>
+          <Typography variant="h5" component="h1" gutterBottom sx={{ color: '#ED7414' }}>
             Central de Confirmações – ELGA
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.80)' }}>
             Gerencie facilmente a lista de convidados e acompanhe confirmações em tempo real.
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
             <Grid item xs={12} md={6}>
-              <Typography variant="h6">O que você pode fazer aqui:</Typography>
+              <Typography variant="h6" sx={{ color: 'white' }}>O que você pode fazer aqui:</Typography>
               <List dense>
                 <ListItem>
-                  <ListItemIcon><AddCircleOutlineIcon fontSize="small" /></ListItemIcon>
-                  <ListItemText primary="Adicionar convidados individuais" />
+                  <ListItemIcon><AddCircleOutlineIcon fontSize="small" sx={{ color: '#33B6E5' }} /></ListItemIcon>
+                  <ListItemText primary="Adicionar convidados individuais" sx={{ color: 'rgba(255,255,255,0.80)' }} />
                 </ListItem>
                 <ListItem>
-                  <ListItemIcon><UploadFileIcon fontSize="small" /></ListItemIcon>
-                  <ListItemText primary="Importar lista em massa (CSV)" />
+                  <ListItemIcon><UploadFileIcon fontSize="small" sx={{ color: '#33B6E5' }} /></ListItemIcon>
+                  <ListItemText primary="Importar lista em massa (CSV)" sx={{ color: 'rgba(255,255,255,0.80)' }} />
                 </ListItem>
                  <ListItem>
-                  <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
-                  <ListItemText primary="Editar ou remover registros" />
+                  <ListItemIcon><EditIcon fontSize="small" sx={{ color: '#33B6E5' }} /></ListItemIcon>
+                  <ListItemText primary="Editar ou remover registros" sx={{ color: 'rgba(255,255,255,0.80)' }} />
                 </ListItem>
                  <ListItem>
-                  <ListItemIcon><SearchIcon fontSize="small" /></ListItemIcon>
-                  <ListItemText primary="Pesquisar e filtrar convidados" />
+                  <ListItemIcon><SearchIcon fontSize="small" sx={{ color: '#33B6E5' }} /></ListItemIcon>
+                  <ListItemText primary="Pesquisar e filtrar convidados" sx={{ color: 'rgba(255,255,255,0.80)' }} />
                 </ListItem>
               </List>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="h6">Boas práticas:</Typography>
+              <Typography variant="h6" sx={{ color: 'white' }}>Boas práticas:</Typography>
               <List dense>
                  <ListItem>
-                  <ListItemIcon><CheckCircleOutlineIcon fontSize="small" color="primary" /></ListItemIcon>
-                  <ListItemText primary="Preencha tudo com atenção para garantir a confirmação." />
+                  <ListItemIcon><CheckCircleOutlineIcon fontSize="small" sx={{ color: '#33B6E5' }} /></ListItemIcon>
+                  <ListItemText primary="Preencha tudo com atenção para garantir a confirmação." sx={{ color: 'rgba(255,255,255,0.80)' }} />
                 </ListItem>
                  <ListItem>
-                  <ListItemIcon><CheckCircleOutlineIcon fontSize="small" color="primary" /></ListItemIcon>
-                  <ListItemText primary="Mantenha os dados sempre atualizados." />
+                  <ListItemIcon><CheckCircleOutlineIcon fontSize="small" sx={{ color: '#33B6E5' }} /></ListItemIcon>
+                  <ListItemText primary="Mantenha os dados sempre atualizados." sx={{ color: 'rgba(255,255,255,0.80)' }} />
                 </ListItem>
               </List>
             </Grid>
@@ -197,24 +207,42 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
         {/* Cards de Estatísticas */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid item xs={12} sm={6} md={3}>
-              <Card>
+              <Card sx={{
+                background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
+                borderRadius: '24px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
+                transition: 'all 150ms ease-in-out',
+                '&:hover': {
+                  boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
+                  transform: 'translateY(-2px)'
+                }
+              }}>
                 <CardContent>
-                  <Typography color="text.secondary" gutterBottom>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.80)' }} gutterBottom>
                     Convidados
                   </Typography>
-                  <Typography variant="h5" component="div">
+                  <Typography variant="h5" component="div" sx={{ color: 'white' }}>
                     {totalGuests}
                   </Typography>
                 </CardContent>
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Card>
+              <Card sx={{
+                background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
+                borderRadius: '24px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
+                transition: 'all 150ms ease-in-out',
+                '&:hover': {
+                  boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
+                  transform: 'translateY(-2px)'
+                }
+              }}>
                 <CardContent>
-                  <Typography color="text.secondary" gutterBottom>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.80)' }} gutterBottom>
                     Confirmados
                   </Typography>
-                  <Typography variant="h5" component="div">
+                  <Typography variant="h5" component="div" sx={{ color: 'white' }}>
                     {confirmedGuests}
                   </Typography>
                 </CardContent>
@@ -232,7 +260,29 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
               onChange={(e) => setSearchQuery(e.target.value)}
               sx={{ flexGrow: 1, mr: 2 }}
             />
-            <Button variant="contained" onClick={handleOpenAddModal} size="large" sx={{ height: '40px' }}>
+            <Button 
+              variant="contained" 
+              onClick={handleOpenAddModal} 
+              size="large" 
+              sx={{ 
+                height: '40px',
+                background: 'linear-gradient(90deg, #ED7414 0%, #F08D0D 100%)',
+                borderRadius: '999px',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                color: 'white',
+                transition: 'all 150ms ease-in-out',
+                '&:hover': {
+                  background: 'linear-gradient(90deg, #F08D0D 0%, #ED7414 100%)'
+                },
+                '&:active': {
+                  background: '#C95F0C',
+                  boxShadow: 'none'
+                },
+                '&:focus': {
+                  outline: '2px solid #33B6E5'
+                }
+              }}
+            >
               Adicionar convidado
             </Button>
             <Tooltip title="Importar CSV">
@@ -241,9 +291,19 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                 onClick={handleOpenImportModal}
                 sx={{ 
                   ml: 1,
-                  minWidth: '40px', // Largura para um botão de ícone quadrado
-                  height: '40px', // Altura para corresponder ao botão 'large'
-                  padding: '0'
+                  minWidth: '40px',
+                  height: '40px',
+                  padding: '0',
+                  background: 'white',
+                  color: '#564C9B',
+                  border: '1px solid #564C9B',
+                  borderRadius: '999px',
+                  transition: 'all 150ms ease-in-out',
+                  '&:hover': {
+                    background: 'white',
+                    color: '#ED7414',
+                    border: '1px solid #ED7414'
+                  }
                 }}
               >
                 <FileUploadIcon />
@@ -360,22 +420,39 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
           {/* Lista de Convidados com Accordion */}
           <Box sx={{ mt: 4 }}>
             {filteredGuests.map((guest) => (
-              <Accordion key={guest.id}>
+              <Accordion 
+                key={guest.id}
+                sx={{
+                  background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
+                  borderRadius: '24px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
+                  mb: 2,
+                  transition: 'all 150ms ease-in-out',
+                  '&:hover': {
+                    boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
+                    transform: 'translateY(-2px)'
+                  },
+                  '&:before': {
+                    display: 'none'
+                  }
+                }}
+              >
                 <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
+                  expandIcon={<ExpandMoreIcon sx={{ color: 'white' }} />}
                   aria-controls={`panel-${guest.id}-content`}
                   id={`panel-${guest.id}-header`}
+                  sx={{ color: 'white' }}
                 >
                   <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
                     <Grid container spacing={2} alignItems="center">
                       <Grid item xs={12} sm={3}>
-                        <Typography variant="subtitle1">{guest.nome}</Typography>
+                        <Typography variant="subtitle1" sx={{ color: 'white' }}>{guest.nome}</Typography>
                       </Grid>
                       <Grid item xs={12} sm={3}>
-                        <Typography color="text.secondary">{guest.empresa}</Typography>
+                        <Typography sx={{ color: 'rgba(255,255,255,0.80)' }}>{guest.empresa}</Typography>
                       </Grid>
                       <Grid item xs={12} sm={4}>
-                        <Typography color="text.secondary">{guest.email}</Typography>
+                        <Typography sx={{ color: 'rgba(255,255,255,0.80)' }}>{guest.email}</Typography>
                       </Grid>
                       <Grid item xs={12} sm={2}>
                         <Chip
@@ -394,6 +471,15 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                         event.stopPropagation();
                         handleOpenEditModal(guest);
                       }}
+                      sx={{
+                        color: 'white',
+                        background: '#33B6E5',
+                        borderRadius: '8px',
+                        transition: 'all 150ms ease-in-out',
+                        '&:hover': {
+                          background: '#ED7414'
+                        }
+                      }}
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
@@ -404,22 +490,32 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                         event.stopPropagation();
                         handleOpenDeleteModal(guest);
                       }}
+                      sx={{
+                        color: 'white',
+                        background: '#33B6E5',
+                        borderRadius: '8px',
+                        ml: 1,
+                        transition: 'all 150ms ease-in-out',
+                        '&:hover': {
+                          background: '#ED7414'
+                        }
+                      }}
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </Box>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails sx={{ background: 'rgba(0,0,0,0.10)', borderRadius: '0 0 24px 24px' }}>
                   <Box>
-                    <Typography><strong>Telefone:</strong> {guest.telefone}</Typography>
-                    <Typography><strong>Cargo:</strong> {guest.cargo}</Typography>
-                    <Typography><strong>Convidado por:</strong> {guest.convidado_por}</Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.80)' }}><strong style={{ color: 'white' }}>Telefone:</strong> {guest.telefone}</Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.80)' }}><strong style={{ color: 'white' }}>Cargo:</strong> {guest.cargo}</Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.80)' }}><strong style={{ color: 'white' }}>Convidado por:</strong> {guest.convidado_por}</Typography>
                   </Box>
                 </AccordionDetails>
               </Accordion>
             ))}
           </Box>
         </Container>
-    </>
+    </Box>
   );
-} 
+}

@@ -1,0 +1,205 @@
+{
+    "tokens": {
+      "colors": {
+        "purple‑700": "#463888",
+        "purple‑600": "#564C9B",
+        "purple‑400": "#6E5BC7",
+        "orange‑600": "#C95F0C",
+        "orange‑500": "#ED7414",            /* script / accent */
+        "orange‑400": "#F08D0D",
+        "blue‑500":  "#33B6E5",            /* “up”, wave, focus outline */
+        "blue‑200":  "#4AC0EC",
+        "green‑500": "#67B32D",            /* 2025 tile */
+        "yellow‑500":"#F5D51D",            /* 2025 tile */
+        "magenta‑500":"#B23AAE",           /* 2025 tile */
+        "white":    "#FFFFFF",
+        "white‑80": "rgba(255,255,255,0.80)",
+        "black‑10": "rgba(0,0,0,0.10)"
+      },
+      "gradients": {
+        "brand‑purple": "linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)",
+        "button‑orange": "linear-gradient(90deg, #ED7414 0%, #F08D0D 100%)",
+        "button‑orange‑hover": "linear-gradient(90deg, #F08D0D 0%, #ED7414 100%)"
+      },
+      "shadows": {
+        "elevation‑sm": "0 2px 6px rgba(0,0,0,0.08)",
+        "elevation‑md": "0 4px 12px rgba(0,0,0,0.10)"
+      },
+      "radii": {
+        "lg": "24px",
+        "md": "16px",
+        "sm": "8px",
+        "pill": "999px"
+      },
+      "timings": {
+        "hover‑transition": "150ms ease‑in‑out"
+      }
+    },
+  
+    "elementStyling": {
+      "cards": {
+        "container": {
+          "background": "@gradients.brand‑purple",
+          "border": "none",
+          "borderRadius": "@radii.lg",
+          "shadow": "@shadows.elevation‑md"
+        },
+        "content": {
+          "heading": "@colors.white",
+          "body": "@colors.white‑80"
+        },
+        "icon": {
+          "container": {
+            "background": "transparent",
+            "borderRadius": "@radii.md"
+          },
+          "fill": "@colors.white"
+        },
+        "states": {
+          "hover": {
+            "shadow": "0 6px 18px rgba(0,0,0,0.14)",
+            "transform": "translateY(-2px)"
+          }
+        }
+      },
+  
+      "buttons": {
+        "primary": {
+          "background": "@gradients.button‑orange",
+          "text": "@colors.white",
+          "icon": "@colors.white",
+          "borderRadius": "@radii.pill",
+          "shadow": "@shadows.elevation‑sm",
+          "states": {
+            "hover": {
+              "background": "@gradients.button‑orange‑hover"
+            },
+            "active": {
+              "background": "@colors.orange‑600",
+              "shadow": "none"
+            },
+            "disabled": {
+              "background": "@colors.orange‑400",
+              "text": "@colors.white‑80",
+              "opacity": 0.5,
+              "shadow": "none"
+            },
+            "focus": {
+              "outline": "2px solid @colors.blue‑500"
+            }
+          }
+        },
+        "secondary": {
+          "background": "@colors.white",
+          "text": "@colors.purple‑600",
+          "border": "1px solid @colors.purple‑600",
+          "states": {
+            "hover": {
+              "background": "@colors.white",
+              "text": "@colors.orange‑500",
+              "border": "1px solid @colors.orange‑500"
+            }
+          }
+        }
+      },
+  
+      "navigation‑icons": {
+        "fill": "@colors.blue‑500",
+        "hover": {
+          "fill": "@colors.orange‑500"
+        }
+      },
+  
+      "action‑icons": {
+        "fill": "@colors.white",
+        "background": "@colors.blue‑500",
+        "borderRadius": "@radii.sm",
+        "hover": {
+          "background": "@colors.orange‑500"
+        }
+      },
+  
+      "text‑hierarchy": {
+        "h1": "@colors.orange‑500",
+        "h2": "@colors.white",
+        "h3": "@colors.blue‑500",
+        "body": "@colors.white",
+        "caption": "@colors.white‑80"
+      },
+  
+      "backgrounds": {
+        "page": "@colors.purple‑700",
+        "section‑alt": "@gradients.brand‑purple"
+      }
+    },
+  
+    "visualEffects": {
+      "shadowsAppliedTo": [
+        ".card",
+        ".button--primary",
+        ".button--secondary"
+      ],
+      "gradientsAppliedTo": [
+        ".card",
+        ".button--primary",
+        ".section--altBackground"
+      ],
+      "borderRadiusSpec": {
+        ".card": "@radii.lg",
+        ".button": "@radii.pill",
+        ".icon--container": "@radii.sm"
+      },
+      "hoverAnimations": {
+        ".card": "transform + shadow",
+        ".button": "background‑gradient swap"
+      }
+    },
+  
+    "componentStates": {
+      ".button--primary": {
+        "default": {
+          "background": "@gradients.button‑orange",
+          "text": "@colors.white"
+        },
+        "hover": {
+          "background": "@gradients.button‑orange‑hover"
+        },
+        "active": {
+          "background": "@colors.orange‑600",
+          "shadow": "none"
+        },
+        "disabled": {
+          "opacity": 0.5,
+          "cursor": "not-allowed"
+        },
+        "focus": {
+          "outline": "2px solid @colors.blue‑500"
+        }
+      },
+      ".card": {
+        "default": {
+          "shadow": "@shadows.elevation‑md"
+        },
+        "hover": {
+          "shadow": "0 6px 18px rgba(0,0,0,0.14)"
+        }
+      }
+    },
+  
+    "selectors": {
+      ".card": "Container for content blocks or previews",
+      ".button--primary": "Primary call‑to‑action",
+      ".button--secondary": "Secondary action",
+      ".icon--nav": "Navigation glyph inside side‑bars / menus",
+      ".icon--action": "Standalone action glyph inside cards or lists"
+    },
+  
+    "doNot": [
+      "DO NOT apply card background gradients to icon fills or icon containers.",
+      "DO NOT use the orange button gradient (#ED7414 → #F08D0D) on text elements or card borders.",
+      "DO NOT place shadows on individual text or icon elements — shadows belong only on containers (cards, buttons, modals).",
+      "DO NOT invert the purple gradient direction; keep 145° unless a mirror layout explicitly requires it.",
+      "DO NOT reduce button border‑radius below @radii.pill; maintaining pill shape is mandatory for brand consistency."
+    ]
+  }
+  

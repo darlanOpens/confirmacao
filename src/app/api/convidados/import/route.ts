@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
+
+interface GuestData {
+  nome: string;
+  email: string;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  convidado_por: string;
+}
 
 export async function POST(request: Request) {
   try {
@@ -8,17 +18,53 @@ export async function POST(request: Request) {
 
     if (!Array.isArray(convidados) || convidados.length === 0) {
       return NextResponse.json(
-        { success: false, error: "A lista de convidados está vazia ou em formato inválido." },
+        {
+          success: false,
+          error: "A lista de convidados está vazia ou em formato inválido.",
+        },
         { status: 400 }
       );
     }
 
-    const result = await prisma.guest.createMany({
-      data: convidados,
-      skipDuplicates: true,
-    });
+    const importResults = {
+      successCount: 0,
+      errors: [] as { guest: GuestData; error: string }[],
+    };
 
-    return NextResponse.json({ success: true, importedCount: result.count }, { status: 201 });
+    for (const convidado of convidados) {
+      try {
+        await prisma.guest.create({
+          data: convidado,
+        });
+        importResults.successCount++;
+      } catch (error) {
+        let errorMessage = "Ocorreu um erro desconhecido.";
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          // Exemplo: Erro de violação de restrição única (email duplicado)
+          if (error.code === 'P2002') {
+            errorMessage = `Convidado com email '${(convidado as GuestData).email}' já existe.`;
+          }
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+
+        importResults.errors.push({
+          guest: convidado,
+          error: `Erro ao importar: ${errorMessage}`,
+        });
+      }
+    }
+
+    console.log("Importação finalizada:", importResults);
+
+    return NextResponse.json(
+      {
+        success: true,
+        importedCount: importResults.successCount,
+        errors: importResults.errors,
+      },
+      { status: 201 }
+    );
   } catch {
     return NextResponse.json(
       { success: false, error: "Ocorreu um erro ao importar os convidados." },
