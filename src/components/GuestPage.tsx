@@ -143,7 +143,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
           <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
             <Image 
               src="/logo-esquenta.png" 
-              alt="ELGA Logo" 
+              alt="Esquenta Logo" 
               width={150} 
               height={40} 
               style={{ objectFit: 'contain' }}
@@ -161,7 +161,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
           color: 'white'
         }}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ color: '#ED7414' }}>
-            Central de Confirmações – ELGA
+            Central de Confirmações – Esquenta Startup Summit
           </Typography>
           <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.80)' }}>
             Gerencie facilmente a lista de convidados e acompanhe confirmações em tempo real.

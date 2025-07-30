@@ -14,7 +14,17 @@ interface WebhookPayload {
   };
 }
 
-export async function sendGuestAddedWebhook(guestData: any): Promise<void> {
+export async function sendGuestAddedWebhook(guestData: {
+  id: number;
+  nome: string;
+  email: string;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  convidado_por: string;
+  status: string;
+  data_cadastro: Date;
+}): Promise<void> {
   console.log('🔍 Iniciando verificação de webhook...');
   console.log('📋 Dados do convidado recebidos:', JSON.stringify(guestData, null, 2));
   
@@ -51,7 +61,7 @@ export async function sendGuestAddedWebhook(guestData: any): Promise<void> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'ELGA-Guest-System/1.0',
+        'User-Agent': 'Esquenta-Guest-System/1.0',
       },
       body: JSON.stringify(payload),
       signal: controller.signal,
