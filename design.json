@@ -5,13 +5,13 @@
         "purple‑600": "#564C9B",
         "purple‑400": "#6E5BC7",
         "orange‑600": "#C95F0C",
-        "orange‑500": "#ED7414",            /* script / accent */
+        "orange‑500": "#ED7414",            
         "orange‑400": "#F08D0D",
-        "blue‑500":  "#33B6E5",            /* “up”, wave, focus outline */
+        "blue‑500":  "#33B6E5",            
         "blue‑200":  "#4AC0EC",
-        "green‑500": "#67B32D",            /* 2025 tile */
-        "yellow‑500":"#F5D51D",            /* 2025 tile */
-        "magenta‑500":"#B23AAE",           /* 2025 tile */
+        "green‑500": "#67B32D",            
+        "yellow‑500":"#F5D51D",            
+        "magenta‑500":"#B23AAE",           
         "white":    "#FFFFFF",
         "white‑80": "rgba(255,255,255,0.80)",
         "black‑10": "rgba(0,0,0,0.10)"

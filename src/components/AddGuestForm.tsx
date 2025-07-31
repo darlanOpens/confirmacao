@@ -132,27 +132,6 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           onChange={handleChange} 
           fullWidth 
           required 
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: 'rgba(255,255,255,0.1)',
-              borderRadius: '16px',
-              '& fieldset': {
-                borderColor: 'rgba(255,255,255,0.3)',
-              },
-              '&:hover fieldset': {
-                borderColor: '#33B6E5',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#33B6E5',
-              },
-            },
-            '& .MuiInputLabel-root': {
-              color: 'rgba(255,255,255,0.80)',
-            },
-            '& .MuiOutlinedInput-input': {
-              color: '#FFFFFF',
-            },
-          }}
         />
         <TextField 
           name="email" 
@@ -162,27 +141,6 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           onChange={handleChange} 
           fullWidth 
           required 
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: 'rgba(255,255,255,0.1)',
-              borderRadius: '16px',
-              '& fieldset': {
-                borderColor: 'rgba(255,255,255,0.3)',
-              },
-              '&:hover fieldset': {
-                borderColor: '#33B6E5',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#33B6E5',
-              },
-            },
-            '& .MuiInputLabel-root': {
-              color: 'rgba(255,255,255,0.80)',
-            },
-            '& .MuiOutlinedInput-input': {
-              color: '#FFFFFF',
-            },
-          }}
         />
         <TextField 
           name="telefone" 
@@ -190,28 +148,7 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           value={formData.telefone} 
           onChange={handleChange} 
           fullWidth 
-          required 
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: 'rgba(255,255,255,0.1)',
-              borderRadius: '16px',
-              '& fieldset': {
-                borderColor: 'rgba(255,255,255,0.3)',
-              },
-              '&:hover fieldset': {
-                borderColor: '#33B6E5',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#33B6E5',
-              },
-            },
-            '& .MuiInputLabel-root': {
-              color: 'rgba(255,255,255,0.80)',
-            },
-            '& .MuiOutlinedInput-input': {
-              color: '#FFFFFF',
-            },
-          }}
+          required
         />
         <TextField 
           name="empresa" 
@@ -219,28 +156,7 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           value={formData.empresa} 
           onChange={handleChange} 
           fullWidth 
-          required 
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: 'rgba(255,255,255,0.1)',
-              borderRadius: '16px',
-              '& fieldset': {
-                borderColor: 'rgba(255,255,255,0.3)',
-              },
-              '&:hover fieldset': {
-                borderColor: '#33B6E5',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#33B6E5',
-              },
-            },
-            '& .MuiInputLabel-root': {
-              color: 'rgba(255,255,255,0.80)',
-            },
-            '& .MuiOutlinedInput-input': {
-              color: '#FFFFFF',
-            },
-          }}
+          required
         />
         <TextField 
           name="cargo" 
@@ -248,28 +164,7 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           value={formData.cargo} 
           onChange={handleChange} 
           fullWidth 
-          required 
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: 'rgba(255,255,255,0.1)',
-              borderRadius: '16px',
-              '& fieldset': {
-                borderColor: 'rgba(255,255,255,0.3)',
-              },
-              '&:hover fieldset': {
-                borderColor: '#33B6E5',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#33B6E5',
-              },
-            },
-            '& .MuiInputLabel-root': {
-              color: 'rgba(255,255,255,0.80)',
-            },
-            '& .MuiOutlinedInput-input': {
-              color: '#FFFFFF',
-            },
-          }}
+          required
         />
         <Autocomplete
           value={formData.convidado_por}

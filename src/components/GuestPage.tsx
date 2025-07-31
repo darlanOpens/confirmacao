@@ -48,16 +48,19 @@ interface GuestPageProps {
   guests: Guest[];
 }
 
-const style = {
+const modalStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
+  width: { xs: '90%', sm: 450 },
+  maxHeight: '90vh',
+  overflow: 'auto',
+  background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
   borderRadius: '24px',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
+  boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
   p: 4,
+  color: '#FFFFFF'
 } as const;
 
 export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
@@ -281,25 +284,6 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                   variant="outlined"
                   sx={{
                     minWidth: 250,
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      borderRadius: '16px',
-                      '& fieldset': {
-                        borderColor: 'rgba(255, 255, 255, 0.3)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: '#33B6E5',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#33B6E5',
-                      },
-                    },
-                    '& .MuiInputLabel-root': {
-                      color: 'rgba(255, 255, 255, 0.7)',
-                    },
-                    '& .MuiOutlinedInput-input': {
-                      color: 'white',
-                    },
                     '& .MuiOutlinedInput-input::placeholder': {
                       color: 'rgba(255, 255, 255, 0.5)',
                       opacity: 1,
@@ -378,7 +362,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
             onClose={handleCloseAddModal}
             aria-labelledby="add-guest-modal-title"
           >
-            <Box sx={style}>
+            <Box sx={modalStyle}>
               <IconButton
                 aria-label="close"
                 onClick={handleCloseAddModal}
@@ -403,7 +387,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
             onClose={handleCloseImportModal}
             aria-labelledby="import-csv-modal-title"
           >
-            <Box sx={style}>
+            <Box sx={modalStyle}>
               <IconButton
                 aria-label="close"
                 onClick={handleCloseImportModal}
@@ -425,7 +409,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
 
           {selectedGuest && (
             <Modal open={editModalOpen} onClose={handleCloseEditModal}>
-              <Box sx={style}>
+              <Box sx={modalStyle}>
                 <IconButton
                   aria-label="close"
                   onClick={handleCloseEditModal}
@@ -448,7 +432,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
 
           {selectedGuest && (
             <Modal open={deleteModalOpen} onClose={handleCloseDeleteModal}>
-              <Box sx={style}>
+              <Box sx={modalStyle}>
                 <Typography variant="h6" component="h2">
                   Confirmar Exclusão
                 </Typography>

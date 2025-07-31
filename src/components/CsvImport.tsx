@@ -43,7 +43,14 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
   };
 
   return (
-    <Box sx={{ mt: 2, textAlign: 'center' }}>
+    <Box sx={{ 
+      mt: 2, 
+      p: 3,
+      background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
+      borderRadius: '24px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
+      textAlign: 'center' 
+    }}>
       <input
         type="file"
         accept=".csv"
@@ -51,24 +58,120 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
         onChange={handleFileChange}
         style={{ display: "none" }}
       />
-      <Button variant="contained" onClick={handleButtonClick}>
+      <Button 
+        variant="contained" 
+        onClick={handleButtonClick}
+        sx={{
+          py: 1.5,
+          px: 4,
+          fontSize: '1rem',
+          fontWeight: 600,
+          mb: 3
+        }}
+      >
         Selecionar Arquivo CSV
       </Button>
-      <Box sx={{ mt: 2, textAlign: 'left' }}>
-        <Typography variant="subtitle2" gutterBottom>
+      <Box sx={{ textAlign: 'left' }}>
+        <Typography 
+          variant="subtitle2" 
+          gutterBottom
+          sx={{ 
+            color: '#FFFFFF',
+            fontWeight: 600,
+            mb: 1
+          }}
+        >
           Instruções para o arquivo CSV:
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            color: 'rgba(255,255,255,0.80)',
+            mb: 2
+          }}
+        >
           O arquivo deve conter as seguintes colunas como cabeçalho, na ordem exata:
         </Typography>
-        <List dense>
-          <ListItem><ListItemText primary="nome" /></ListItem>
-          <ListItem><ListItemText primary="email" /></ListItem>
-          <ListItem><ListItemText primary="telefone" /></ListItem>
-          <ListItem><ListItemText primary="empresa" /></ListItem>
-          <ListItem><ListItemText primary="cargo" /></ListItem>
-          <ListItem><ListItemText primary="convidado_por" /></ListItem>
-        </List>
+        <Box sx={{ 
+          background: 'rgba(255,255,255,0.1)',
+          borderRadius: '16px',
+          p: 2
+        }}>
+          <List dense>
+            <ListItem sx={{ py: 0.5 }}>
+              <ListItemText 
+                primary="nome" 
+                sx={{ 
+                  '& .MuiTypography-root': { 
+                    color: '#FFFFFF',
+                    fontFamily: 'monospace',
+                    fontSize: '0.9rem'
+                  }
+                }} 
+              />
+            </ListItem>
+            <ListItem sx={{ py: 0.5 }}>
+              <ListItemText 
+                primary="email" 
+                sx={{ 
+                  '& .MuiTypography-root': { 
+                    color: '#FFFFFF',
+                    fontFamily: 'monospace',
+                    fontSize: '0.9rem'
+                  }
+                }} 
+              />
+            </ListItem>
+            <ListItem sx={{ py: 0.5 }}>
+              <ListItemText 
+                primary="telefone" 
+                sx={{ 
+                  '& .MuiTypography-root': { 
+                    color: '#FFFFFF',
+                    fontFamily: 'monospace',
+                    fontSize: '0.9rem'
+                  }
+                }} 
+              />
+            </ListItem>
+            <ListItem sx={{ py: 0.5 }}>
+              <ListItemText 
+                primary="empresa" 
+                sx={{ 
+                  '& .MuiTypography-root': { 
+                    color: '#FFFFFF',
+                    fontFamily: 'monospace',
+                    fontSize: '0.9rem'
+                  }
+                }} 
+              />
+            </ListItem>
+            <ListItem sx={{ py: 0.5 }}>
+              <ListItemText 
+                primary="cargo" 
+                sx={{ 
+                  '& .MuiTypography-root': { 
+                    color: '#FFFFFF',
+                    fontFamily: 'monospace',
+                    fontSize: '0.9rem'
+                  }
+                }} 
+              />
+            </ListItem>
+            <ListItem sx={{ py: 0.5 }}>
+              <ListItemText 
+                primary="convidado_por" 
+                sx={{ 
+                  '& .MuiTypography-root': { 
+                    color: '#FFFFFF',
+                    fontFamily: 'monospace',
+                    fontSize: '0.9rem'
+                  }
+                }} 
+              />
+            </ListItem>
+          </List>
+        </Box>
       </Box>
     </Box>
   );

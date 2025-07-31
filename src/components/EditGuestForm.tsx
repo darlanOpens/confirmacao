@@ -65,7 +65,17 @@ export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGues
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+    <Box 
+      component="form" 
+      onSubmit={handleSubmit} 
+      sx={{ 
+        mt: 2,
+        p: 3,
+        background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
+        borderRadius: '24px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.10)'
+      }}
+    >
       <Stack spacing={2}>
         <TextField name="nome" label="Nome Completo" value={formData.nome} onChange={handleChange} fullWidth required />
         <TextField name="email" label="Email" type="email" value={formData.email} onChange={handleChange} fullWidth required />
@@ -73,7 +83,20 @@ export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGues
         <TextField name="empresa" label="Empresa" value={formData.empresa} onChange={handleChange} fullWidth required />
         <TextField name="cargo" label="Cargo" value={formData.cargo} onChange={handleChange} fullWidth required />
         <TextField name="convidado_por" label="Convidado Por" value={formData.convidado_por} onChange={handleChange} fullWidth required />
-        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>Salvar Alterações</Button>
+        <Button 
+          type="submit" 
+          variant="contained" 
+          color="primary" 
+          fullWidth 
+          sx={{ 
+            mt: 3,
+            py: 1.5,
+            fontSize: '1rem',
+            fontWeight: 600
+          }}
+        >
+          Salvar Alterações
+        </Button>
       </Stack>
     </Box>
   );
