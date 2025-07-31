@@ -39,7 +39,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # Define DATABASE_URL padrão (será sobrescrita pelo Easypanel)
 ENV DATABASE_URL="postgresql://elga_user:elga_pass@db:5432/elga_db"
 
-ENV PORT=3001
-EXPOSE 3001
+ENV PORT=3000
+EXPOSE 3000
 
-CMD ["/usr/local/bin/docker-entrypoint.sh"] 
+CMD ["/usr/local/bin/docker-entrypoint.sh"]

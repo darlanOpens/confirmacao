@@ -113,13 +113,164 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+    <Box 
+      component="form" 
+      onSubmit={handleSubmit} 
+      sx={{ 
+        mt: 2,
+        p: 3,
+        background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
+        borderRadius: '24px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.10)'
+      }}
+    >
       <Stack spacing={2}>
-        <TextField name="nome" label="Nome Completo" value={formData.nome} onChange={handleChange} fullWidth required />
-        <TextField name="email" label="Email" type="email" value={formData.email} onChange={handleChange} fullWidth required />
-        <TextField name="telefone" label="Telefone" value={formData.telefone} onChange={handleChange} fullWidth required />
-        <TextField name="empresa" label="Empresa" value={formData.empresa} onChange={handleChange} fullWidth required />
-        <TextField name="cargo" label="Cargo" value={formData.cargo} onChange={handleChange} fullWidth required />
+        <TextField 
+          name="nome" 
+          label="Nome Completo" 
+          value={formData.nome} 
+          onChange={handleChange} 
+          fullWidth 
+          required 
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              '& fieldset': {
+                borderColor: 'rgba(255,255,255,0.3)',
+              },
+              '&:hover fieldset': {
+                borderColor: '#33B6E5',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#33B6E5',
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: 'rgba(255,255,255,0.80)',
+            },
+            '& .MuiOutlinedInput-input': {
+              color: '#FFFFFF',
+            },
+          }}
+        />
+        <TextField 
+          name="email" 
+          label="Email" 
+          type="email" 
+          value={formData.email} 
+          onChange={handleChange} 
+          fullWidth 
+          required 
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              '& fieldset': {
+                borderColor: 'rgba(255,255,255,0.3)',
+              },
+              '&:hover fieldset': {
+                borderColor: '#33B6E5',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#33B6E5',
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: 'rgba(255,255,255,0.80)',
+            },
+            '& .MuiOutlinedInput-input': {
+              color: '#FFFFFF',
+            },
+          }}
+        />
+        <TextField 
+          name="telefone" 
+          label="Telefone" 
+          value={formData.telefone} 
+          onChange={handleChange} 
+          fullWidth 
+          required 
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              '& fieldset': {
+                borderColor: 'rgba(255,255,255,0.3)',
+              },
+              '&:hover fieldset': {
+                borderColor: '#33B6E5',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#33B6E5',
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: 'rgba(255,255,255,0.80)',
+            },
+            '& .MuiOutlinedInput-input': {
+              color: '#FFFFFF',
+            },
+          }}
+        />
+        <TextField 
+          name="empresa" 
+          label="Empresa" 
+          value={formData.empresa} 
+          onChange={handleChange} 
+          fullWidth 
+          required 
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              '& fieldset': {
+                borderColor: 'rgba(255,255,255,0.3)',
+              },
+              '&:hover fieldset': {
+                borderColor: '#33B6E5',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#33B6E5',
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: 'rgba(255,255,255,0.80)',
+            },
+            '& .MuiOutlinedInput-input': {
+              color: '#FFFFFF',
+            },
+          }}
+        />
+        <TextField 
+          name="cargo" 
+          label="Cargo" 
+          value={formData.cargo} 
+          onChange={handleChange} 
+          fullWidth 
+          required 
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              '& fieldset': {
+                borderColor: 'rgba(255,255,255,0.3)',
+              },
+              '&:hover fieldset': {
+                borderColor: '#33B6E5',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#33B6E5',
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: 'rgba(255,255,255,0.80)',
+            },
+            '& .MuiOutlinedInput-input': {
+              color: '#FFFFFF',
+            },
+          }}
+        />
         <Autocomplete
           value={formData.convidado_por}
           onChange={handleConvidadoPorChange}
@@ -146,13 +297,81 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           renderOption={(props, option) => <li {...props}>{option}</li>}
           freeSolo
           renderInput={(params) => (
-            <TextField {...params} label="Convidado Por" required />
+            <TextField 
+              {...params} 
+              label="Convidado Por" 
+              required 
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  borderRadius: '16px',
+                  '& fieldset': {
+                    borderColor: 'rgba(255,255,255,0.3)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#33B6E5',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#33B6E5',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'rgba(255,255,255,0.80)',
+                },
+                '& .MuiOutlinedInput-input': {
+                  color: '#FFFFFF',
+                },
+                '& .MuiAutocomplete-endAdornment': {
+                  '& .MuiSvgIcon-root': {
+                    color: 'rgba(255,255,255,0.80)',
+                  },
+                },
+              }}
+            />
           )}
+          sx={{
+            '& .MuiAutocomplete-paper': {
+              backgroundColor: '#564C9B',
+              borderRadius: '16px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
+            },
+            '& .MuiAutocomplete-option': {
+              color: '#FFFFFF',
+              '&:hover': {
+                backgroundColor: 'rgba(51, 182, 229, 0.2)',
+              },
+            },
+          }}
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-          Adicionar Convidado
+        <Button 
+          type="submit" 
+          variant="contained" 
+          fullWidth 
+          sx={{ 
+            mt: 2,
+            background: 'linear-gradient(90deg, #ED7414 0%, #F08D0D 100%)',
+            color: '#FFFFFF',
+            borderRadius: '999px',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+            textTransform: 'none',
+            fontWeight: 600,
+            py: 1.5,
+            transition: '150ms ease-in-out',
+            '&:hover': {
+              background: 'linear-gradient(90deg, #F08D0D 0%, #ED7414 100%)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              transform: 'translateY(-1px)',
+            },
+            '&:active': {
+              background: '#C95F0C',
+              boxShadow: 'none',
+              transform: 'translateY(0)',
+            },
+          }}
+        >
+          ADICIONAR CONVIDADO
         </Button>
       </Stack>
     </Box>
   );
-} 
+}
