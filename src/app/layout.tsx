@@ -16,7 +16,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "ELGA - Gerenciamento de Convidados",
+  title: "Esquenta Startup SUmmit - Gerenciamento de Convidados",
   description: "Sistema interno para gerenciamento de convidados do evento Esquenta Startup Summit",
 };
 
