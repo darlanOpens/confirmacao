@@ -25,6 +25,7 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
+  Autocomplete,
 } from "@mui/material";
 import Grid from '@mui/material/Grid'; // Direct import for Grid
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -62,6 +63,7 @@ const style = {
 export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const [guests, setGuests] = useState<Guest[]>(initialGuests);
   const [searchQuery, setSearchQuery] = useState("");
+  const [convidadoPorFilter, setConvidadoPorFilter] = useState<string | null>(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -126,12 +128,19 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const totalGuests = guests.length;
   const confirmedGuests = guests.filter(g => g.status === 'confirmado').length;
   
-  // Lógica de filtro (a ser aplicada depois)
-  const filteredGuests = guests.filter(guest => 
-    guest.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    guest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    guest.empresa.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Obter lista única de pessoas que convidaram
+  const uniqueConvidadoPor = Array.from(new Set(guests.map(guest => guest.convidado_por))).filter(Boolean).sort();
+  
+  // Lógica de filtro
+  const filteredGuests = guests.filter(guest => {
+    const matchesSearch = guest.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      guest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      guest.empresa.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesConvidadoPor = !convidadoPorFilter || guest.convidado_por === convidadoPorFilter;
+    
+    return matchesSearch && matchesConvidadoPor;
+  });
 
   return (
     <Box sx={{ minHeight: '100vh', background: '#463888' }}>
@@ -251,14 +260,67 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
           </Grid>
           
           {/* Barra de Ações */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, gap: 2 }}>
             <TextField 
               variant="outlined"
               size="small"
               placeholder="Procurar..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{ flexGrow: 1, mr: 2 }}
+              sx={{ flexGrow: 1 }}
+            />
+            <Autocomplete
+              size="small"
+              options={uniqueConvidadoPor}
+              value={convidadoPorFilter}
+              onChange={(event, newValue) => setConvidadoPorFilter(newValue)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="convidado por..."
+                  variant="outlined"
+                  sx={{
+                    minWidth: 250,
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '16px',
+                      '& fieldset': {
+                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#33B6E5',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#33B6E5',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    },
+                    '& .MuiOutlinedInput-input': {
+                      color: 'white',
+                    },
+                    '& .MuiOutlinedInput-input::placeholder': {
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      opacity: 1,
+                    },
+                  }}
+                />
+              )}
+              sx={{
+                '& .MuiPaper-root': {
+                  backgroundColor: '#564C9B',
+                  color: 'white',
+                },
+                '& .MuiAutocomplete-option': {
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  },
+                },
+              }}
             />
             <Button 
               variant="contained" 
