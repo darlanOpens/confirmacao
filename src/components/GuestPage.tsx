@@ -38,6 +38,7 @@ import CsvImport from "./CsvImport";
 import EditGuestForm from "./EditGuestForm";
 
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import DownloadIcon from '@mui/icons-material/Download';
 import Image from 'next/image';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -125,6 +126,27 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     } else {
         showSnackbar("Falha ao excluir o convidado.", "error");
         handleCloseDeleteModal();
+    }
+  };
+
+  const handleDownload = async () => {
+    try {
+      const response = await fetch('/api/convidados/download');
+      if (!response.ok) {
+        throw new Error('Falha ao baixar o arquivo.');
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'convidados.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      showSnackbar("Download iniciado com sucesso!", "success");
+    } catch (error) {
+      showSnackbar("Erro ao iniciar o download.", "error");
     }
   };
 
@@ -353,6 +375,30 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                 }}
               >
                 <FileUploadIcon />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Baixar CSV">
+              <Button 
+                variant="outlined" 
+                onClick={handleDownload}
+                sx={{ 
+                  ml: 1,
+                  minWidth: '40px',
+                  height: '40px',
+                  padding: '0',
+                  background: 'white',
+                  color: '#564C9B',
+                  border: '1px solid #564C9B',
+                  borderRadius: '999px',
+                  transition: 'all 150ms ease-in-out',
+                  '&:hover': {
+                    background: 'white',
+                    color: '#ED7414',
+                    border: '1px solid #ED7414'
+                  }
+                }}
+              >
+                <DownloadIcon />
               </Button>
             </Tooltip>
           </Box>

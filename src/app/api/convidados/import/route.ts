@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { sendGuestAddedWebhook } from "@/lib/webhook";
 
 interface GuestData {
   nome: string;
@@ -33,10 +34,14 @@ export async function POST(request: Request) {
 
     for (const convidado of convidados) {
       try {
-        await prisma.guest.create({
+        const createdGuest = await prisma.guest.create({
           data: convidado,
         });
         importResults.successCount++;
+
+        // Dispara o webhook para o convidado recém-criado
+        await sendGuestAddedWebhook(createdGuest);
+
       } catch (error) {
         let errorMessage = "Ocorreu um erro desconhecido.";
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -71,4 +76,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-} 
+}
