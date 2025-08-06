@@ -141,6 +141,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
       window.URL.revokeObjectURL(url);
       showSnackbar("Download iniciado com sucesso!", "success");
     } catch (error) {
+      console.error(error);
       showSnackbar("Erro ao iniciar o download.", "error");
     }
   };
