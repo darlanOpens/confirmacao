@@ -18,8 +18,8 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Esquenta Startup SUmmit - Gerenciamento de Convidados",
-  description: "Sistema interno para gerenciamento de convidados do evento Esquenta Startup Summit",
+  title: "Brunch Experience - Central de Confirmações",
+  description: "Sistema interno para gerenciamento de convidados do evento Brunch Experience",
 };
 
 export default function RootLayout({

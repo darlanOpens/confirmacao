@@ -61,7 +61,7 @@ export async function sendGuestAddedWebhook(guestData: {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'Esquenta-Guest-System/1.0',
+        'User-Agent': 'Brunch-Experience-Guest-System/1.0',
       },
       body: JSON.stringify(payload),
       signal: controller.signal,

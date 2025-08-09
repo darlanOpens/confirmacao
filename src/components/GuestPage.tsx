@@ -224,7 +224,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
           color: tokens.textPrimary,
         }}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ color: '#ED7414' }}>
-            Central de Confirmações – Esquenta Startup Summit
+            Central de Confirmações – Brunch Experience
           </Typography>
           <Typography variant="body1" sx={{ color: tokens.textSecondary }}>
             Gerencie facilmente a lista de convidados e acompanhe confirmações em tempo real.
