@@ -1,6 +1,5 @@
 import GuestPage from "@/components/GuestPage";
 import { headers } from 'next/headers';
-import { tokens } from '@/theme/designSystem';
 
 async function getGuests() {
   try {

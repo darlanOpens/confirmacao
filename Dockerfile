@@ -9,7 +9,6 @@ COPY next.config.ts ./
 COPY tsconfig.json ./
 COPY postcss.config.mjs ./
 COPY tailwind.config.js ./
-COPY design.json ./
 COPY public ./public
 COPY src ./src
 COPY prisma ./prisma
@@ -32,7 +31,6 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/design.json ./design.json
 
 # Copiar script de entrada
 COPY scripts/docker-entrypoint.sh /usr/local/bin/

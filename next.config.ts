@@ -1,10 +1,8 @@
 import type { NextConfig } from "next";
-import design from './design.json';
-
-const basePath = (design as any)?.meta?.base_path || '';
 
 const nextConfig: NextConfig = {
-  basePath: basePath || undefined,
+  // Removendo basePath pois o Easypanel não suporta rewrite de paths
+  // O app será servido diretamente na raiz
 };
 
 export default nextConfig;

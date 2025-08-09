@@ -3,7 +3,7 @@
 
 /*
   CssBaseline do MUI cuida do reset/base.
-  Aqui adicionamos classes utilitárias que refletem tokens do design.json via theme MUI.
+  Aqui adicionamos classes utilitárias adicionais.
 */
 
 :root {
@@ -11,11 +11,11 @@
 }
 
 .gradient-primary {
-  background-image: theme('backgroundImage.gradient-primary');
+  background-image: linear-gradient(to right, #fb1b1f, #5b00b6);
 }
 
 .bg-hero {
-  background-image: theme('backgroundImage.hero');
+  background-image: url('/Bg.png');
   background-size: cover;
   background-position: center;
 }
