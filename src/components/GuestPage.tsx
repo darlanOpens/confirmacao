@@ -41,7 +41,6 @@ import { tokens } from '@/theme/designSystem';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import DownloadIcon from '@mui/icons-material/Download';
 import Image from 'next/image';
-import { withBasePath } from '@/lib/appPaths';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SearchIcon from '@mui/icons-material/Search';
@@ -182,7 +181,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
         <Toolbar sx={{ justifyContent: 'center', py: 1 }}>
           <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
             <Image 
-              src={withBasePath('/logo-esquenta.png')} 
+              src="/logo-esquenta.png" 
               alt="Esquenta Logo" 
               width={150} 
               height={40} 
