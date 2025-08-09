@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Button, Box, Typography, List, ListItem, ListItemText } from "@mui/material";
 import Papa from "papaparse";
+import { tokens } from '@/theme/designSystem';
 
 interface CsvImportProps {
     showSnackbar: (message: string, severity: "success" | "error") => void;
@@ -43,13 +44,15 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
   };
 
   return (
-    <Box sx={{ 
-      mt: 2, 
+    <Box sx={{
+      mt: 2,
       p: 3,
-      background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
-      borderRadius: '24px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
-      textAlign: 'center' 
+      background: tokens.alphaWhite05,
+      border: `1px solid ${tokens.borderGlass}`,
+      borderRadius: '16px',
+      backdropFilter: `blur(${tokens.blurBackdropLg})`,
+      boxShadow: tokens.shadowGlassInnerWeak,
+      textAlign: 'center'
     }}>
       <input
         type="file"
@@ -58,16 +61,10 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
         onChange={handleFileChange}
         style={{ display: "none" }}
       />
-      <Button 
-        variant="contained" 
+      <Button
+        variant="contained"
         onClick={handleButtonClick}
-        sx={{
-          py: 1.5,
-          px: 4,
-          fontSize: '1rem',
-          fontWeight: 600,
-          mb: 3
-        }}
+        sx={{ py: 1.5, px: 4, mb: 3 }}
       >
         Selecionar Arquivo CSV
       </Button>
@@ -92,8 +89,8 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
         >
           O arquivo deve conter as seguintes colunas como cabeçalho, na ordem exata:
         </Typography>
-        <Box sx={{ 
-          background: 'rgba(255,255,255,0.1)',
+        <Box sx={{
+          background: tokens.alphaWhite10,
           borderRadius: '16px',
           p: 2
         }}>

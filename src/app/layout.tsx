@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import ThemeRegistry from "@/components/ThemeRegistry";
+import { tokens } from '@/theme/designSystem';
+import { butler } from '@/fonts/butler';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,7 +30,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${playfairDisplay.variable} antialiased`}
+        className={`${inter.variable} ${playfairDisplay.variable} ${butler.variable} antialiased`}
+        style={{ background: tokens.backgroundApp, color: tokens.textPrimary }}
       >
         <ThemeRegistry>{children}</ThemeRegistry>
       </body>

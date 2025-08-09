@@ -8,6 +8,7 @@ import {
   Stack,
 } from "@mui/material";
 import { Guest } from "@prisma/client";
+import { tokens } from '@/theme/designSystem';
 
 interface EditGuestFormProps {
   guest: Guest;
@@ -65,15 +66,17 @@ export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGues
   };
 
   return (
-    <Box 
-      component="form" 
-      onSubmit={handleSubmit} 
-      sx={{ 
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
         mt: 2,
         p: 3,
-        background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
-        borderRadius: '24px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.10)'
+        background: tokens.alphaWhite05,
+        border: `1px solid ${tokens.borderGlass}`,
+        borderRadius: '16px',
+        backdropFilter: `blur(${tokens.blurBackdropLg})`,
+        boxShadow: tokens.shadowGlassInnerWeak,
       }}
     >
       <Stack spacing={2}>
@@ -83,17 +86,12 @@ export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGues
         <TextField name="empresa" label="Empresa" value={formData.empresa} onChange={handleChange} fullWidth required />
         <TextField name="cargo" label="Cargo" value={formData.cargo} onChange={handleChange} fullWidth required />
         <TextField name="convidado_por" label="Convidado Por" value={formData.convidado_por} onChange={handleChange} fullWidth required />
-        <Button 
-          type="submit" 
-          variant="contained" 
-          color="primary" 
-          fullWidth 
-          sx={{ 
-            mt: 3,
-            py: 1.5,
-            fontSize: '1rem',
-            fontWeight: 600
-          }}
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 3, py: 1.5 }}
         >
           Salvar Alterações
         </Button>

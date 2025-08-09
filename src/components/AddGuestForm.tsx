@@ -9,6 +9,7 @@ import {
   Autocomplete,
   createFilterOptions,
 } from "@mui/material";
+import { tokens } from '@/theme/designSystem';
 
 interface Guest {
   id: number;
@@ -113,15 +114,17 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
   };
 
   return (
-    <Box 
-      component="form" 
-      onSubmit={handleSubmit} 
-      sx={{ 
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
         mt: 2,
         p: 3,
-        background: 'linear-gradient(145deg, #6E5BC7 0%, #564C9B 100%)',
-        borderRadius: '24px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.10)'
+        background: tokens.alphaWhite05,
+        border: `1px solid ${tokens.borderGlass}`,
+        borderRadius: '16px',
+        backdropFilter: `blur(${tokens.blurBackdropLg})`,
+        boxShadow: tokens.shadowGlassInnerWeak,
       }}
     >
       <Stack spacing={2}>
@@ -192,36 +195,10 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           renderOption={(props, option) => <li {...props}>{option}</li>}
           freeSolo
           renderInput={(params) => (
-            <TextField 
-              {...params} 
-              label="Convidado Por" 
-              required 
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  borderRadius: '16px',
-                  '& fieldset': {
-                    borderColor: 'rgba(255,255,255,0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: '#33B6E5',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#33B6E5',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255,255,255,0.80)',
-                },
-                '& .MuiOutlinedInput-input': {
-                  color: '#FFFFFF',
-                },
-                '& .MuiAutocomplete-endAdornment': {
-                  '& .MuiSvgIcon-root': {
-                    color: 'rgba(255,255,255,0.80)',
-                  },
-                },
-              }}
+            <TextField
+              {...params}
+              label="Convidado Por"
+              required
             />
           )}
           sx={{
@@ -238,31 +215,11 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
             },
           }}
         />
-        <Button 
-          type="submit" 
-          variant="contained" 
-          fullWidth 
-          sx={{ 
-            mt: 2,
-            background: 'linear-gradient(90deg, #ED7414 0%, #F08D0D 100%)',
-            color: '#FFFFFF',
-            borderRadius: '999px',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-            textTransform: 'none',
-            fontWeight: 600,
-            py: 1.5,
-            transition: '150ms ease-in-out',
-            '&:hover': {
-              background: 'linear-gradient(90deg, #F08D0D 0%, #ED7414 100%)',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              transform: 'translateY(-1px)',
-            },
-            '&:active': {
-              background: '#C95F0C',
-              boxShadow: 'none',
-              transform: 'translateY(0)',
-            },
-          }}
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ mt: 2, py: 1.5 }}
         >
           ADICIONAR CONVIDADO
         </Button>
