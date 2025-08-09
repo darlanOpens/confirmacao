@@ -27,21 +27,21 @@ const darkTheme = createTheme({
     h1: { 
       fontFamily: "var(--font-butler), var(--font-playfair-display), Butler, serif",
       fontWeight: 300,
-      color: tokens.textPrimary,
+      color: tokens.alphaWhite80,
     },
     h2: { 
       fontFamily: "var(--font-butler), var(--font-playfair-display), Butler, serif",
       fontWeight: 300,
-      color: tokens.textPrimary,
+      color: tokens.alphaWhite80,
     },
     h3: { 
       fontFamily: "var(--font-butler), var(--font-playfair-display), Butler, serif",
       fontWeight: 300,
-      color: tokens.textPrimary,
+      color: tokens.alphaWhite80,
     },
-    h4: { fontFamily: "'Work Sans', var(--font-inter), system-ui, sans-serif", fontWeight: 600 },
-    h5: { fontFamily: "'Work Sans', var(--font-inter), system-ui, sans-serif", fontWeight: 600 },
-    h6: { fontFamily: "'Work Sans', var(--font-inter), system-ui, sans-serif", fontWeight: 600 },
+    h4: { fontFamily: "var(--font-butler), Butler, serif", fontWeight: 300, color: tokens.alphaWhite80 },
+    h5: { fontFamily: "var(--font-butler), Butler, serif", fontWeight: 300, color: tokens.alphaWhite80 },
+    h6: { fontFamily: "var(--font-butler), Butler, serif", fontWeight: 300, color: tokens.alphaWhite80 },
     body1: {
       color: tokens.textPrimary,
     },

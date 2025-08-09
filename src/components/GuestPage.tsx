@@ -40,7 +40,6 @@ import { tokens } from '@/theme/designSystem';
 
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import DownloadIcon from '@mui/icons-material/Download';
-import Image from 'next/image';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SearchIcon from '@mui/icons-material/Search';
@@ -173,20 +172,43 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   return (
     <Box sx={{ minHeight: '100vh', background: tokens.backgroundApp }}>
       <AppBar position="static" sx={{
-        background: tokens.alphaWhite05,
+        background: 'transparent',
         borderBottom: `1px solid ${tokens.borderGlass}`,
         backdropFilter: `blur(${tokens.blurBackdropMd})`,
         boxShadow: 'none'
       }}>
-        <Toolbar sx={{ justifyContent: 'center', py: 1 }}>
-          <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-            <Image 
-              src="/logo-esquenta.png" 
-              alt="Esquenta Logo" 
-              width={150} 
-              height={40} 
-              style={{ objectFit: 'contain' }}
+        <Toolbar sx={{ justifyContent: 'center', py: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            <Typography
+              variant="h5"
+              sx={{
+                fontFamily: 'var(--font-butler), Butler, serif',
+                fontWeight: 300,
+                letterSpacing: '-0.02em',
+                textTransform: 'uppercase',
+                color: tokens.white,
+              }}
+            >
+              BRUNCH
+            </Typography>
+            <Box
+              sx={{
+                width: 1,
+                height: { xs: 28, sm: 36 },
+                background: 'linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.70), rgba(255,255,255,0.10))',
+              }}
             />
+            <Typography
+              variant="h6"
+              sx={{
+                fontFamily: "'Work Sans', var(--font-inter), system-ui, sans-serif",
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                color: tokens.alphaWhite70,
+              }}
+            >
+              EXPERIENCE
+            </Typography>
           </Box>
         </Toolbar>
       </AppBar>
