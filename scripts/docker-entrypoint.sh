@@ -40,9 +40,9 @@ echo "📊 DATABASE_URL is configured"
 # Wait for database
 wait_for_db
 
-# Run migrations
-echo "🔄 Running database migrations..."
-npx prisma migrate deploy
+# Sync database schema
+echo "🔄 Syncing database schema..."
+npx prisma db push
 
 if [ $? -eq 0 ]; then
   echo "✅ Migrations completed successfully"
