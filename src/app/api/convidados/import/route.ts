@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { sendGuestAddedWebhook } from "@/lib/webhook";
+import { buildInviteUrl } from "@/lib/invite";
 
 interface GuestData {
   nome: string;
@@ -35,7 +36,10 @@ export async function POST(request: Request) {
     for (const convidado of convidados) {
       try {
         const createdGuest = await prisma.guest.create({
-          data: convidado,
+          data: {
+            ...convidado,
+            convite_url: buildInviteUrl((convidado as GuestData).email),
+          },
         });
         importResults.successCount++;
 

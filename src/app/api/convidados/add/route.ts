@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendGuestAddedWebhook } from "@/lib/webhook";
+import { buildInviteUrl } from "@/lib/invite";
 
 console.log('📦 API de adição de convidado carregada, webhook importado:', typeof sendGuestAddedWebhook);
 
@@ -25,6 +26,7 @@ export async function POST(request: Request) {
         empresa,
         cargo,
         convidado_por,
+        convite_url: buildInviteUrl(email),
       },
     });
     console.log('✅ Convidado criado com sucesso:', newGuest.id);

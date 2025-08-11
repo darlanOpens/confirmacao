@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { buildInviteUrl } from "@/lib/invite";
 
 // Força a re-compilação
 // Editar um convidado
@@ -22,6 +23,7 @@ export async function PUT(
         empresa,
         cargo,
         convidado_por,
+        convite_url: buildInviteUrl(email),
       },
     });
 

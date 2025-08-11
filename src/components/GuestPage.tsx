@@ -37,16 +37,33 @@ import AddGuestForm from "./AddGuestForm";
 import CsvImport from "./CsvImport";
 import EditGuestForm from "./EditGuestForm";
 import { tokens } from '@/theme/designSystem';
+import { buildInviteUrl } from "@/lib/invite";
+
+type GuestUI = Guest & { convite_url?: string };
+type GuestLike = {
+  id: number;
+  nome: string;
+  email: string;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  convidado_por: string;
+  status: string;
+  data_cadastro: Date;
+  data_confirmacao: Date | null;
+  convite_url?: string;
+};
 
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import DownloadIcon from '@mui/icons-material/Download';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 interface GuestPageProps {
-  guests: Guest[];
+  guests: GuestUI[];
 }
 
 const modalStyle = {
@@ -67,14 +84,14 @@ const modalStyle = {
 } as const;
 
 export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
-  const [guests, setGuests] = useState<Guest[]>(initialGuests);
+  const [guests, setGuests] = useState<GuestUI[]>(initialGuests);
   const [searchQuery, setSearchQuery] = useState("");
   const [convidadoPorFilter, setConvidadoPorFilter] = useState<string | null>(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
+  const [selectedGuest, setSelectedGuest] = useState<GuestUI | null>(null);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" } | null>(null);
   
 
@@ -86,8 +103,12 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     setSnackbar(null);
   };
 
-  const handleGuestAdded = (newGuest: Guest) => {
-    setGuests(prevGuests => [newGuest, ...prevGuests]);
+  const handleGuestAdded = (newGuest: GuestLike) => {
+    const guestWithUrl: GuestUI = {
+      ...newGuest,
+      convite_url: newGuest.convite_url || buildInviteUrl(newGuest.email),
+    };
+    setGuests(prevGuests => [guestWithUrl, ...prevGuests]);
     setAddModalOpen(false);
   };
 
@@ -97,7 +118,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const handleOpenImportModal = () => setImportModalOpen(true);
   const handleCloseImportModal = () => setImportModalOpen(false);
 
-  const handleOpenEditModal = (guest: Guest) => {
+  const handleOpenEditModal = (guest: GuestUI) => {
     setSelectedGuest(guest);
     setEditModalOpen(true);
   };
@@ -106,7 +127,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     setSelectedGuest(null);
   };
 
-  const handleOpenDeleteModal = (guest: Guest) => {
+  const handleOpenDeleteModal = (guest: GuestUI) => {
     setSelectedGuest(guest);
     setDeleteModalOpen(true);
   };
@@ -149,6 +170,18 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
       showSnackbar("Download iniciado com sucesso!", "success");
     } catch (error) {
       showSnackbar("Erro ao iniciar o download.", "error");
+    }
+  };
+
+  const handleCopyInviteUrl = async (guest: GuestUI) => {
+    const inviteUrl = guest.convite_url || `https://go.opens.com.br/brunch-vip?emailconf=${encodeURIComponent(guest.email)}`;
+    
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      showSnackbar("Link do convite copiado!", "success");
+    } catch (error) {
+      console.error(error);
+      showSnackbar("Erro ao copiar link.", "error");
     }
   };
 
@@ -554,7 +587,26 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                   <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
                     <Grid container spacing={2} alignItems="center">
                       <Grid item xs={12} sm={3}>
-                        <Typography variant="subtitle1" sx={{ color: tokens.textPrimary }}>{guest.nome}</Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="subtitle1" sx={{ color: tokens.textPrimary }}>{guest.nome}</Typography>
+                          <Tooltip title="Copiar link do convite">
+                            <IconButton
+                              size="small"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleCopyInviteUrl(guest);
+                              }}
+                              sx={{
+                                color: tokens.textSecondary,
+                                '&:hover': {
+                                  color: tokens.accentPrimary
+                                }
+                              }}
+                            >
+                              <ContentCopyIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
                       </Grid>
                       <Grid item xs={12} sm={3}>
                         <Typography sx={{ color: tokens.textSecondary }}>{guest.empresa}</Typography>
