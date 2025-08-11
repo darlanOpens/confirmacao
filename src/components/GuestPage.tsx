@@ -32,6 +32,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import { Guest } from "@prisma/client";
+import { buildInviteUrl } from "@/lib/invite";
 import AddGuestForm from "./AddGuestForm";
 import CsvImport from "./CsvImport";
 import EditGuestForm from "./EditGuestForm";
@@ -45,6 +46,19 @@ import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 type GuestUI = Guest & { convite_url?: string };
+type GuestLike = {
+  id: number;
+  nome: string;
+  email: string;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  convidado_por: string;
+  status: string;
+  data_cadastro: Date;
+  data_confirmacao: Date | null;
+  convite_url?: string;
+};
 
 interface GuestPageProps {
   guests: GuestUI[];
@@ -81,8 +95,12 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     setSnackbar(null);
   };
 
-  const handleGuestAdded = (newGuest: GuestUI) => {
-    setGuests(prevGuests => [newGuest, ...prevGuests]);
+  const handleGuestAdded = (newGuest: GuestLike) => {
+    const guestWithUrl: GuestUI = {
+      ...newGuest,
+      convite_url: newGuest.convite_url || buildInviteUrl(newGuest.email),
+    };
+    setGuests(prevGuests => [guestWithUrl, ...prevGuests]);
     setAddModalOpen(false);
   };
 
