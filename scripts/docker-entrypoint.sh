@@ -40,7 +40,10 @@ echo "📊 DATABASE_URL is configured"
 # Wait for database
 wait_for_db
 
-# Apply database migrations
+# Resolve migration conflicts and apply migrations
+echo "🔄 Resolving migration conflicts..."
+npx prisma migrate resolve --applied 20250811171141_add_convite_url_esquenta
+
 echo "🔄 Applying database migrations..."
 npx prisma migrate deploy
 
