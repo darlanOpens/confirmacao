@@ -44,8 +44,10 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
+type GuestUI = Guest & { convite_url?: string };
+
 interface GuestPageProps {
-  guests: Guest[];
+  guests: GuestUI[];
 }
 
 const style = {
@@ -61,13 +63,13 @@ const style = {
 } as const;
 
 export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
-  const [guests, setGuests] = useState<Guest[]>(initialGuests);
+  const [guests, setGuests] = useState<GuestUI[]>(initialGuests);
   const [searchQuery, setSearchQuery] = useState("");
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
+  const [selectedGuest, setSelectedGuest] = useState<GuestUI | null>(null);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" } | null>(null);
   
 
@@ -79,7 +81,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     setSnackbar(null);
   };
 
-  const handleGuestAdded = (newGuest: Guest) => {
+  const handleGuestAdded = (newGuest: GuestUI) => {
     setGuests(prevGuests => [newGuest, ...prevGuests]);
     setAddModalOpen(false);
   };
@@ -90,7 +92,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const handleOpenImportModal = () => setImportModalOpen(true);
   const handleCloseImportModal = () => setImportModalOpen(false);
 
-  const handleOpenEditModal = (guest: Guest) => {
+  const handleOpenEditModal = (guest: GuestUI) => {
     setSelectedGuest(guest);
     setEditModalOpen(true);
   };
@@ -99,7 +101,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     setSelectedGuest(null);
   };
 
-  const handleOpenDeleteModal = (guest: Guest) => {
+  const handleOpenDeleteModal = (guest: GuestUI) => {
     setSelectedGuest(guest);
     setDeleteModalOpen(true);
   };
@@ -412,7 +414,18 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                         <Typography color="text.secondary">{guest.empresa}</Typography>
                       </Grid>
                       <Grid item xs={12} sm={4}>
-                        <Typography color="text.secondary">{guest.email}</Typography>
+                        <Box>
+                          <Typography color="text.secondary">{guest.email}</Typography>
+                          <Typography variant="body2">
+                            <a
+                              href={guest.convite_url || `https://go.opens.com.br/elga?emailconf=${encodeURIComponent(guest.email)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              URL do convite
+                            </a>
+                          </Typography>
+                        </Box>
                       </Grid>
                       <Grid item xs={12} sm={2}>
                         <Chip
