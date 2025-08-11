@@ -169,6 +169,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
       window.URL.revokeObjectURL(url);
       showSnackbar("Download iniciado com sucesso!", "success");
     } catch (error) {
+      console.error(error);
       showSnackbar("Erro ao iniciar o download.", "error");
     }
   };
@@ -599,7 +600,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                               sx={{
                                 color: tokens.textSecondary,
                                 '&:hover': {
-                                  color: tokens.accentPrimary
+                                  color: tokens.textPrimary
                                 }
                               }}
                             >
