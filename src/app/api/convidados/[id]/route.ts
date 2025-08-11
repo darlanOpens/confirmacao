@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { buildInviteUrl } from "@/lib/invite";
 
 // Força a re-compilação
 // Editar um convidado
@@ -11,7 +12,7 @@ export async function PUT(
     const params = await context.params;
     const id = parseInt(params.id, 10);
     const body = await request.json();
-    const { nome, email, telefone, empresa, cargo, convidado_por } = body;
+  const { nome, email, telefone, empresa, cargo, convidado_por } = body;
 
     const updatedGuest = await prisma.guest.update({
       where: { id },
@@ -22,6 +23,7 @@ export async function PUT(
         empresa,
         cargo,
         convidado_por,
+        convite_url: buildInviteUrl(email),
       },
     });
 
