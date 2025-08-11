@@ -169,12 +169,13 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
 
   const handleCopyInviteUrl = async (guest: GuestUI) => {
     const inviteUrl = guest.convite_url || `https://go.opens.com.br/elga?emailconf=${encodeURIComponent(guest.email)}`;
+    
     try {
       await navigator.clipboard.writeText(inviteUrl);
       showSnackbar("Link do convite copiado!", "success");
     } catch (error) {
       console.error(error);
-      showSnackbar("Erro ao copiar o link.", "error");
+      showSnackbar("Erro ao copiar link.", "error");
     }
   };
 
@@ -447,7 +448,12 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                                 event.stopPropagation();
                                 handleCopyInviteUrl(guest);
                               }}
-                              sx={{ p: 0.5 }}
+                              sx={{
+                                color: 'text.secondary',
+                                '&:hover': {
+                                  color: 'primary.main'
+                                }
+                              }}
                             >
                               <ContentCopyIcon fontSize="small" />
                             </IconButton>
