@@ -39,6 +39,7 @@ import EditGuestForm from "./EditGuestForm";
 
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import DownloadIcon from '@mui/icons-material/Download';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Image from 'next/image';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -163,6 +164,17 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     } catch (error) {
       console.error(error);
       showSnackbar("Erro ao iniciar o download.", "error");
+    }
+  };
+
+  const handleCopyInviteUrl = async (guest: GuestUI) => {
+    const inviteUrl = guest.convite_url || `https://go.opens.com.br/elga?emailconf=${encodeURIComponent(guest.email)}`;
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      showSnackbar("Link do convite copiado!", "success");
+    } catch (error) {
+      console.error(error);
+      showSnackbar("Erro ao copiar o link.", "error");
     }
   };
 
@@ -426,24 +438,27 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                   <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
                     <Grid container spacing={2} alignItems="center">
                       <Grid item xs={12} sm={3}>
-                        <Typography variant="subtitle1">{guest.nome}</Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="subtitle1">{guest.nome}</Typography>
+                          <Tooltip title="Copiar link do convite">
+                            <IconButton
+                              size="small"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleCopyInviteUrl(guest);
+                              }}
+                              sx={{ p: 0.5 }}
+                            >
+                              <ContentCopyIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
                       </Grid>
                       <Grid item xs={12} sm={3}>
                         <Typography color="text.secondary">{guest.empresa}</Typography>
                       </Grid>
                       <Grid item xs={12} sm={4}>
-                        <Box>
-                          <Typography color="text.secondary">{guest.email}</Typography>
-                          <Typography variant="body2">
-                            <a
-                              href={guest.convite_url || `https://go.opens.com.br/elga?emailconf=${encodeURIComponent(guest.email)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              URL do convite
-                            </a>
-                          </Typography>
-                        </Box>
+                        <Typography color="text.secondary">{guest.email}</Typography>
                       </Grid>
                       <Grid item xs={12} sm={2}>
                         <Chip
