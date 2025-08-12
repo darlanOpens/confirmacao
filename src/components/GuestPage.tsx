@@ -99,7 +99,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const handleGuestAdded = (newGuest: GuestLike) => {
     const guestWithUrl: GuestUI = {
       ...newGuest,
-      convite_url: newGuest.convite_url || buildInviteUrl(newGuest.email),
+      convite_url: newGuest.convite_url || buildInviteUrl(newGuest.email, newGuest.convidado_por),
     };
     setGuests(prevGuests => [guestWithUrl, ...prevGuests]);
     setAddModalOpen(false);
@@ -168,7 +168,12 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   };
 
   const handleCopyInviteUrl = async (guest: GuestUI) => {
-    const inviteUrl = guest.convite_url || `https://go.opens.com.br/elga?emailconf=${encodeURIComponent(guest.email)}`;
+    const base = guest.convite_url || buildInviteUrl(guest.email, guest.convidado_por);
+    const url = new URL(base);
+    if (guest.convidado_por && String(guest.convidado_por).trim() !== '') {
+      url.searchParams.set('utm_source', String(guest.convidado_por));
+    }
+    const inviteUrl = url.toString();
     
     try {
       await navigator.clipboard.writeText(inviteUrl);

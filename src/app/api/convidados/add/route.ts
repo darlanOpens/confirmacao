@@ -26,7 +26,7 @@ export async function POST(request: Request) {
         empresa,
         cargo,
         convidado_por,
-        convite_url: buildInviteUrl(email),
+        convite_url: buildInviteUrl(email, convidado_por),
       },
     });
     console.log('✅ Convidado criado com sucesso:', newGuest.id);

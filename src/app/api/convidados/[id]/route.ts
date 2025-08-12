@@ -23,7 +23,7 @@ export async function PUT(
         empresa,
         cargo,
         convidado_por,
-        convite_url: buildInviteUrl(email),
+        convite_url: buildInviteUrl(email, convidado_por),
       },
     });
 
