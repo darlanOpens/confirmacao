@@ -175,7 +175,13 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   };
 
   const handleCopyInviteUrl = async (guest: GuestUI) => {
-    const inviteUrl = guest.convite_url || `https://go.opens.com.br/brunch-vip?emailconf=${encodeURIComponent(guest.email)}`;
+    // Sempre gere a partir da função utilitária para evitar hardcode de path
+    const baseUrl = guest.convite_url || buildInviteUrl(guest.email);
+    const url = new URL(baseUrl);
+    if (guest.convidado_por && String(guest.convidado_por).trim() !== '') {
+      url.searchParams.set('utm_source', String(guest.convidado_por));
+    }
+    const inviteUrl = url.toString();
     
     try {
       await navigator.clipboard.writeText(inviteUrl);

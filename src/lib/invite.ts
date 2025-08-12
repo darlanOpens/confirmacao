@@ -1,5 +1,5 @@
 export function buildInviteUrl(email: string): string {
-  const baseUrl = process.env.INVITE_BASE_URL || 'https://go.opens.com.br/brunch-vip';
+  const baseUrl = process.env.INVITE_BASE_URL || 'https://go.opens.com.br/brunch-esquenta';
   try {
     const url = new URL(baseUrl);
     url.searchParams.set('emailconf', email);
