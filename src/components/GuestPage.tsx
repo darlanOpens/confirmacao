@@ -74,10 +74,13 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
-  bgcolor: 'background.paper',
-  borderRadius: 2,
+  bgcolor: 'rgba(30, 30, 30, 0.95)',
+  backdropFilter: 'blur(10px)',
+  border: '1px solid rgba(255, 255, 255, 0.15)',
+  borderRadius: 1,
   boxShadow: 24,
   p: 4,
+  color: 'white',
 } as const;
 
 export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
@@ -241,8 +244,8 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
         <Toolbar sx={{ justifyContent: 'center', py: 1, position: 'relative' }}>
           <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
             <Image 
-              src="/elga-logo.png" 
-              alt="ELGA Logo" 
+              src="/brunch-experience.png" 
+              alt="Brunch Experience Logo" 
               width={150} 
               height={40} 
               style={{ objectFit: 'contain' }}
@@ -263,7 +266,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Box sx={{ mb: 4, p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
           <Typography variant="h5" component="h1" gutterBottom>
-            Central de Confirmações – ELGA
+            Central de Confirmações – Brunch Experience
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Gerencie facilmente a lista de convidados e acompanhe confirmações em tempo real.
@@ -381,6 +384,12 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
             open={trackingModalOpen}
             onClose={() => setTrackingModalOpen(false)}
             aria-labelledby="tracking-modal-title"
+            sx={{
+              '& .MuiBackdrop-root': {
+                backdropFilter: 'blur(5px)',
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              }
+            }}
           >
             <Box sx={style}>
               <IconButton
@@ -421,6 +430,12 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
             open={addModalOpen}
             onClose={handleCloseAddModal}
             aria-labelledby="add-guest-modal-title"
+            sx={{
+              '& .MuiBackdrop-root': {
+                backdropFilter: 'blur(5px)',
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              }
+            }}
           >
             <Box sx={style}>
               <IconButton
@@ -446,6 +461,12 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
             open={importModalOpen}
             onClose={handleCloseImportModal}
             aria-labelledby="import-csv-modal-title"
+            sx={{
+              '& .MuiBackdrop-root': {
+                backdropFilter: 'blur(5px)',
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              }
+            }}
           >
             <Box sx={style}>
               <IconButton
@@ -468,7 +489,16 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
           </Modal>
 
           {selectedGuest && (
-            <Modal open={editModalOpen} onClose={handleCloseEditModal}>
+            <Modal 
+              open={editModalOpen} 
+              onClose={handleCloseEditModal}
+              sx={{
+                '& .MuiBackdrop-root': {
+                  backdropFilter: 'blur(5px)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                }
+              }}
+            >
               <Box sx={style}>
                 <IconButton
                   aria-label="close"
@@ -491,7 +521,16 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
           )}
 
           {selectedGuest && (
-            <Modal open={deleteModalOpen} onClose={handleCloseDeleteModal}>
+            <Modal 
+              open={deleteModalOpen} 
+              onClose={handleCloseDeleteModal}
+              sx={{
+                '& .MuiBackdrop-root': {
+                  backdropFilter: 'blur(5px)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                }
+              }}
+            >
               <Box sx={style}>
                 <Typography variant="h6" component="h2">
                   Confirmar Exclusão

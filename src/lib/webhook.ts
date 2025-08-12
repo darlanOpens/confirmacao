@@ -31,8 +31,10 @@ export async function sendGuestAddedWebhook(guestData: {
   // Usar a URL do webhook da variável de ambiente ou fallback para a URL existente
   const webhookUrl = process.env.WEBHOOK_URL || "https://n8n.opens.com.br/webhook/elga-guests";
   
-  console.log('🌐 WEBHOOK_URL configurada:', webhookUrl);
-  console.log('🔧 Variável de ambiente WEBHOOK_URL:', process.env.WEBHOOK_URL || 'NÃO CONFIGURADA');
+  console.log('🔍 WEBHOOK Debug:');
+  console.log('  process.env.WEBHOOK_URL:', process.env.WEBHOOK_URL || 'NÃO CONFIGURADA');
+  console.log('  URL final do webhook:', webhookUrl);
+  console.log('  Usando fallback?', !process.env.WEBHOOK_URL ? 'SIM' : 'NÃO');
   
   const payload: WebhookPayload = {
     event: 'guest_added',
