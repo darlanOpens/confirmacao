@@ -34,18 +34,18 @@ export async function POST(request: Request) {
       );
     }
 
-    let finalGuest = guest;
-    if (guest.status === "pendente") {
-      finalGuest = await prisma.guest.update({
-        where: { email },
-        data: { status: "confirmado", data_confirmacao: new Date() },
-      });
-    }
+  const updatedGuest =
+    guest.status === "pendente"
+      ? await prisma.guest.update({
+          where: { email },
+          data: { status: "confirmado", data_confirmacao: new Date() },
+        })
+      : guest;
 
-    return NextResponse.json(
-      { success: true, found: true, guest: finalGuest },
-      { status: 200, headers: corsHeaders }
-    );
+  return NextResponse.json(
+    { success: true, found: true, guest: updatedGuest },
+    { status: 200, headers: corsHeaders }
+  );
   } catch {
     return NextResponse.json(
       { success: false, error: "Ocorreu um erro interno." },

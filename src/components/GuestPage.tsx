@@ -26,6 +26,7 @@ import {
   ListItemText,
   ListItemIcon,
   Autocomplete,
+  Stack,
 } from "@mui/material";
 import Grid from '@mui/material/Grid'; // Direct import for Grid
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -33,11 +34,20 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import { Guest } from "@prisma/client";
+import { buildInviteUrl, buildTrackingUrl } from "@/lib/invite";
 import AddGuestForm from "./AddGuestForm";
 import CsvImport from "./CsvImport";
 import EditGuestForm from "./EditGuestForm";
-import { tokens } from '@/theme/designSystem';
-import { buildInviteUrl, buildTrackingUrl } from "@/lib/invite";
+
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import DownloadIcon from '@mui/icons-material/Download';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import Image from 'next/image';
+import LinkIcon from '@mui/icons-material/Link';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import SearchIcon from '@mui/icons-material/Search';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 type GuestUI = Guest & { convite_url?: string };
 type GuestLike = {
@@ -54,46 +64,52 @@ type GuestLike = {
   convite_url?: string;
 };
 
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import DownloadIcon from '@mui/icons-material/Download';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import SearchIcon from '@mui/icons-material/Search';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-
 interface GuestPageProps {
   guests: GuestUI[];
 }
 
-const modalStyle = {
+const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: { xs: '90%', sm: 450 },
-  maxHeight: '90vh',
-  overflow: 'auto',
-  background: tokens.alphaWhite05,
-  border: `1px solid ${tokens.borderGlass}`,
-  borderRadius: '16px',
-  backdropFilter: `blur(${tokens.blurBackdropLg})`,
-  boxShadow: tokens.shadowGlassInnerWeak,
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius: 2,
+  boxShadow: 24,
   p: 4,
-  color: tokens.textPrimary,
 } as const;
 
 export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const [guests, setGuests] = useState<GuestUI[]>(initialGuests);
   const [searchQuery, setSearchQuery] = useState("");
-  const [convidadoPorFilter, setConvidadoPorFilter] = useState<string | null>(null);
-  const [trackingConvidadoPor, setTrackingConvidadoPor] = useState<string>("");
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<GuestUI | null>(null);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" } | null>(null);
+  const [trackingModalOpen, setTrackingModalOpen] = useState(false);
+  const [trackingConvidadoPor, setTrackingConvidadoPor] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
+
+  React.useEffect(() => {
+    const loadTags = async () => {
+      try {
+        const res = await fetch('/api/convidados/tags');
+        const data = await res.json();
+        const saved = typeof window !== 'undefined'
+          ? (localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por'))
+          : null;
+        const merged = Array.from(new Set([...(Array.isArray(data) ? data : []), ...(saved ? [saved] : [])]));
+        setTags(merged as string[]);
+        if (saved) setTrackingConvidadoPor(saved);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadTags();
+  }, []);
   
 
   const showSnackbar = (message: string, severity: "success" | "error") => {
@@ -107,7 +123,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const handleGuestAdded = (newGuest: GuestLike) => {
     const guestWithUrl: GuestUI = {
       ...newGuest,
-      convite_url: newGuest.convite_url || buildInviteUrl(newGuest.email),
+      convite_url: newGuest.convite_url || buildInviteUrl(newGuest.email, newGuest.convidado_por),
     };
     setGuests(prevGuests => [guestWithUrl, ...prevGuests]);
     setAddModalOpen(false);
@@ -175,10 +191,23 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     }
   };
 
+  const trackingUrl = buildTrackingUrl(trackingConvidadoPor || null);
+  const handleCopyTrackingUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(trackingUrl);
+      showSnackbar("Link de rastreamento copiado!", "success");
+      if (typeof window !== 'undefined' && trackingConvidadoPor) {
+        localStorage.setItem('elga_convidado_por', trackingConvidadoPor);
+      }
+    } catch (error) {
+      console.error(error);
+      showSnackbar("Erro ao copiar link de rastreamento.", "error");
+    }
+  };
+
   const handleCopyInviteUrl = async (guest: GuestUI) => {
-    // Sempre gere a partir da função utilitária para evitar hardcode de path
-    const baseUrl = guest.convite_url || buildInviteUrl(guest.email);
-    const url = new URL(baseUrl);
+    const base = guest.convite_url || buildInviteUrl(guest.email, guest.convidado_por);
+    const url = new URL(base);
     if (guest.convidado_por && String(guest.convidado_por).trim() !== '') {
       url.searchParams.set('utm_source', String(guest.convidado_por));
     }
@@ -187,6 +216,9 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     try {
       await navigator.clipboard.writeText(inviteUrl);
       showSnackbar("Link do convite copiado!", "success");
+      if (typeof window !== 'undefined' && guest.convidado_por) {
+        localStorage.setItem('elga_convidado_por', guest.convidado_por);
+      }
     } catch (error) {
       console.error(error);
       showSnackbar("Erro ao copiar link.", "error");
@@ -196,124 +228,78 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const totalGuests = guests.length;
   const confirmedGuests = guests.filter(g => g.status === 'confirmado').length;
   
-  // Obter lista única de pessoas que convidaram
-  const uniqueConvidadoPor = Array.from(new Set(guests.map(guest => guest.convidado_por))).filter(Boolean).sort();
-  
-  // Lógica de filtro
-  const filteredGuests = guests.filter(guest => {
-    const matchesSearch = guest.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      guest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      guest.empresa.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesConvidadoPor = !convidadoPorFilter || guest.convidado_por === convidadoPorFilter;
-    
-    return matchesSearch && matchesConvidadoPor;
-  });
-
-  const trackingUrl = buildTrackingUrl(trackingConvidadoPor || null);
-
-  const handleCopyTrackingUrl = async () => {
-    try {
-      await navigator.clipboard.writeText(trackingUrl);
-      showSnackbar("Link de rastreamento copiado!", "success");
-    } catch (error) {
-      console.error(error);
-      showSnackbar("Erro ao copiar link de rastreamento.", "error");
-    }
-  };
+  // Lógica de filtro (a ser aplicada depois)
+  const filteredGuests = guests.filter(guest => 
+    guest.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    guest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    guest.empresa.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <Box sx={{ minHeight: '100vh', background: tokens.backgroundApp }}>
-      <AppBar position="static" sx={{
-        background: 'transparent',
-        borderBottom: `1px solid ${tokens.borderGlass}`,
-        backdropFilter: `blur(${tokens.blurBackdropMd})`,
-        boxShadow: 'none'
-      }}>
-        <Toolbar sx={{ justifyContent: 'center', py: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-            <Typography
-              variant="h5"
-              sx={{
-                fontFamily: 'var(--font-butler), Butler, serif',
-                fontWeight: 300,
-                letterSpacing: '-0.02em',
-                textTransform: 'uppercase',
-                color: tokens.white,
-              }}
-            >
-              BRUNCH
-            </Typography>
-            <Box
-              sx={{
-                width: 1,
-                height: { xs: 28, sm: 36 },
-                background: 'linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.70), rgba(255,255,255,0.10))',
-              }}
+    <>
+      <AppBar position="static" color="default" elevation={1}>
+        <Toolbar sx={{ justifyContent: 'center', py: 1, position: 'relative' }}>
+          <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+            <Image 
+              src="/elga-logo.png" 
+              alt="ELGA Logo" 
+              width={150} 
+              height={40} 
+              style={{ objectFit: 'contain' }}
             />
-            <Typography
-              variant="h6"
-              sx={{
-                fontFamily: "'Work Sans', var(--font-inter), system-ui, sans-serif",
-                letterSpacing: '0.3em',
-                textTransform: 'uppercase',
-                color: tokens.alphaWhite70,
-              }}
+          </Box>
+          <Box sx={{ position: 'absolute', right: 8 }}>
+            <Button
+              variant="outlined"
+              startIcon={<LinkIcon />}
+              onClick={() => setTrackingModalOpen(true)}
+              size="small"
             >
-              EXPERIENCE
-            </Typography>
+              Seu link de rastreamento
+            </Button>
           </Box>
         </Toolbar>
       </AppBar>
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{
-          mb: 4,
-          p: 3,
-          background: tokens.alphaWhite05,
-          border: `1px solid ${tokens.borderGlass}`,
-          borderRadius: '16px',
-          backdropFilter: `blur(${tokens.blurBackdropLg})`,
-          boxShadow: tokens.shadowGlassInnerWeak,
-          color: tokens.textPrimary,
-        }}>
-          <Typography variant="h5" component="h1" gutterBottom sx={{ color: '#ED7414' }}>
-            Central de Confirmações – Brunch Experience
+        <Box sx={{ mb: 4, p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
+          <Typography variant="h5" component="h1" gutterBottom>
+            Central de Confirmações – ELGA
           </Typography>
-          <Typography variant="body1" sx={{ color: tokens.textSecondary }}>
+          <Typography variant="body1" color="text.secondary">
             Gerencie facilmente a lista de convidados e acompanhe confirmações em tempo real.
           </Typography>
           <Grid container spacing={2} sx={{ mt: 2 }}>
             <Grid item xs={12} md={6}>
-              <Typography variant="h6" sx={{ color: tokens.textPrimary }}>O que você pode fazer aqui:</Typography>
+              <Typography variant="h6">O que você pode fazer aqui:</Typography>
               <List dense>
                 <ListItem>
-                  <ListItemIcon><AddCircleOutlineIcon fontSize="small" sx={{ color: tokens.textSecondary }} /></ListItemIcon>
-                  <ListItemText primary="Adicionar convidados individuais" sx={{ color: tokens.textSecondary }} />
+                  <ListItemIcon><AddCircleOutlineIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="Adicionar convidados individuais" />
                 </ListItem>
                 <ListItem>
-                  <ListItemIcon><UploadFileIcon fontSize="small" sx={{ color: tokens.textSecondary }} /></ListItemIcon>
-                  <ListItemText primary="Importar lista em massa (CSV)" sx={{ color: tokens.textSecondary }} />
+                  <ListItemIcon><UploadFileIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="Importar lista em massa (CSV)" />
                 </ListItem>
                  <ListItem>
-                  <ListItemIcon><EditIcon fontSize="small" sx={{ color: tokens.textSecondary }} /></ListItemIcon>
-                  <ListItemText primary="Editar ou remover registros" sx={{ color: tokens.textSecondary }} />
+                  <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="Editar ou remover registros" />
                 </ListItem>
                  <ListItem>
-                  <ListItemIcon><SearchIcon fontSize="small" sx={{ color: tokens.textSecondary }} /></ListItemIcon>
-                  <ListItemText primary="Pesquisar e filtrar convidados" sx={{ color: tokens.textSecondary }} />
+                  <ListItemIcon><SearchIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="Pesquisar e filtrar convidados" />
                 </ListItem>
               </List>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="h6" sx={{ color: tokens.textPrimary }}>Boas práticas:</Typography>
+              <Typography variant="h6">Boas práticas:</Typography>
               <List dense>
                  <ListItem>
-                  <ListItemIcon><CheckCircleOutlineIcon fontSize="small" sx={{ color: tokens.textSecondary }} /></ListItemIcon>
-                  <ListItemText primary="Preencha tudo com atenção para garantir a confirmação." sx={{ color: tokens.textSecondary }} />
+                  <ListItemIcon><CheckCircleOutlineIcon fontSize="small" color="primary" /></ListItemIcon>
+                  <ListItemText primary="Preencha tudo com atenção para garantir a confirmação." />
                 </ListItem>
                  <ListItem>
-                  <ListItemIcon><CheckCircleOutlineIcon fontSize="small" sx={{ color: tokens.textSecondary }} /></ListItemIcon>
-                  <ListItemText primary="Mantenha os dados sempre atualizados." sx={{ color: tokens.textSecondary }} />
+                  <ListItemIcon><CheckCircleOutlineIcon fontSize="small" color="primary" /></ListItemIcon>
+                  <ListItemText primary="Mantenha os dados sempre atualizados." />
                 </ListItem>
               </List>
             </Grid>
@@ -323,46 +309,24 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
         {/* Cards de Estatísticas */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{
-                background: tokens.alphaWhite05,
-                border: `1px solid ${tokens.borderGlass}`,
-                borderRadius: '16px',
-                backdropFilter: `blur(${tokens.blurBackdropLg})`,
-                boxShadow: tokens.shadowGlassInnerWeak,
-                transition: 'all 150ms ease-in-out',
-                '&:hover': {
-                  boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
-                  transform: 'translateY(-2px)'
-                }
-              }}>
+              <Card>
                 <CardContent>
-                  <Typography sx={{ color: tokens.textSecondary }} gutterBottom>
+                  <Typography color="text.secondary" gutterBottom>
                     Convidados
                   </Typography>
-                  <Typography variant="h5" component="div" sx={{ color: tokens.textPrimary }}>
+                  <Typography variant="h5" component="div">
                     {totalGuests}
                   </Typography>
                 </CardContent>
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{
-                background: tokens.alphaWhite05,
-                border: `1px solid ${tokens.borderGlass}`,
-                borderRadius: '16px',
-                backdropFilter: `blur(${tokens.blurBackdropLg})`,
-                boxShadow: tokens.shadowGlassInnerWeak,
-                transition: 'all 150ms ease-in-out',
-                '&:hover': {
-                  boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
-                  transform: 'translateY(-2px)'
-                }
-              }}>
+              <Card>
                 <CardContent>
-                  <Typography sx={{ color: tokens.textSecondary }} gutterBottom>
+                  <Typography color="text.secondary" gutterBottom>
                     Confirmados
                   </Typography>
-                  <Typography variant="h5" component="div" sx={{ color: tokens.textPrimary }}>
+                  <Typography variant="h5" component="div">
                     {confirmedGuests}
                   </Typography>
                 </CardContent>
@@ -371,55 +335,16 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
           </Grid>
           
           {/* Barra de Ações */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
             <TextField 
               variant="outlined"
               size="small"
               placeholder="Procurar..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{ flexGrow: 1 }}
+              sx={{ flexGrow: 1, mr: 2 }}
             />
-            <Autocomplete
-              size="small"
-              options={uniqueConvidadoPor}
-              value={convidadoPorFilter}
-              onChange={(event, newValue) => setConvidadoPorFilter(newValue)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="convidado por..."
-                  variant="outlined"
-                  sx={{
-                    minWidth: 250,
-                    '& .MuiOutlinedInput-input::placeholder': {
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      opacity: 1,
-                    },
-                  }}
-                />
-              )}
-              sx={{
-                '& .MuiPaper-root': {
-                  backgroundColor: '#564C9B',
-                  color: 'white',
-                },
-                '& .MuiAutocomplete-option': {
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  },
-                  '&.Mui-focused': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  },
-                },
-              }}
-            />
-            <Button
-              variant="contained"
-              onClick={handleOpenAddModal}
-              size="large"
-              sx={{ height: '40px' }}
-            >
+            <Button variant="contained" onClick={handleOpenAddModal} size="large" sx={{ height: '40px' }}>
               Adicionar convidado
             </Button>
             <Tooltip title="Importar CSV">
@@ -428,18 +353,9 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                 onClick={handleOpenImportModal}
                 sx={{ 
                   ml: 1,
-                  minWidth: '40px',
-                  height: '40px',
-                  padding: '0',
-                  background: tokens.alphaWhite05,
-                  color: tokens.textPrimary,
-                  border: `1px solid ${tokens.borderGlass}`,
-                  borderRadius: '999px',
-                  transition: 'all 150ms ease-in-out',
-                  '&:hover': {
-                    background: tokens.alphaWhite10,
-                    border: `1px solid ${tokens.borderGlassStrong}`,
-                  }
+                  minWidth: '40px', // Largura para um botão de ícone quadrado
+                  height: '40px', // Altura para corresponder ao botão 'large'
+                  padding: '0'
                 }}
               >
                 <FileUploadIcon />
@@ -453,16 +369,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                   ml: 1,
                   minWidth: '40px',
                   height: '40px',
-                  padding: '0',
-                  background: tokens.alphaWhite05,
-                  color: tokens.textPrimary,
-                  border: `1px solid ${tokens.borderGlass}`,
-                  borderRadius: '999px',
-                  transition: 'all 150ms ease-in-out',
-                  '&:hover': {
-                    background: tokens.alphaWhite10,
-                    border: `1px solid ${tokens.borderGlassStrong}`,
-                  }
+                  padding: '0'
                 }}
               >
                 <DownloadIcon />
@@ -470,60 +377,52 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
             </Tooltip>
           </Box>
 
-          {/* Seu link de rastreamento */}
-          <Box sx={{
-            mb: 4,
-            p: 3,
-            background: tokens.alphaWhite05,
-            border: `1px solid ${tokens.borderGlass}`,
-            borderRadius: '16px',
-            backdropFilter: `blur(${tokens.blurBackdropLg})`,
-            boxShadow: tokens.shadowGlassInnerWeak,
-            color: tokens.textPrimary,
-          }}>
-            <Typography variant="h6" sx={{ mb: 2, color: tokens.textPrimary }}>
-              Seu link de rastreamento
-            </Typography>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} md={4}>
+          <Modal
+            open={trackingModalOpen}
+            onClose={() => setTrackingModalOpen(false)}
+            aria-labelledby="tracking-modal-title"
+          >
+            <Box sx={style}>
+              <IconButton
+                aria-label="close"
+                onClick={() => setTrackingModalOpen(false)}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: (theme) => theme.palette.grey[500],
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+              <Typography id="tracking-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
+                Seu link de rastreamento
+              </Typography>
+              <Stack spacing={2}>
                 <Autocomplete
-                  size="small"
                   freeSolo
-                  options={uniqueConvidadoPor}
+                  options={tags}
                   value={trackingConvidadoPor}
                   onChange={(event, newValue) => setTrackingConvidadoPor(newValue ?? "")}
                   onInputChange={(event, newInputValue) => setTrackingConvidadoPor(newInputValue)}
                   renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="convidado por..."
-                      variant="outlined"
-                    />
+                    <TextField {...params} label="Convidado por" fullWidth />
                   )}
                 />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  value={trackingUrl}
-                  InputProps={{ readOnly: true }}
-                />
-              </Grid>
-              <Grid item xs={12} md={2}>
-                <Button variant="outlined" onClick={handleCopyTrackingUrl} fullWidth>
-                  Copiar link
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
+                <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>
+                  {trackingUrl}
+                </Typography>
+                <Button variant="contained" onClick={handleCopyTrackingUrl} startIcon={<ContentCopyIcon />}>Copiar link</Button>
+              </Stack>
+            </Box>
+          </Modal>
 
           <Modal
             open={addModalOpen}
             onClose={handleCloseAddModal}
             aria-labelledby="add-guest-modal-title"
           >
-            <Box sx={modalStyle}>
+            <Box sx={style}>
               <IconButton
                 aria-label="close"
                 onClick={handleCloseAddModal}
@@ -548,7 +447,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
             onClose={handleCloseImportModal}
             aria-labelledby="import-csv-modal-title"
           >
-            <Box sx={modalStyle}>
+            <Box sx={style}>
               <IconButton
                 aria-label="close"
                 onClick={handleCloseImportModal}
@@ -570,7 +469,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
 
           {selectedGuest && (
             <Modal open={editModalOpen} onClose={handleCloseEditModal}>
-              <Box sx={modalStyle}>
+              <Box sx={style}>
                 <IconButton
                   aria-label="close"
                   onClick={handleCloseEditModal}
@@ -593,7 +492,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
 
           {selectedGuest && (
             <Modal open={deleteModalOpen} onClose={handleCloseDeleteModal}>
-              <Box sx={modalStyle}>
+              <Box sx={style}>
                 <Typography variant="h6" component="h2">
                   Confirmar Exclusão
                 </Typography>
@@ -627,36 +526,17 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
           {/* Lista de Convidados com Accordion */}
           <Box sx={{ mt: 4 }}>
             {filteredGuests.map((guest) => (
-              <Accordion 
-                key={guest.id}
-                sx={{
-                  background: tokens.alphaWhite05,
-                  border: `1px solid ${tokens.borderGlass}`,
-                  borderRadius: '16px',
-                  backdropFilter: `blur(${tokens.blurBackdropLg})`,
-                  boxShadow: tokens.shadowGlassInnerWeak,
-                  mb: 2,
-                  transition: 'all 150ms ease-in-out',
-                  '&:hover': {
-                    boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
-                    transform: 'translateY(-2px)'
-                  },
-                  '&:before': {
-                    display: 'none'
-                  }
-                }}
-              >
+              <Accordion key={guest.id}>
                 <AccordionSummary
-                  expandIcon={<ExpandMoreIcon sx={{ color: tokens.textPrimary }} />}
+                  expandIcon={<ExpandMoreIcon />}
                   aria-controls={`panel-${guest.id}-content`}
                   id={`panel-${guest.id}-header`}
-                  sx={{ color: tokens.textPrimary }}
                 >
                   <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
                     <Grid container spacing={2} alignItems="center">
                       <Grid item xs={12} sm={3}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography variant="subtitle1" sx={{ color: tokens.textPrimary }}>{guest.nome}</Typography>
+                          <Typography variant="subtitle1">{guest.nome}</Typography>
                           <Tooltip title="Copiar link do convite">
                             <IconButton
                               size="small"
@@ -665,9 +545,9 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                                 handleCopyInviteUrl(guest);
                               }}
                               sx={{
-                                color: tokens.textSecondary,
+                                color: 'text.secondary',
                                 '&:hover': {
-                                  color: tokens.textPrimary
+                                  color: 'primary.main'
                                 }
                               }}
                             >
@@ -677,10 +557,10 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                         </Box>
                       </Grid>
                       <Grid item xs={12} sm={3}>
-                        <Typography sx={{ color: tokens.textSecondary }}>{guest.empresa}</Typography>
+                        <Typography color="text.secondary">{guest.empresa}</Typography>
                       </Grid>
                       <Grid item xs={12} sm={4}>
-                        <Typography sx={{ color: tokens.textSecondary }}>{guest.email}</Typography>
+                        <Typography color="text.secondary">{guest.email}</Typography>
                       </Grid>
                       <Grid item xs={12} sm={2}>
                         <Chip
@@ -699,15 +579,6 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                         event.stopPropagation();
                         handleOpenEditModal(guest);
                       }}
-                      sx={{
-                        color: tokens.textPrimary,
-                        background: tokens.alphaWhite10,
-                        borderRadius: '8px',
-                        transition: 'all 150ms ease-in-out',
-                        '&:hover': {
-                          background: tokens.primaryHoverGradient
-                        }
-                      }}
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
@@ -718,32 +589,22 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                         event.stopPropagation();
                         handleOpenDeleteModal(guest);
                       }}
-                      sx={{
-                        color: tokens.textPrimary,
-                        background: tokens.alphaWhite10,
-                        borderRadius: '8px',
-                        ml: 1,
-                        transition: 'all 150ms ease-in-out',
-                        '&:hover': {
-                          background: tokens.primaryHoverGradient
-                        }
-                      }}
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </Box>
                 </AccordionSummary>
-                <AccordionDetails sx={{ background: tokens.alphaWhite10, borderRadius: '0 0 16px 16px' }}>
+                <AccordionDetails>
                   <Box>
-                    <Typography sx={{ color: tokens.textSecondary }}><strong style={{ color: tokens.textPrimary }}>Telefone:</strong> {guest.telefone}</Typography>
-                    <Typography sx={{ color: tokens.textSecondary }}><strong style={{ color: tokens.textPrimary }}>Cargo:</strong> {guest.cargo}</Typography>
-                    <Typography sx={{ color: tokens.textSecondary }}><strong style={{ color: tokens.textPrimary }}>Convidado por:</strong> {guest.convidado_por}</Typography>
+                    <Typography><strong>Telefone:</strong> {guest.telefone}</Typography>
+                    <Typography><strong>Cargo:</strong> {guest.cargo}</Typography>
+                    <Typography><strong>Convidado por:</strong> {guest.convidado_por}</Typography>
                   </Box>
                 </AccordionDetails>
               </Accordion>
             ))}
           </Box>
         </Container>
-    </Box>
+    </>
   );
 }

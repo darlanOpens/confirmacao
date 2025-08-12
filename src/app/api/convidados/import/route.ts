@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { sendGuestAddedWebhook } from "@/lib/webhook";
 import { buildInviteUrl } from "@/lib/invite";
+import { sendGuestAddedWebhook } from "@/lib/webhook";
 
 interface GuestData {
   nome: string;
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     const importResults = {
       successCount: 0,
-      errors: [] as { guest: GuestData; error: string }[],
+      errors: [] as { guest: GuestData; error:string }[],
     };
 
     for (const convidado of convidados) {
@@ -38,18 +38,16 @@ export async function POST(request: Request) {
         const createdGuest = await prisma.guest.create({
           data: {
             ...convidado,
-            convite_url: buildInviteUrl((convidado as GuestData).email),
+            convite_url: buildInviteUrl((convidado as GuestData).email, (convidado as GuestData).convidado_por),
           },
         });
         importResults.successCount++;
 
-        // Dispara o webhook para o convidado recém-criado
         await sendGuestAddedWebhook(createdGuest);
 
       } catch (error) {
         let errorMessage = "Ocorreu um erro desconhecido.";
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          // Exemplo: Erro de violação de restrição única (email duplicado)
           if (error.code === 'P2002') {
             errorMessage = `Convidado com email '${(convidado as GuestData).email}' já existe.`;
           }

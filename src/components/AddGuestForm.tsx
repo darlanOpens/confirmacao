@@ -9,7 +9,6 @@ import {
   Autocomplete,
   createFilterOptions,
 } from "@mui/material";
-import { tokens } from '@/theme/designSystem';
 
 interface Guest {
   id: number;
@@ -47,13 +46,26 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
       try {
         const response = await fetch('/api/convidados/tags');
         const data = await response.json();
-        setTags(data);
+        // Inclui possível preferido salvo em localStorage (com fallback da chave legada)
+        const saved = typeof window !== 'undefined'
+          ? (localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por'))
+          : null;
+        const merged = Array.from(new Set([...(Array.isArray(data) ? data : []), ...(saved ? [saved] : [])]));
+        setTags(merged as string[]);
       } catch (error) {
         console.error('Failed to fetch tags', error);
       }
     };
 
     fetchTags();
+
+    // Prefill do campo a partir do localStorage (com fallback da chave legada)
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por');
+      if (saved) {
+        setFormData((prev) => ({ ...prev, convidado_por: saved }));
+      }
+    }
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,6 +103,11 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           setTags([...tags, formData.convidado_por]);
         }
 
+        // Salva preferência no localStorage com a chave padronizada
+        if (typeof window !== 'undefined' && formData.convidado_por) {
+          localStorage.setItem('elga_convidado_por', formData.convidado_por);
+        }
+
         // Call the callback to update the parent component
         if (onGuestAdded && result.guest) {
           onGuestAdded(result.guest);
@@ -114,61 +131,13 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        mt: 2,
-        p: 3,
-        background: tokens.alphaWhite05,
-        border: `1px solid ${tokens.borderGlass}`,
-        borderRadius: '16px',
-        backdropFilter: `blur(${tokens.blurBackdropLg})`,
-        boxShadow: tokens.shadowGlassInnerWeak,
-      }}
-    >
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
       <Stack spacing={2}>
-        <TextField 
-          name="nome" 
-          label="Nome Completo" 
-          value={formData.nome} 
-          onChange={handleChange} 
-          fullWidth 
-          required 
-        />
-        <TextField 
-          name="email" 
-          label="Email" 
-          type="email" 
-          value={formData.email} 
-          onChange={handleChange} 
-          fullWidth 
-          required 
-        />
-        <TextField 
-          name="telefone" 
-          label="Telefone" 
-          value={formData.telefone} 
-          onChange={handleChange} 
-          fullWidth 
-          required
-        />
-        <TextField 
-          name="empresa" 
-          label="Empresa" 
-          value={formData.empresa} 
-          onChange={handleChange} 
-          fullWidth 
-          required
-        />
-        <TextField 
-          name="cargo" 
-          label="Cargo" 
-          value={formData.cargo} 
-          onChange={handleChange} 
-          fullWidth 
-          required
-        />
+        <TextField name="nome" label="Nome Completo" value={formData.nome} onChange={handleChange} fullWidth required />
+        <TextField name="email" label="Email" type="email" value={formData.email} onChange={handleChange} fullWidth required />
+        <TextField name="telefone" label="Telefone" value={formData.telefone} onChange={handleChange} fullWidth required />
+        <TextField name="empresa" label="Empresa" value={formData.empresa} onChange={handleChange} fullWidth required />
+        <TextField name="cargo" label="Cargo" value={formData.cargo} onChange={handleChange} fullWidth required />
         <Autocomplete
           value={formData.convidado_por}
           onChange={handleConvidadoPorChange}
@@ -195,35 +164,13 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           renderOption={(props, option) => <li {...props}>{option}</li>}
           freeSolo
           renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Convidado Por"
-              required
-            />
+            <TextField {...params} label="Convidado Por" required />
           )}
-          sx={{
-            '& .MuiAutocomplete-paper': {
-              backgroundColor: '#564C9B',
-              borderRadius: '16px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
-            },
-            '& .MuiAutocomplete-option': {
-              color: '#FFFFFF',
-              '&:hover': {
-                backgroundColor: 'rgba(51, 182, 229, 0.2)',
-              },
-            },
-          }}
         />
-        <Button
-          type="submit"
-          variant="contained"
-          fullWidth
-          sx={{ mt: 2, py: 1.5 }}
-        >
-          ADICIONAR CONVIDADO
+        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+          Adicionar Convidado
         </Button>
       </Stack>
     </Box>
   );
-}
+} 
