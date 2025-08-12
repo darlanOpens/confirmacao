@@ -25,6 +25,7 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
+  Stack,
 } from "@mui/material";
 import Grid from '@mui/material/Grid'; // Direct import for Grid
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -89,6 +90,23 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" } | null>(null);
   const [trackingModalOpen, setTrackingModalOpen] = useState(false);
   const [trackingConvidadoPor, setTrackingConvidadoPor] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
+
+  React.useEffect(() => {
+    const loadTags = async () => {
+      try {
+        const res = await fetch('/api/convidados/tags');
+        const data = await res.json();
+        const saved = typeof window !== 'undefined' ? localStorage.getItem('convidado_por') : null;
+        const merged = Array.from(new Set([...(Array.isArray(data) ? data : []), ...(saved ? [saved] : [])]));
+        setTags(merged as string[]);
+        if (saved) setTrackingConvidadoPor(saved);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadTags();
+  }, []);
   
 
   const showSnackbar = (message: string, severity: "success" | "error") => {
@@ -175,6 +193,9 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     try {
       await navigator.clipboard.writeText(trackingUrl);
       showSnackbar("Link de rastreamento copiado!", "success");
+      if (typeof window !== 'undefined' && trackingConvidadoPor) {
+        localStorage.setItem('convidado_por', trackingConvidadoPor);
+      }
     } catch (error) {
       console.error(error);
       showSnackbar("Erro ao copiar link de rastreamento.", "error");
@@ -192,6 +213,9 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     try {
       await navigator.clipboard.writeText(inviteUrl);
       showSnackbar("Link do convite copiado!", "success");
+      if (typeof window !== 'undefined' && guest.convidado_por) {
+        localStorage.setItem('convidado_por', guest.convidado_por);
+      }
     } catch (error) {
       console.error(error);
       showSnackbar("Erro ao copiar link.", "error");
@@ -228,7 +252,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
               onClick={() => setTrackingModalOpen(true)}
               size="small"
             >
-              Link de rastreamento
+              Seu link de rastreamento
             </Button>
           </Box>
         </Toolbar>
@@ -371,22 +395,22 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
               <Typography id="tracking-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
                 Seu link de rastreamento
               </Typography>
-              <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    label="Convidado por"
-                    fullWidth
-                    value={trackingConvidadoPor}
-                    onChange={(e) => setTrackingConvidadoPor(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField fullWidth size="small" value={trackingUrl} InputProps={{ readOnly: true }} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Button variant="contained" onClick={handleCopyTrackingUrl} startIcon={<ContentCopyIcon />}>Copiar link</Button>
-                </Grid>
-              </Grid>
+              <Stack spacing={2}>
+                <Autocomplete
+                  freeSolo
+                  options={tags}
+                  value={trackingConvidadoPor}
+                  onChange={(event, newValue) => setTrackingConvidadoPor(newValue ?? "")}
+                  onInputChange={(event, newInputValue) => setTrackingConvidadoPor(newInputValue)}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Convidado por" fullWidth />
+                  )}
+                />
+                <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>
+                  {trackingUrl}
+                </Typography>
+                <Button variant="contained" onClick={handleCopyTrackingUrl} startIcon={<ContentCopyIcon />}>Copiar link</Button>
+              </Stack>
             </Box>
           </Modal>
 

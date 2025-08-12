@@ -46,13 +46,24 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
       try {
         const response = await fetch('/api/convidados/tags');
         const data = await response.json();
-        setTags(data);
+        // Inclui possível preferido salvo em localStorage
+        const saved = typeof window !== 'undefined' ? localStorage.getItem('convidado_por') : null;
+        const merged = Array.from(new Set([...(Array.isArray(data) ? data : []), ...(saved ? [saved] : [])]));
+        setTags(merged as string[]);
       } catch (error) {
         console.error('Failed to fetch tags', error);
       }
     };
 
     fetchTags();
+
+    // Prefill do campo a partir do localStorage
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('convidado_por');
+      if (saved) {
+        setFormData((prev) => ({ ...prev, convidado_por: saved }));
+      }
+    }
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +99,11 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
         // Add the new tag to the list if it's not already there
         if (formData.convidado_por && !tags.includes(formData.convidado_por)) {
           setTags([...tags, formData.convidado_por]);
+        }
+
+        // Salva preferência no localStorage
+        if (typeof window !== 'undefined' && formData.convidado_por) {
+          localStorage.setItem('convidado_por', formData.convidado_por);
         }
 
         // Call the callback to update the parent component
