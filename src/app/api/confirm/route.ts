@@ -34,15 +34,16 @@ export async function POST(request: Request) {
       );
     }
 
+    let finalGuest = guest;
     if (guest.status === "pendente") {
-      await prisma.guest.update({
+      finalGuest = await prisma.guest.update({
         where: { email },
         data: { status: "confirmado", data_confirmacao: new Date() },
       });
     }
 
     return NextResponse.json(
-      { success: true, found: true, name: guest.nome },
+      { success: true, found: true, guest: finalGuest },
       { status: 200, headers: corsHeaders }
     );
   } catch {
