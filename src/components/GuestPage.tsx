@@ -35,6 +35,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import { Guest } from "@prisma/client";
 import { buildInviteUrl, buildTrackingUrl } from "@/lib/invite";
+import { useConfig } from "@/hooks/useConfig";
 import AddGuestForm from "./AddGuestForm";
 import CsvImport from "./CsvImport";
 import EditGuestForm from "./EditGuestForm";
@@ -95,6 +96,9 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const [trackingModalOpen, setTrackingModalOpen] = useState(false);
   const [trackingConvidadoPor, setTrackingConvidadoPor] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
+  
+  // Hook para carregar configuração do servidor
+  const { config, loading: configLoading } = useConfig();
 
   React.useEffect(() => {
     const loadTags = async () => {
@@ -126,7 +130,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const handleGuestAdded = (newGuest: GuestLike) => {
     const guestWithUrl: GuestUI = {
       ...newGuest,
-      convite_url: newGuest.convite_url || buildInviteUrl(newGuest.email, newGuest.convidado_por),
+      convite_url: newGuest.convite_url || buildInviteUrl(newGuest.email, newGuest.convidado_por, config?.INVITE_BASE_URL),
     };
     setGuests(prevGuests => [guestWithUrl, ...prevGuests]);
     setAddModalOpen(false);
@@ -194,7 +198,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     }
   };
 
-  const trackingUrl = buildTrackingUrl(trackingConvidadoPor || null);
+  const trackingUrl = buildTrackingUrl(trackingConvidadoPor || null, config?.INVITE_BASE_URL);
   const handleCopyTrackingUrl = async () => {
     try {
       await navigator.clipboard.writeText(trackingUrl);
@@ -209,7 +213,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   };
 
   const handleCopyInviteUrl = async (guest: GuestUI) => {
-    const base = guest.convite_url || buildInviteUrl(guest.email, guest.convidado_por);
+    const base = guest.convite_url || buildInviteUrl(guest.email, guest.convidado_por, config?.INVITE_BASE_URL);
     const url = new URL(base);
     if (guest.convidado_por && String(guest.convidado_por).trim() !== '') {
       url.searchParams.set('utm_source', String(guest.convidado_por));
