@@ -64,7 +64,7 @@ async function debugInfo() {
     const tableCheck = await prisma.$queryRaw`
       SELECT table_name 
       FROM information_schema.tables 
-      WHERE table_schema = 'public' AND table_name = 'Guest'
+      WHERE table_schema = 'public' AND table_name = 'guest'
     `;
     info.guestTableExists = Array.isArray(tableCheck) && tableCheck.length > 0 ? 'Exists ✅' : 'Missing ❌';
     

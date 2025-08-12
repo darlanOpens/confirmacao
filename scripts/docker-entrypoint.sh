@@ -40,6 +40,10 @@ echo "📊 DATABASE_URL is configured"
 # Wait for database
 wait_for_db
 
+# Rename table Guest -> guest if needed (idempotent)
+echo "🔧 Checking and renaming table if necessary..."
+node -e "(async()=>{try{const {PrismaClient}=require('@prisma/client');const prisma=new PrismaClient();const res=await prisma.$queryRaw\`SELECT to_regclass('"Guest"') as old, to_regclass('guest') as new\`;if(Array.isArray(res)&&res[0]&&res[0].old&& !res[0].new){console.log('Renaming table "Guest" -> "guest"...');await prisma.$executeRawUnsafe('ALTER TABLE "Guest" RENAME TO guest');try{await prisma.$executeRawUnsafe('ALTER INDEX "Guest_pkey" RENAME TO guest_pkey');}catch(e){}try{await prisma.$executeRawUnsafe('ALTER INDEX "Guest_email_key" RENAME TO guest_email_key');}catch(e){}console.log('Rename completed');}else{console.log('No rename needed');}}catch(e){console.error('Rename check failed',e);}finally{process.exit(0)}})()"
+
 # Sync database schema
 echo "🔄 Syncing database schema..."
 npx prisma db push

@@ -19,4 +19,6 @@ model Guest {
   data_cadastro    DateTime  @default(now())
   data_confirmacao DateTime?
   convite_url      String    @default("")
+
+  @@map("guest")
 }
