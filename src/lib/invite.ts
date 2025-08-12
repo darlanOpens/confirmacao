@@ -2,7 +2,7 @@ export function buildInviteUrl(email: string, convidadoPor?: string): string {
   const baseUrl =
     process.env.NEXT_PUBLIC_INVITE_BASE_URL ||
     process.env.INVITE_BASE_URL ||
-    'https://go.opens.com.br/elga';
+    'https://go.opens.com.br/brunch-vip';
   try {
     const url = new URL(baseUrl);
     url.searchParams.set('emailconf', email);
@@ -20,7 +20,7 @@ export function buildTrackingUrl(convidadoPor?: string | null): string {
   const baseUrl =
     process.env.NEXT_PUBLIC_INVITE_BASE_URL ||
     process.env.INVITE_BASE_URL ||
-    'https://go.opens.com.br/elga';
+    'https://go.opens.com.br/brunch-vip';
   try {
     const url = new URL(baseUrl);
     if (convidadoPor && String(convidadoPor).trim() !== '') {
