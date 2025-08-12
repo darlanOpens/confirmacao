@@ -15,13 +15,10 @@ export function useConfig() {
         if (response.ok) {
           const data = await response.json();
           setConfig(data);
-          console.log('📡 Configuração carregada do servidor:', data);
         } else {
-          console.warn('⚠️ Falha ao carregar configuração, usando fallback');
           setConfig({ INVITE_BASE_URL: 'https://go.opens.com.br/brunch-vip' });
         }
       } catch (error) {
-        console.error('❌ Erro ao carregar configuração:', error);
         setConfig({ INVITE_BASE_URL: 'https://go.opens.com.br/brunch-vip' });
       } finally {
         setLoading(false);

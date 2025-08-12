@@ -25,16 +25,10 @@ export async function sendGuestAddedWebhook(guestData: {
   status: string;
   data_cadastro: Date;
 }): Promise<void> {
-  console.log('🔍 Iniciando verificação de webhook...');
-  console.log('📋 Dados do convidado recebidos:', JSON.stringify(guestData, null, 2));
+  console.log('🔍 Iniciando envio de webhook...');
   
   // Usar a URL do webhook da variável de ambiente ou fallback para a URL existente
   const webhookUrl = process.env.WEBHOOK_URL || "https://n8n.opens.com.br/webhook/elga-guests";
-  
-  console.log('🔍 WEBHOOK Debug:');
-  console.log('  process.env.WEBHOOK_URL:', process.env.WEBHOOK_URL || 'NÃO CONFIGURADA');
-  console.log('  URL final do webhook:', webhookUrl);
-  console.log('  Usando fallback?', !process.env.WEBHOOK_URL ? 'SIM' : 'NÃO');
   
   const payload: WebhookPayload = {
     event: 'guest_added',
@@ -53,8 +47,7 @@ export async function sendGuestAddedWebhook(guestData: {
   };
 
   try {
-    console.log('📤 Enviando webhook para:', webhookUrl);
-    console.log('📋 Payload:', JSON.stringify(payload, null, 2));
+    console.log('📤 Enviando webhook...');
     
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
@@ -71,8 +64,6 @@ export async function sendGuestAddedWebhook(guestData: {
 
     clearTimeout(timeoutId);
 
-    console.log('📊 Status do webhook:', response.status);
-    
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Webhook falhou com status: ${response.status}, resposta: ${errorText}`);
@@ -83,6 +74,5 @@ export async function sendGuestAddedWebhook(guestData: {
     // Log do erro mas não falha a operação principal
     console.error('❌ Erro ao enviar webhook:', error);
   }
-  
-  console.log('🏁 Finalizando função sendGuestAddedWebhook');
+
 } 
