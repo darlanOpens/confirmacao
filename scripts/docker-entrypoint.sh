@@ -48,13 +48,27 @@ const prisma = new PrismaClient();
 
 (async () => {
   try {
-    const rows = await prisma.$queryRawUnsafe("SELECT to_regclass('\"Guest\"') AS old, to_regclass('guest') AS new");
-    const row = Array.isArray(rows) ? rows[0] : null;
-    if (row && row.old && !row.new) {
+    const exists = async (name) => {
+      const r = await prisma.$queryRawUnsafe(
+        "SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=$1 LIMIT 1",
+        name
+      );
+      return Array.isArray(r) && r.length > 0;
+    };
+
+    const oldExists = await exists('Guest');
+    const newExists = await exists('guest');
+    console.log(`Table check -> Guest: ${oldExists ? 'YES' : 'NO'}, guest: ${newExists ? 'YES' : 'NO'}`);
+
+    if (oldExists && !newExists) {
       console.log('Renaming table "Guest" -> "guest"...');
       await prisma.$executeRawUnsafe('ALTER TABLE "Guest" RENAME TO guest');
       try { await prisma.$executeRawUnsafe('ALTER INDEX "Guest_pkey" RENAME TO guest_pkey'); } catch {}
       try { await prisma.$executeRawUnsafe('ALTER INDEX "Guest_email_key" RENAME TO guest_email_key'); } catch {}
+
+      const postOld = await exists('Guest');
+      const postNew = await exists('guest');
+      console.log(`Post-rename -> Guest: ${postOld ? 'YES' : 'NO'}, guest: ${postNew ? 'YES' : 'NO'}`);
       console.log('Rename completed');
     } else {
       console.log('No rename needed');
