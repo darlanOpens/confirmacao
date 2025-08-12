@@ -25,6 +25,7 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
+  Autocomplete,
   Stack,
 } from "@mui/material";
 import Grid from '@mui/material/Grid'; // Direct import for Grid
@@ -97,7 +98,9 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
       try {
         const res = await fetch('/api/convidados/tags');
         const data = await res.json();
-        const saved = typeof window !== 'undefined' ? localStorage.getItem('convidado_por') : null;
+        const saved = typeof window !== 'undefined'
+          ? (localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por'))
+          : null;
         const merged = Array.from(new Set([...(Array.isArray(data) ? data : []), ...(saved ? [saved] : [])]));
         setTags(merged as string[]);
         if (saved) setTrackingConvidadoPor(saved);
@@ -194,7 +197,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
       await navigator.clipboard.writeText(trackingUrl);
       showSnackbar("Link de rastreamento copiado!", "success");
       if (typeof window !== 'undefined' && trackingConvidadoPor) {
-        localStorage.setItem('convidado_por', trackingConvidadoPor);
+        localStorage.setItem('elga_convidado_por', trackingConvidadoPor);
       }
     } catch (error) {
       console.error(error);
@@ -214,7 +217,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
       await navigator.clipboard.writeText(inviteUrl);
       showSnackbar("Link do convite copiado!", "success");
       if (typeof window !== 'undefined' && guest.convidado_por) {
-        localStorage.setItem('convidado_por', guest.convidado_por);
+        localStorage.setItem('elga_convidado_por', guest.convidado_por);
       }
     } catch (error) {
       console.error(error);

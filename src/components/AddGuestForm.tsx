@@ -46,8 +46,10 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
       try {
         const response = await fetch('/api/convidados/tags');
         const data = await response.json();
-        // Inclui possível preferido salvo em localStorage
-        const saved = typeof window !== 'undefined' ? localStorage.getItem('convidado_por') : null;
+        // Inclui possível preferido salvo em localStorage (com fallback da chave legada)
+        const saved = typeof window !== 'undefined'
+          ? (localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por'))
+          : null;
         const merged = Array.from(new Set([...(Array.isArray(data) ? data : []), ...(saved ? [saved] : [])]));
         setTags(merged as string[]);
       } catch (error) {
@@ -57,9 +59,9 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
 
     fetchTags();
 
-    // Prefill do campo a partir do localStorage
+    // Prefill do campo a partir do localStorage (com fallback da chave legada)
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('convidado_por');
+      const saved = localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por');
       if (saved) {
         setFormData((prev) => ({ ...prev, convidado_por: saved }));
       }
@@ -101,9 +103,9 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           setTags([...tags, formData.convidado_por]);
         }
 
-        // Salva preferência no localStorage
+        // Salva preferência no localStorage com a chave padronizada
         if (typeof window !== 'undefined' && formData.convidado_por) {
-          localStorage.setItem('convidado_por', formData.convidado_por);
+          localStorage.setItem('elga_convidado_por', formData.convidado_por);
         }
 
         // Call the callback to update the parent component
