@@ -37,7 +37,7 @@ import AddGuestForm from "./AddGuestForm";
 import CsvImport from "./CsvImport";
 import EditGuestForm from "./EditGuestForm";
 import { tokens } from '@/theme/designSystem';
-import { buildInviteUrl } from "@/lib/invite";
+import { buildInviteUrl, buildTrackingUrl } from "@/lib/invite";
 
 type GuestUI = Guest & { convite_url?: string };
 type GuestLike = {
@@ -87,6 +87,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const [guests, setGuests] = useState<GuestUI[]>(initialGuests);
   const [searchQuery, setSearchQuery] = useState("");
   const [convidadoPorFilter, setConvidadoPorFilter] = useState<string | null>(null);
+  const [trackingConvidadoPor, setTrackingConvidadoPor] = useState<string>("");
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -208,6 +209,18 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     
     return matchesSearch && matchesConvidadoPor;
   });
+
+  const trackingUrl = buildTrackingUrl(trackingConvidadoPor || null);
+
+  const handleCopyTrackingUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(trackingUrl);
+      showSnackbar("Link de rastreamento copiado!", "success");
+    } catch (error) {
+      console.error(error);
+      showSnackbar("Erro ao copiar link de rastreamento.", "error");
+    }
+  };
 
   return (
     <Box sx={{ minHeight: '100vh', background: tokens.backgroundApp }}>
@@ -455,6 +468,54 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                 <DownloadIcon />
               </Button>
             </Tooltip>
+          </Box>
+
+          {/* Seu link de rastreamento */}
+          <Box sx={{
+            mb: 4,
+            p: 3,
+            background: tokens.alphaWhite05,
+            border: `1px solid ${tokens.borderGlass}`,
+            borderRadius: '16px',
+            backdropFilter: `blur(${tokens.blurBackdropLg})`,
+            boxShadow: tokens.shadowGlassInnerWeak,
+            color: tokens.textPrimary,
+          }}>
+            <Typography variant="h6" sx={{ mb: 2, color: tokens.textPrimary }}>
+              Seu link de rastreamento
+            </Typography>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} md={4}>
+                <Autocomplete
+                  size="small"
+                  freeSolo
+                  options={uniqueConvidadoPor}
+                  value={trackingConvidadoPor}
+                  onChange={(event, newValue) => setTrackingConvidadoPor(newValue ?? "")}
+                  onInputChange={(event, newInputValue) => setTrackingConvidadoPor(newInputValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="convidado por..."
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  value={trackingUrl}
+                  InputProps={{ readOnly: true }}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <Button variant="outlined" onClick={handleCopyTrackingUrl} fullWidth>
+                  Copiar link
+                </Button>
+              </Grid>
+            </Grid>
           </Box>
 
           <Modal
