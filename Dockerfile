@@ -16,6 +16,16 @@ COPY prisma ./prisma
 # Define uma DATABASE_URL padrão para o build (será sobrescrita no runtime)
 ENV DATABASE_URL="postgresql://elga_user:elga_pass@db:5432/elga_db"
 
+# Aceita variáveis de ambiente para o build (importante para NEXT_PUBLIC_*)
+ARG NEXT_PUBLIC_INVITE_BASE_URL
+ARG INVITE_BASE_URL
+ARG WEBHOOK_URL
+
+# Define as variáveis de ambiente para o build
+ENV NEXT_PUBLIC_INVITE_BASE_URL=$NEXT_PUBLIC_INVITE_BASE_URL
+ENV INVITE_BASE_URL=$INVITE_BASE_URL
+ENV WEBHOOK_URL=$WEBHOOK_URL
+
 RUN npx prisma generate
 RUN npm run build
 
