@@ -32,7 +32,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import { Guest } from "@prisma/client";
-import { buildInviteUrl } from "@/lib/invite";
+import { buildInviteUrl, buildTrackingUrl } from "@/lib/invite";
 import AddGuestForm from "./AddGuestForm";
 import CsvImport from "./CsvImport";
 import EditGuestForm from "./EditGuestForm";
@@ -41,6 +41,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import DownloadIcon from '@mui/icons-material/Download';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Image from 'next/image';
+import LinkIcon from '@mui/icons-material/Link';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SearchIcon from '@mui/icons-material/Search';
@@ -86,6 +87,8 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<GuestUI | null>(null);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" } | null>(null);
+  const [trackingModalOpen, setTrackingModalOpen] = useState(false);
+  const [trackingConvidadoPor, setTrackingConvidadoPor] = useState<string>("");
   
 
   const showSnackbar = (message: string, severity: "success" | "error") => {
@@ -167,6 +170,17 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
     }
   };
 
+  const trackingUrl = buildTrackingUrl(trackingConvidadoPor || null);
+  const handleCopyTrackingUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(trackingUrl);
+      showSnackbar("Link de rastreamento copiado!", "success");
+    } catch (error) {
+      console.error(error);
+      showSnackbar("Erro ao copiar link de rastreamento.", "error");
+    }
+  };
+
   const handleCopyInviteUrl = async (guest: GuestUI) => {
     const base = guest.convite_url || buildInviteUrl(guest.email, guest.convidado_por);
     const url = new URL(base);
@@ -197,7 +211,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   return (
     <>
       <AppBar position="static" color="default" elevation={1}>
-        <Toolbar sx={{ justifyContent: 'center', py: 1 }}>
+        <Toolbar sx={{ justifyContent: 'center', py: 1, position: 'relative' }}>
           <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
             <Image 
               src="/elga-logo.png" 
@@ -206,6 +220,16 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
               height={40} 
               style={{ objectFit: 'contain' }}
             />
+          </Box>
+          <Box sx={{ position: 'absolute', right: 8 }}>
+            <Button
+              variant="outlined"
+              startIcon={<LinkIcon />}
+              onClick={() => setTrackingModalOpen(true)}
+              size="small"
+            >
+              Link de rastreamento
+            </Button>
           </Box>
         </Toolbar>
       </AppBar>
@@ -325,6 +349,46 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
               </Button>
             </Tooltip>
           </Box>
+
+          <Modal
+            open={trackingModalOpen}
+            onClose={() => setTrackingModalOpen(false)}
+            aria-labelledby="tracking-modal-title"
+          >
+            <Box sx={style}>
+              <IconButton
+                aria-label="close"
+                onClick={() => setTrackingModalOpen(false)}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: (theme) => theme.palette.grey[500],
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+              <Typography id="tracking-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
+                Seu link de rastreamento
+              </Typography>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    label="Convidado por"
+                    fullWidth
+                    value={trackingConvidadoPor}
+                    onChange={(e) => setTrackingConvidadoPor(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField fullWidth size="small" value={trackingUrl} InputProps={{ readOnly: true }} />
+                </Grid>
+                <Grid item xs={12}>
+                  <Button variant="contained" onClick={handleCopyTrackingUrl} startIcon={<ContentCopyIcon />}>Copiar link</Button>
+                </Grid>
+              </Grid>
+            </Box>
+          </Modal>
 
           <Modal
             open={addModalOpen}
