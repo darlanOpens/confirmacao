@@ -58,7 +58,6 @@ export async function PUT(
       typeof error === "object" &&
       error !== null &&
       "code" in error &&
-      // @ts-ignore - prisma error shape at runtime
       error.code === "P2025"
     ) {
       return NextResponse.json(

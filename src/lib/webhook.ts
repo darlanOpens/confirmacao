@@ -14,7 +14,19 @@ interface WebhookPayload {
   };
 }
 
-export async function sendGuestAddedWebhook(guestData: any): Promise<void> {
+interface GuestData {
+  id: number;
+  nome: string;
+  email: string;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  convidado_por: string;
+  status: string;
+  data_cadastro: Date;
+}
+
+export async function sendGuestAddedWebhook(guestData: GuestData): Promise<void> {
   console.log('🔍 Iniciando verificação de webhook...');
   console.log('📋 Dados do convidado recebidos:', JSON.stringify(guestData, null, 2));
   

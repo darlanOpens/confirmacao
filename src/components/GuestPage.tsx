@@ -114,7 +114,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
   const [tags, setTags] = useState<string[]>([]);
   
   // Hook para carregar configuração do servidor
-  const { config, loading: configLoading } = useConfig();
+  const { config } = useConfig();
 
   React.useEffect(() => {
     const loadTags = async () => {
