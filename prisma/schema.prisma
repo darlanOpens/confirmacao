@@ -31,3 +31,16 @@ model Guest {
 
   @@map("guest")
 }
+
+model preselection {
+  id               Int       @id @default(autoincrement())
+  nome             String
+  email            String    @unique
+  telefone         String
+  empresa          String
+  cargo            String
+  status           String    @default("pendente") // pendente, convidado
+  data_cadastro    DateTime  @default(now())
+
+  @@map("preselection")
+}

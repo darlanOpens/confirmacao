@@ -1,0 +1,404 @@
+"use client";
+
+import { useState } from "react";
+import * as React from 'react';
+import {
+  Chip,
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  IconButton,
+  Snackbar,
+  Alert,
+  Container,
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import Grid from '@mui/material/Grid';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PromoteIcon from '@mui/icons-material/TrendingUp';
+import { preselection } from "@prisma/client";
+
+type PreselectionUI = preselection;
+
+interface PreselectionPageProps {
+  preselections: PreselectionUI[];
+}
+
+export default function PreselectionPage({ preselections: initialPreselections }: PreselectionPageProps) {
+  const [preselections, setPreselections] = useState<PreselectionUI[]>(initialPreselections);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [promoteModalOpen, setPromoteModalOpen] = useState(false);
+  const [selectedPreselection, setSelectedPreselection] = useState<PreselectionUI | null>(null);
+  const [promoteForm, setPromoteForm] = useState({ convidado_por: "" });
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const showSnackbar = (message: string, severity: "success" | "error") => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
+
+  const handleDeleteClick = (preselection: PreselectionUI) => {
+    setSelectedPreselection(preselection);
+    setDeleteModalOpen(true);
+  };
+
+  const handlePromoteClick = (preselection: PreselectionUI) => {
+    setSelectedPreselection(preselection);
+    setPromoteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setSelectedPreselection(null);
+  };
+
+  const handleClosePromoteModal = () => {
+    setPromoteModalOpen(false);
+    setSelectedPreselection(null);
+    setPromoteForm({ convidado_por: "" });
+  };
+
+  const handleDelete = async () => {
+    if (!selectedPreselection) return;
+
+    try {
+      const response = await fetch(`/api/preselecao/${selectedPreselection.id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        showSnackbar("Contato excluído com sucesso!", "success");
+        setPreselections(prev => prev.filter(p => p.id !== selectedPreselection.id));
+        handleCloseDeleteModal();
+      } else {
+        showSnackbar(result.error || "Falha ao excluir o contato.", "error");
+      }
+    } catch (error) {
+      console.error(error);
+      showSnackbar("Erro ao excluir o contato.", "error");
+    }
+  };
+
+  const handlePromote = async () => {
+    if (!selectedPreselection || !promoteForm.convidado_por.trim()) {
+      showSnackbar("Por favor, preencha quem está convidando.", "error");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/preselecao/promote/${selectedPreselection.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          convidado_por: promoteForm.convidado_por.trim(),
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showSnackbar("Contato promovido com sucesso para convidados!", "success");
+        setPreselections(prev => prev.filter(p => p.id !== selectedPreselection.id));
+        handleClosePromoteModal();
+      } else {
+        showSnackbar(result.error || "Falha ao promover o contato.", "error");
+      }
+    } catch (error) {
+      console.error(error);
+      showSnackbar("Erro ao promover o contato.", "error");
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "convidado": return "success";
+      case "pendente": return "warning";
+      default: return "default";
+    }
+  };
+
+  // Filtro de pesquisa
+  const filteredPreselections = preselections.filter(preselection =>
+    preselection.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    preselection.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    preselection.empresa.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    preselection.cargo.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const totalPreselections = preselections.length;
+  const pendenteCount = preselections.filter(p => p.status === "pendente").length;
+  const convidadoCount = preselections.filter(p => p.status === "convidado").length;
+
+  return (
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      {/* Header */}
+      <Box sx={{ mb: 4, p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
+        <Typography variant="h5" component="h1" gutterBottom>
+          Pré-seleção de Contatos
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Gerencie contatos em processo de pré-seleção e promova os qualificados para convidados.
+        </Typography>
+      </Box>
+      
+      {/* Cards de Estatísticas */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography color="text.secondary" gutterBottom>
+                Total Pré-seleção
+              </Typography>
+              <Typography variant="h5" component="div">
+                {totalPreselections}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography color="text.secondary" gutterBottom>
+                Pendentes
+              </Typography>
+              <Typography variant="h5" component="div">
+                {pendenteCount}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card>
+            <CardContent>
+              <Typography color="text.secondary" gutterBottom>
+                Promovidos
+              </Typography>
+              <Typography variant="h5" component="div">
+                {convidadoCount}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Campo de Pesquisa */}
+      <Box sx={{ mb: 3 }}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Pesquisar por nome, email, empresa ou cargo..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              bgcolor: 'background.paper',
+            }
+          }}
+        />
+      </Box>
+
+      {/* Lista de Pré-seleções */}
+      <Box>
+        {filteredPreselections.length === 0 ? (
+          <Card>
+            <CardContent>
+              <Typography variant="h6" color="text.secondary" textAlign="center">
+                {searchQuery ? "Nenhuma pré-seleção encontrada para sua pesquisa." : "Nenhuma pré-seleção cadastrada."}
+              </Typography>
+            </CardContent>
+          </Card>
+        ) : (
+          filteredPreselections.map((preselection) => (
+            <Accordion 
+              key={preselection.id} 
+              sx={{ 
+                mb: 2, 
+                '&:before': { display: 'none' },
+                bgcolor: 'background.paper',
+                borderRadius: 1,
+                '&.Mui-expanded': { margin: '0 0 16px 0' }
+              }}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Box sx={{ width: '100%', pr: 2 }}>
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={12} sm={3}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="subtitle1">{preselection.nome}</Typography>
+                      </Box>
+                      <Typography color="text.secondary">{preselection.empresa}</Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <Typography color="text.secondary">{preselection.email}</Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Chip
+                          label={preselection.status}
+                          color={getStatusColor(preselection.status)}
+                          size="small"
+                        />
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                        <Tooltip title="Promover para Convidados">
+                          <IconButton
+                            aria-label="promote"
+                            size="small"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handlePromoteClick(preselection);
+                            }}
+                            sx={{ color: 'success.main' }}
+                          >
+                            <PromoteIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Excluir">
+                          <IconButton
+                            aria-label="delete"
+                            size="small"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleDeleteClick(preselection);
+                            }}
+                            sx={{ color: 'error.main' }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Box>
+                  <Typography><strong>Email:</strong> {preselection.email}</Typography>
+                  <Typography><strong>Telefone:</strong> {preselection.telefone}</Typography>
+                  <Typography><strong>Cargo:</strong> {preselection.cargo}</Typography>
+                  <Typography><strong>Status:</strong> {preselection.status}</Typography>
+                  <Typography><strong>Data de cadastro:</strong> {new Date(preselection.data_cadastro).toLocaleDateString('pt-BR')}</Typography>
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+          ))
+        )}
+      </Box>
+
+      {/* Modal de Exclusão */}
+      {selectedPreselection && (
+        <Dialog 
+          open={deleteModalOpen} 
+          onClose={handleCloseDeleteModal}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>
+            Confirmar Exclusão
+          </DialogTitle>
+          <DialogContent>
+            <Typography sx={{ mb: 2 }}>
+              Tem certeza que deseja excluir &quot;{selectedPreselection.nome}&quot; da pré-seleção?
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Esta ação não pode ser desfeita.
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDeleteModal}>Cancelar</Button>
+            <Button 
+              onClick={handleDelete} 
+              color="error" 
+              variant="contained"
+              sx={{
+                bgcolor: 'error.main',
+                '&:hover': { bgcolor: 'error.dark' }
+              }}
+            >
+              Excluir
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
+      {/* Modal de Promoção */}
+      {selectedPreselection && (
+        <Dialog 
+          open={promoteModalOpen} 
+          onClose={handleClosePromoteModal}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>
+            Promover para Convidados
+          </DialogTitle>
+          <DialogContent>
+            <Typography sx={{ mb: 2 }}>
+              Promover &quot;{selectedPreselection.nome}&quot; para a lista de convidados.
+            </Typography>
+            <TextField
+              fullWidth
+              label="Convidado por"
+              value={promoteForm.convidado_por}
+              onChange={(e) => setPromoteForm({ convidado_por: e.target.value })}
+              sx={{ mt: 2 }}
+              required
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClosePromoteModal}>Cancelar</Button>
+            <Button 
+              onClick={handlePromote} 
+              color="success" 
+              variant="contained"
+              disabled={!promoteForm.convidado_por.trim()}
+            >
+              Promover
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
+      {/* Snackbar para feedback */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Container>
+  );
+}
