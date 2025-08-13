@@ -103,8 +103,7 @@ async function getPreselections() {
       
       const preselections = await prisma.preselection.findMany({
         orderBy: [
-          { prioridade: 'asc' }, 
-          { data_cadastro: 'desc' },
+          { data_cadastro: 'desc' }, // mais recentes primeiro
         ],
       });
       

@@ -5,8 +5,7 @@ export async function GET() {
   try {
     const preselections = await prisma.preselection.findMany({
       orderBy: [
-        { prioridade: 'asc' }, // alta primeiro, depois média, baixa
-        { data_cadastro: 'desc' },
+        { data_cadastro: 'desc' }, // mais recentes primeiro
       ],
     });
     return NextResponse.json({ success: true, preselections }, { status: 200 });
