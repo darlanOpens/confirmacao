@@ -45,7 +45,7 @@ export async function POST(
       );
     }
 
-    // Criar Guest com dados da pré-seleção
+    // Criar Guest com dados da pré-seleção (status padrão é "pendente")
     const guestData = {
       nome: preselection.nome,
       email: preselection.email,
@@ -53,14 +53,8 @@ export async function POST(
       empresa: preselection.empresa,
       cargo: preselection.cargo,
       convidado_por,
+      status: "pendente", // Explicitamente definindo como pendente
       convite_url: buildInviteUrl(preselection.email, convidado_por),
-      nome_preferido: preselection.nome_preferido,
-      linkedin_url: preselection.linkedin_url,
-      tamanho_empresa: preselection.tamanho_empresa,
-      setor_atuacao: preselection.setor_atuacao,
-      produtos_servicos: preselection.produtos_servicos,
-      faturamento_anual: preselection.faturamento_anual,
-      modelo_negocio: preselection.modelo_negocio,
     };
 
     // Usar transação para garantir consistência

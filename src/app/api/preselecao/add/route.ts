@@ -10,29 +10,16 @@ export async function POST(request: Request) {
       telefone,
       empresa,
       cargo,
-      fonte,
-      prioridade,
-      observacoes,
-      score,
-      responsavel,
-      nome_preferido,
-      linkedin_url,
-      tamanho_empresa,
-      setor_atuacao,
-      produtos_servicos,
-      faturamento_anual,
-      modelo_negocio,
+      status,
     } = body;
 
-    if (!nome || !email || !telefone || !empresa || !cargo || !fonte) {
+    // Validação dos campos obrigatórios
+    if (!nome || !email || !telefone || !empresa || !cargo) {
       return NextResponse.json(
-        { success: false, error: "Campos obrigatórios: nome, email, telefone, empresa, cargo, fonte." },
+        { success: false, error: "Nome, email, telefone, empresa e cargo são obrigatórios." },
         { status: 400 }
       );
     }
-
-    const maybe = (key: string, value: unknown) =>
-      typeof value !== "undefined" && value !== null ? { [key]: value } : {};
 
     const data = {
       nome,
@@ -40,18 +27,7 @@ export async function POST(request: Request) {
       telefone,
       empresa,
       cargo,
-      fonte,
-      ...maybe("prioridade", prioridade),
-      ...maybe("observacoes", observacoes),
-      ...maybe("score", score),
-      ...maybe("responsavel", responsavel),
-      ...maybe("nome_preferido", nome_preferido),
-      ...maybe("linkedin_url", linkedin_url),
-      ...maybe("tamanho_empresa", tamanho_empresa),
-      ...maybe("setor_atuacao", setor_atuacao),
-      ...maybe("produtos_servicos", produtos_servicos),
-      ...maybe("faturamento_anual", faturamento_anual),
-      ...maybe("modelo_negocio", modelo_negocio),
+      status: status || "pendente",
     } as const;
 
     const newPreselection = await prisma.preselection.create({ data });

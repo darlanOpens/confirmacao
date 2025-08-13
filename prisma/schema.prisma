@@ -39,25 +39,8 @@ model preselection {
   telefone         String
   empresa          String
   cargo            String
-  fonte            String    // De onde veio (ex: "LinkedIn", "Indicação", "Site")
-  status           String    @default("prospecto") // prospecto, qualificado, aprovado, rejeitado
+  status           String    @default("pendente") // pendente, convidado
   data_cadastro    DateTime  @default(now())
-  data_qualificacao DateTime?
-  
-  // Campos extras da pré-seleção
-  prioridade       String?   // alta, media, baixa
-  observacoes      String?
-  score            Int?      // pontuação de 1-10
-  responsavel      String?   // quem está cuidando da pré-seleção
-  
-  // Campos de negócio (herdados da funcionalidade anterior)
-  nome_preferido       String?
-  linkedin_url         String?
-  tamanho_empresa      String?
-  setor_atuacao        String?
-  produtos_servicos    String?
-  faturamento_anual    String?
-  modelo_negocio       String?
-  
+
   @@map("preselection")
 }
