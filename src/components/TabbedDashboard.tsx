@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Tabs, Tab, AppBar, Toolbar, Typography, IconButton } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { Box, Tabs, Tab } from "@mui/material";
 import { Guest } from "@prisma/client";
 import { preselection } from "@prisma/client";
 import GuestPage from "./GuestPage";
@@ -51,83 +50,30 @@ export default function TabbedDashboard({ guests, preselections }: TabbedDashboa
 
   return (
     <Box sx={{ width: '100%' }}>
-      <AppBar 
-        position="static" 
-        sx={{ 
-          bgcolor: 'rgba(10, 10, 10, 0.95)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 3,
-            flexGrow: 1 
-          }}>
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: 2 
-            }}>
-              <Box
-                component="img"
-                src="/assets/figma/brunch-experience-logo.png"
-                alt="Brunch Experience"
-                sx={{
-                  height: 40,
-                  width: 'auto',
-                }}
-              />
-              <Typography 
-                variant="h6" 
-                component="div" 
-                sx={{ 
-                  color: 'white',
-                  fontWeight: 600,
-                }}
-              >
-                Brunch Experience
-              </Typography>
-            </Box>
-          </Box>
-        </Toolbar>
-        
-        {/* Tabs de navegação */}
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 2 }}>
-          <Tabs 
-            value={value} 
-            onChange={handleChange} 
-            aria-label="dashboard tabs"
-            indicatorColor="primary"
-            textColor="primary"
-            centered
-          >
-            <Tab 
-              label={`Convidados (${guests.length})`} 
-              {...a11yProps(0)} 
-            />
-            <Tab 
-              label={`Pré-seleção (${preselections.length})`} 
-              {...a11yProps(1)} 
-            />
-          </Tabs>
-        </Box>
-      </AppBar>
+      {/* Tabs de navegação */}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 2 }}>
+        <Tabs 
+          value={value} 
+          onChange={handleChange} 
+          aria-label="dashboard tabs"
+          indicatorColor="primary"
+          textColor="primary"
+          centered
+        >
+          <Tab 
+            label={`Convidados (${guests.length})`} 
+            {...a11yProps(0)} 
+          />
+          <Tab 
+            label={`Pré-seleção (${preselections.length})`} 
+            {...a11yProps(1)} 
+          />
+        </Tabs>
+      </Box>
 
       {/* Conteúdo das abas */}
       <TabPanel value={value} index={0}>
-        <GuestPage guests={guests} hideAppBar={true} />
+        <GuestPage guests={guests} />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <PreselectionPage preselections={preselections} />
