@@ -117,6 +117,7 @@ export default function TabbedDashboard({ guests, preselections }: TabbedDashboa
             aria-label="dashboard tabs"
             indicatorColor="primary"
             textColor="primary"
+            centered
           >
             <Tab 
               label={`Convidados (${guests.length})`} 
