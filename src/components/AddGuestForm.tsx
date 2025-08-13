@@ -21,6 +21,15 @@ interface Guest {
   status: string;
   data_cadastro: Date;
   data_confirmacao: Date | null;
+  convite_url?: string;
+  // Novos campos opcionais vindos da API
+  nome_preferido?: string | null;
+  linkedin_url?: string | null;
+  tamanho_empresa?: string | null;
+  setor_atuacao?: string | null;
+  produtos_servicos?: string | null;
+  faturamento_anual?: string | null;
+  modelo_negocio?: string | null;
 }
 
 interface AddGuestFormProps {
