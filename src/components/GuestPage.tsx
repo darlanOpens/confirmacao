@@ -50,7 +50,26 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
-type GuestUI = Guest & { convite_url?: string };
+// UI type: torna novos campos opcionais (podem vir nulos ou ausentes)
+type GuestUI = Omit<
+  Guest,
+  | "nome_preferido"
+  | "linkedin_url"
+  | "tamanho_empresa"
+  | "setor_atuacao"
+  | "produtos_servicos"
+  | "faturamento_anual"
+  | "modelo_negocio"
+> & {
+  convite_url?: string;
+  nome_preferido?: string | null;
+  linkedin_url?: string | null;
+  tamanho_empresa?: string | null;
+  setor_atuacao?: string | null;
+  produtos_servicos?: string | null;
+  faturamento_anual?: string | null;
+  modelo_negocio?: string | null;
+};
 type GuestLike = {
   id: number;
   nome: string;
