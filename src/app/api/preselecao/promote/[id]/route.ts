@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
 import { sendGuestAddedWebhook } from "@/lib/webhook";
 
-// Promover uma pré-seleção para Guest confirmado
+// Promover uma pré-seleção para Guest convidado
 export async function POST(
   request: Request,
   context: { params: Promise<{ id: string }> }
@@ -87,7 +87,7 @@ export async function POST(
       { 
         success: true, 
         guest: result,
-        message: "Contato promovido com sucesso para confirmados!"
+        message: "Contato promovido com sucesso para convidados!"
       },
       { status: 201 }
     );

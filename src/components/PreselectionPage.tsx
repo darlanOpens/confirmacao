@@ -19,11 +19,6 @@ import {
   Alert,
   Container,
   Tooltip,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Stack,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -31,15 +26,11 @@ import {
 } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CloseIcon from '@mui/icons-material/Close';
 import PromoteIcon from '@mui/icons-material/TrendingUp';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import StarIcon from '@mui/icons-material/Star';
-import PersonIcon from '@mui/icons-material/Person';
 import { preselection } from "@prisma/client";
-import { tokens } from '@/theme/designSystem';
 
 type PreselectionUI = preselection & { convite_url?: string };
 
@@ -133,7 +124,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
       const result = await response.json();
       
       if (result.success) {
-        showSnackbar("Contato promovido com sucesso para confirmados!", "success");
+        showSnackbar("Contato promovido com sucesso para convidados!", "success");
         setPreselections(prev => prev.filter(p => p.id !== selectedPreselection.id));
         handleClosePromoteModal();
       } else {
@@ -184,7 +175,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
             Pré-seleção de Contatos
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Gerencie contatos em processo de pré-seleção e promova os qualificados para confirmados.
+            Gerencie contatos em processo de pré-seleção e promova os qualificados para convidados.
           </Typography>
         </Box>
         
@@ -257,7 +248,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
                 Confirmar Exclusão
               </Typography>
               <Typography sx={{ mt: 2 }}>
-                Tem certeza que deseja excluir o contato "{selectedPreselection.nome}" da pré-seleção?
+                Tem certeza que deseja excluir o contato &quot;{selectedPreselection.nome}&quot; da pré-seleção?
               </Typography>
               <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
                 <Button onClick={handleCloseDeleteModal}>Cancelar</Button>
@@ -276,11 +267,11 @@ export default function PreselectionPage({ preselections: initialPreselections }
             fullWidth
           >
             <DialogTitle>
-              Promover para Confirmados
+              Promover para Convidados
             </DialogTitle>
             <DialogContent>
               <Typography sx={{ mb: 2 }}>
-                Promover "{selectedPreselection.nome}" para a lista de convidados confirmados.
+                Promover &quot;{selectedPreselection.nome}&quot; para a lista de convidados.
               </Typography>
               <TextField
                 fullWidth
@@ -366,7 +357,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
                   </Grid>
                 </Box>
                 <Box>
-                  <Tooltip title="Promover para Confirmados">
+                  <Tooltip title="Promover para Convidados">
                     <IconButton
                       aria-label="promote"
                       size="small"

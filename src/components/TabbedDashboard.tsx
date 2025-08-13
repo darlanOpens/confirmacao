@@ -119,7 +119,7 @@ export default function TabbedDashboard({ guests, preselections }: TabbedDashboa
             textColor="primary"
           >
             <Tab 
-              label={`Confirmados (${guests.length})`} 
+              label={`Convidados (${guests.length})`} 
               {...a11yProps(0)} 
             />
             <Tab 
