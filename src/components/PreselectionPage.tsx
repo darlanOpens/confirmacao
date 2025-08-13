@@ -28,12 +28,15 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PromoteIcon from '@mui/icons-material/TrendingUp';
 import { preselection } from "@prisma/client";
+import { Autocomplete, createFilterOptions } from "@mui/material";
 
 type PreselectionUI = preselection;
 
 interface PreselectionPageProps {
   preselections: PreselectionUI[];
 }
+
+const filter = createFilterOptions<string>();
 
 export default function PreselectionPage({ preselections: initialPreselections }: PreselectionPageProps) {
   const [preselections, setPreselections] = useState<PreselectionUI[]>(initialPreselections);
@@ -42,6 +45,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
   const [promoteModalOpen, setPromoteModalOpen] = useState(false);
   const [selectedPreselection, setSelectedPreselection] = useState<PreselectionUI | null>(null);
   const [promoteForm, setPromoteForm] = useState({ convidado_por: "" });
+  const [tags, setTags] = useState<string[]>([]);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -80,6 +84,25 @@ export default function PreselectionPage({ preselections: initialPreselections }
     setSelectedPreselection(null);
     setPromoteForm({ convidado_por: "" });
   };
+
+  // Carrega tags e preferência do localStorage (mesma lógica dos outros lugares)
+  React.useEffect(() => {
+    const loadTags = async () => {
+      try {
+        const res = await fetch('/api/convidados/tags');
+        const data = await res.json();
+        const saved = typeof window !== 'undefined'
+          ? (localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por'))
+          : null;
+        const merged = Array.from(new Set([...(Array.isArray(data) ? data : []), ...(saved ? [saved] : [])]));
+        setTags(merged as string[]);
+        if (saved) setPromoteForm({ convidado_por: saved });
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadTags();
+  }, []);
 
   const handleDelete = async () => {
     if (!selectedPreselection) return;
@@ -125,7 +148,12 @@ export default function PreselectionPage({ preselections: initialPreselections }
       
       if (result.success) {
         showSnackbar("Contato promovido com sucesso para convidados!", "success");
-        setPreselections(prev => prev.filter(p => p.id !== selectedPreselection.id));
+        // Atualiza o status localmente para manter na lista e marcar como convidado
+        setPreselections(prev => prev.map(p => p.id === selectedPreselection.id ? { ...p, status: "convidado" } : p));
+        // Salva preferência no localStorage
+        if (typeof window !== 'undefined' && promoteForm.convidado_por) {
+          localStorage.setItem('elga_convidado_por', promoteForm.convidado_por);
+        }
         handleClosePromoteModal();
       } else {
         showSnackbar(result.error || "Falha ao promover o contato.", "error");
@@ -269,10 +297,11 @@ export default function PreselectionPage({ preselections: initialPreselections }
                     </Grid>
                     <Grid item xs={12} sm={3}>
                       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                        <Tooltip title="Promover para Convidados">
+                        <Tooltip title={preselection.status === "convidado" ? "Já promovido" : "Promover para Convidados"}>
                           <IconButton
                             aria-label="promote"
                             size="small"
+                            disabled={preselection.status === "convidado"}
                             onClick={(event) => {
                               event.stopPropagation();
                               handlePromoteClick(preselection);
@@ -365,13 +394,40 @@ export default function PreselectionPage({ preselections: initialPreselections }
             <Typography sx={{ mb: 2 }}>
               Promover &quot;{selectedPreselection.nome}&quot; para a lista de convidados.
             </Typography>
-            <TextField
-              fullWidth
-              label="Convidado por"
+            <Autocomplete
               value={promoteForm.convidado_por}
-              onChange={(e) => setPromoteForm({ convidado_por: e.target.value })}
-              sx={{ mt: 2 }}
-              required
+              onChange={(event, newValue: string | null) => {
+                let finalValue = newValue;
+                if (newValue && newValue.startsWith('Adicionar "')) {
+                  finalValue = newValue.substring('Adicionar "'.length, newValue.length - 1);
+                }
+                setPromoteForm({ convidado_por: finalValue || "" });
+              }}
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+                const { inputValue } = params;
+                const isExisting = options.some((option) => inputValue === option);
+                if (inputValue !== '' && !isExisting) {
+                  filtered.push(`Adicionar "${inputValue}"`);
+                }
+                return filtered;
+              }}
+              selectOnFocus
+              clearOnBlur
+              handleHomeEndKeys
+              id="convidado-por-autocomplete-preselection"
+              options={tags}
+              getOptionLabel={(option) => {
+                if (typeof option === 'string') {
+                  return option;
+                }
+                return '';
+              }}
+              renderOption={(props, option) => <li {...props}>{option}</li>}
+              freeSolo
+              renderInput={(params) => (
+                <TextField {...params} label="Convidado Por" required sx={{ mt: 2 }} />
+              )}
             />
           </DialogContent>
           <DialogActions>

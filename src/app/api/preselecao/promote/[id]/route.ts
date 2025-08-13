@@ -64,9 +64,10 @@ export async function POST(
         data: guestData,
       });
 
-      // Remover da pré-seleção
-      await tx.preselection.delete({
+      // Marcar a pré-seleção como promovida (não remover)
+      await tx.preselection.update({
         where: { id },
+        data: { status: "convidado" },
       });
 
       return newGuest;
