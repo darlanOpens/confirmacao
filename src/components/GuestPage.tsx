@@ -86,6 +86,7 @@ type GuestLike = {
 
 interface GuestPageProps {
   guests: GuestUI[];
+  hideAppBar?: boolean;
 }
 
 const style = {
@@ -100,7 +101,7 @@ const style = {
   p: 4,
 } as const;
 
-export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
+export default function GuestPage({ guests: initialGuests, hideAppBar = false }: GuestPageProps) {
   const [guests, setGuests] = useState<GuestUI[]>(initialGuests);
   const [searchQuery, setSearchQuery] = useState("");
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -260,6 +261,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
 
   return (
     <>
+      {hideAppBar ? null : (
       <AppBar position="static" color="default" elevation={1}>
         <Toolbar sx={{ justifyContent: 'center', py: 1, position: 'relative' }}>
           <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
@@ -283,6 +285,7 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
           </Box>
         </Toolbar>
       </AppBar>
+      )}
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Box sx={{ mb: 4, p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
           <Typography variant="h5" component="h1" gutterBottom>
