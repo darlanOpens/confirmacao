@@ -7,11 +7,31 @@ import {
   Button,
   Stack,
 } from "@mui/material";
-import { Guest } from "@prisma/client";
 import { tokens } from '@/theme/designSystem';
 
+type GuestEditType = {
+  id: number;
+  nome: string;
+  email: string;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  convidado_por: string;
+  status: string;
+  data_cadastro: Date;
+  data_confirmacao: Date | null;
+  // Novos campos opcionais (compatível com GuestUI)
+  nome_preferido?: string | null | undefined;
+  linkedin_url?: string | null | undefined;
+  tamanho_empresa?: string | null | undefined;
+  setor_atuacao?: string | null | undefined;
+  produtos_servicos?: string | null | undefined;
+  faturamento_anual?: string | null | undefined;
+  modelo_negocio?: string | null | undefined;
+};
+
 interface EditGuestFormProps {
-  guest: Guest;
+  guest: GuestEditType;
   onClose: () => void;
   showSnackbar: (message: string, severity: "success" | "error") => void;
 }

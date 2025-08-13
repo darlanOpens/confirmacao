@@ -10,7 +10,11 @@ export async function GET() {
       return NextResponse.json({ message: 'Nenhum convidado encontrado.' }, { status: 404 });
     }
 
-    const fields = ['id', 'nome', 'email', 'telefone', 'empresa', 'cargo', 'convidado_por', 'status', 'data_cadastro', 'convite_url'];
+    const fields = [
+      'id', 'nome', 'email', 'telefone', 'empresa', 'cargo', 'convidado_por', 'status', 'data_cadastro', 'convite_url',
+      'nome_preferido', 'linkedin_url', 'tamanho_empresa', 'setor_atuacao', 
+      'produtos_servicos', 'faturamento_anual', 'modelo_negocio'
+    ];
     const json2csv = new Parser({ fields });
     const csv = json2csv.parse(guests);
 

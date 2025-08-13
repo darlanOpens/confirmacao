@@ -50,7 +50,26 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
-type GuestUI = Guest & { convite_url?: string };
+// UI type: torna novos campos opcionais (podem vir nulos ou ausentes)
+type GuestUI = Omit<
+  Guest,
+  | "nome_preferido"
+  | "linkedin_url"
+  | "tamanho_empresa"
+  | "setor_atuacao"
+  | "produtos_servicos"
+  | "faturamento_anual"
+  | "modelo_negocio"
+> & {
+  convite_url?: string;
+  nome_preferido?: string | null;
+  linkedin_url?: string | null;
+  tamanho_empresa?: string | null;
+  setor_atuacao?: string | null;
+  produtos_servicos?: string | null;
+  faturamento_anual?: string | null;
+  modelo_negocio?: string | null;
+};
 type GuestLike = {
   id: number;
   nome: string;
@@ -67,6 +86,7 @@ type GuestLike = {
 
 interface GuestPageProps {
   guests: GuestUI[];
+  hideAppBar?: boolean;
 }
 
 const style = {
@@ -84,7 +104,7 @@ const style = {
   color: 'white',
 } as const;
 
-export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
+export default function GuestPage({ guests: initialGuests, hideAppBar = false }: GuestPageProps) {
   const [guests, setGuests] = useState<GuestUI[]>(initialGuests);
   const [searchQuery, setSearchQuery] = useState("");
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -244,29 +264,31 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
 
   return (
     <>
-      <AppBar position="static" color="default" elevation={1}>
-        <Toolbar sx={{ justifyContent: 'center', py: 1, position: 'relative' }}>
-          <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-            <Image 
-              src="/brunch-experience.png" 
-              alt="Brunch Experience Logo" 
-              width={150} 
-              height={40} 
-              style={{ objectFit: 'contain' }}
-            />
-          </Box>
-          <Box sx={{ position: 'absolute', right: 8 }}>
-            <Button
-              variant="outlined"
-              startIcon={<LinkIcon />}
-              onClick={() => setTrackingModalOpen(true)}
-              size="small"
-            >
-              Seu link de rastreamento
-            </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
+      {!hideAppBar && (
+        <AppBar position="static" color="default" elevation={1}>
+          <Toolbar sx={{ justifyContent: 'center', py: 1, position: 'relative' }}>
+            <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+              <Image 
+                src="/brunch-experience.png" 
+                alt="Brunch Experience Logo" 
+                width={150} 
+                height={40} 
+                style={{ objectFit: 'contain' }}
+              />
+            </Box>
+            <Box sx={{ position: 'absolute', right: 8 }}>
+              <Button
+                variant="outlined"
+                startIcon={<LinkIcon />}
+                onClick={() => setTrackingModalOpen(true)}
+                size="small"
+              >
+                Seu link de rastreamento
+              </Button>
+            </Box>
+          </Toolbar>
+        </AppBar>
+      )}
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Box sx={{ mb: 4, p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
           <Typography variant="h5" component="h1" gutterBottom>
@@ -642,6 +664,34 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                     <Typography><strong>Telefone:</strong> {guest.telefone}</Typography>
                     <Typography><strong>Cargo:</strong> {guest.cargo}</Typography>
                     <Typography><strong>Convidado por:</strong> {guest.convidado_por}</Typography>
+                    
+                    {/* Novos campos opcionais - só aparecem quando preenchidos */}
+                    {guest.nome_preferido && (
+                      <Typography><strong>Nome preferido:</strong> {guest.nome_preferido}</Typography>
+                    )}
+                    {guest.linkedin_url && (
+                      <Typography>
+                        <strong>LinkedIn:</strong>{' '}
+                        <a href={guest.linkedin_url} target="_blank" rel="noopener noreferrer" style={{ color: '#0066cc' }}>
+                          {guest.linkedin_url}
+                        </a>
+                      </Typography>
+                    )}
+                    {guest.tamanho_empresa && (
+                      <Typography><strong>Tamanho da empresa:</strong> {guest.tamanho_empresa}</Typography>
+                    )}
+                    {guest.setor_atuacao && (
+                      <Typography><strong>Setor de atuação:</strong> {guest.setor_atuacao}</Typography>
+                    )}
+                    {guest.produtos_servicos && (
+                      <Typography><strong>Produtos/Serviços:</strong> {guest.produtos_servicos}</Typography>
+                    )}
+                    {guest.faturamento_anual && (
+                      <Typography><strong>Faturamento anual:</strong> {guest.faturamento_anual}</Typography>
+                    )}
+                    {guest.modelo_negocio && (
+                      <Typography><strong>Modelo de negócio:</strong> {guest.modelo_negocio}</Typography>
+                    )}
                   </Box>
                 </AccordionDetails>
               </Accordion>

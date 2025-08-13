@@ -94,80 +94,80 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
           borderRadius: '16px',
           p: 2
         }}>
-          <List dense>
-            <ListItem sx={{ py: 0.5 }}>
-              <ListItemText 
-                primary="nome" 
-                sx={{ 
-                  '& .MuiTypography-root': { 
-                    color: '#FFFFFF',
-                    fontFamily: 'monospace',
-                    fontSize: '0.9rem'
-                  }
-                }} 
-              />
-            </ListItem>
-            <ListItem sx={{ py: 0.5 }}>
-              <ListItemText 
-                primary="email" 
-                sx={{ 
-                  '& .MuiTypography-root': { 
-                    color: '#FFFFFF',
-                    fontFamily: 'monospace',
-                    fontSize: '0.9rem'
-                  }
-                }} 
-              />
-            </ListItem>
-            <ListItem sx={{ py: 0.5 }}>
-              <ListItemText 
-                primary="telefone" 
-                sx={{ 
-                  '& .MuiTypography-root': { 
-                    color: '#FFFFFF',
-                    fontFamily: 'monospace',
-                    fontSize: '0.9rem'
-                  }
-                }} 
-              />
-            </ListItem>
-            <ListItem sx={{ py: 0.5 }}>
-              <ListItemText 
-                primary="empresa" 
-                sx={{ 
-                  '& .MuiTypography-root': { 
-                    color: '#FFFFFF',
-                    fontFamily: 'monospace',
-                    fontSize: '0.9rem'
-                  }
-                }} 
-              />
-            </ListItem>
-            <ListItem sx={{ py: 0.5 }}>
-              <ListItemText 
-                primary="cargo" 
-                sx={{ 
-                  '& .MuiTypography-root': { 
-                    color: '#FFFFFF',
-                    fontFamily: 'monospace',
-                    fontSize: '0.9rem'
-                  }
-                }} 
-              />
-            </ListItem>
-            <ListItem sx={{ py: 0.5 }}>
-              <ListItemText 
-                primary="convidado_por" 
-                sx={{ 
-                  '& .MuiTypography-root': { 
-                    color: '#FFFFFF',
-                    fontFamily: 'monospace',
-                    fontSize: '0.9rem'
-                  }
-                }} 
-              />
-            </ListItem>
-          </List>
+                     <List dense>
+             <ListItem sx={{ py: 0.5 }}>
+               <ListItemText 
+                 primary="nome" 
+                 sx={{ 
+                   '& .MuiTypography-root': { 
+                     color: '#FFFFFF',
+                     fontFamily: 'monospace',
+                     fontSize: '0.9rem'
+                   }
+                 }} 
+               />
+             </ListItem>
+             <ListItem sx={{ py: 0.5 }}>
+               <ListItemText 
+                 primary="email" 
+                 sx={{ 
+                   '& .MuiTypography-root': { 
+                     color: '#FFFFFF',
+                     fontFamily: 'monospace',
+                     fontSize: '0.9rem'
+                   }
+                 }} 
+               />
+             </ListItem>
+             <ListItem sx={{ py: 0.5 }}>
+               <ListItemText 
+                 primary="telefone" 
+                 sx={{ 
+                   '& .MuiTypography-root': { 
+                     color: '#FFFFFF',
+                     fontFamily: 'monospace',
+                     fontSize: '0.9rem'
+                   }
+                 }} 
+               />
+             </ListItem>
+             <ListItem sx={{ py: 0.5 }}>
+               <ListItemText 
+                 primary="empresa" 
+                 sx={{ 
+                   '& .MuiTypography-root': { 
+                     color: '#FFFFFF',
+                     fontFamily: 'monospace',
+                     fontSize: '0.9rem'
+                   }
+                 }} 
+               />
+             </ListItem>
+             <ListItem sx={{ py: 0.5 }}>
+               <ListItemText 
+                 primary="cargo" 
+                 sx={{ 
+                   '& .MuiTypography-root': { 
+                     color: '#FFFFFF',
+                     fontFamily: 'monospace',
+                     fontSize: '0.9rem'
+                   }
+                 }} 
+               />
+             </ListItem>
+             <ListItem sx={{ py: 0.5 }}>
+               <ListItemText 
+                 primary="convidado_por" 
+                 sx={{ 
+                   '& .MuiTypography-root': { 
+                     color: '#FFFFFF',
+                     fontFamily: 'monospace',
+                     fontSize: '0.9rem'
+                   }
+                 }} 
+               />
+             </ListItem>
+           </List>
         </Box>
       </Box>
     </Box>

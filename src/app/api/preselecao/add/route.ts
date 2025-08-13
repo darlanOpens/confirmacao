@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { buildInviteUrl } from "@/lib/invite";
-import { sendGuestAddedWebhook } from "@/lib/webhook";
-
-console.log('📦 API de adição de convidado carregada, webhook importado:', typeof sendGuestAddedWebhook);
 
 export async function POST(request: Request) {
   try {
@@ -14,7 +10,11 @@ export async function POST(request: Request) {
       telefone,
       empresa,
       cargo,
-      convidado_por,
+      fonte,
+      prioridade,
+      observacoes,
+      score,
+      responsavel,
       nome_preferido,
       linkedin_url,
       tamanho_empresa,
@@ -24,14 +24,13 @@ export async function POST(request: Request) {
       modelo_negocio,
     } = body;
 
-    if (!nome || !email || !telefone || !empresa || !cargo || !convidado_por) {
+    if (!nome || !email || !telefone || !empresa || !cargo || !fonte) {
       return NextResponse.json(
-        { success: false, error: "Todos os campos são obrigatórios." },
+        { success: false, error: "Campos obrigatórios: nome, email, telefone, empresa, cargo, fonte." },
         { status: 400 }
       );
     }
 
-    console.log('📝 Criando convidado no banco...');
     const maybe = (key: string, value: unknown) =>
       typeof value !== "undefined" && value !== null ? { [key]: value } : {};
 
@@ -41,8 +40,11 @@ export async function POST(request: Request) {
       telefone,
       empresa,
       cargo,
-      convidado_por,
-      convite_url: buildInviteUrl(email, convidado_por),
+      fonte,
+      ...maybe("prioridade", prioridade),
+      ...maybe("observacoes", observacoes),
+      ...maybe("score", score),
+      ...maybe("responsavel", responsavel),
       ...maybe("nome_preferido", nome_preferido),
       ...maybe("linkedin_url", linkedin_url),
       ...maybe("tamanho_empresa", tamanho_empresa),
@@ -52,17 +54,9 @@ export async function POST(request: Request) {
       ...maybe("modelo_negocio", modelo_negocio),
     } as const;
 
-    const newGuest = await prisma.guest.create({ data });
-    console.log('✅ Convidado criado com sucesso:', newGuest.id);
+    const newPreselection = await prisma.preselection.create({ data });
 
-    // Dispara webhook de forma assíncrona (não bloqueia a resposta)
-    console.log('🚀 Iniciando disparo do webhook...');
-    sendGuestAddedWebhook(newGuest).catch(error => {
-      console.error('❌ Erro ao enviar webhook:', error);
-    });
-    console.log('📤 Webhook disparado (assíncrono)');
-
-    return NextResponse.json({ success: true, guest: newGuest }, { status: 201 });
+    return NextResponse.json({ success: true, preselection: newPreselection }, { status: 201 });
   } catch (error) {
     if (
       typeof error === "object" &&
@@ -71,14 +65,14 @@ export async function POST(request: Request) {
       error.code === "P2002"
     ) {
       return NextResponse.json(
-        { success: false, error: "Este e-mail já está cadastrado." },
+        { success: false, error: "Este e-mail já está cadastrado na pré-seleção." },
         { status: 409 }
       );
     }
 
     return NextResponse.json(
-      { success: false, error: "Ocorreu um erro ao cadastrar o convidado." },
+      { success: false, error: "Ocorreu um erro ao cadastrar na pré-seleção." },
       { status: 500 }
     );
   }
-} 
+}

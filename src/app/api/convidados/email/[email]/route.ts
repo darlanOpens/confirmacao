@@ -1,16 +1,20 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
-import { sendGuestAddedWebhook } from "@/lib/webhook";
 
-console.log('📦 API de adição de convidado carregada, webhook importado:', typeof sendGuestAddedWebhook);
-
-export async function POST(request: Request) {
+// Editar um convidado pelo e-mail
+export async function PUT(
+  request: Request,
+  context: { params: Promise<{ email: string }> }
+) {
   try {
+    const params = await context.params;
+    const rawEmail = params.email;
+    const email = decodeURIComponent(rawEmail);
+
     const body = await request.json();
     const {
       nome,
-      email,
       telefone,
       empresa,
       cargo,
@@ -24,20 +28,11 @@ export async function POST(request: Request) {
       modelo_negocio,
     } = body;
 
-    if (!nome || !email || !telefone || !empresa || !cargo || !convidado_por) {
-      return NextResponse.json(
-        { success: false, error: "Todos os campos são obrigatórios." },
-        { status: 400 }
-      );
-    }
-
-    console.log('📝 Criando convidado no banco...');
     const maybe = (key: string, value: unknown) =>
       typeof value !== "undefined" && value !== null ? { [key]: value } : {};
 
     const data = {
       nome,
-      email,
       telefone,
       empresa,
       cargo,
@@ -52,33 +47,28 @@ export async function POST(request: Request) {
       ...maybe("modelo_negocio", modelo_negocio),
     } as const;
 
-    const newGuest = await prisma.guest.create({ data });
-    console.log('✅ Convidado criado com sucesso:', newGuest.id);
-
-    // Dispara webhook de forma assíncrona (não bloqueia a resposta)
-    console.log('🚀 Iniciando disparo do webhook...');
-    sendGuestAddedWebhook(newGuest).catch(error => {
-      console.error('❌ Erro ao enviar webhook:', error);
+    const updatedGuest = await prisma.guest.update({
+      where: { email },
+      data,
     });
-    console.log('📤 Webhook disparado (assíncrono)');
 
-    return NextResponse.json({ success: true, guest: newGuest }, { status: 201 });
+    return NextResponse.json({ success: true, guest: updatedGuest });
   } catch (error) {
     if (
       typeof error === "object" &&
       error !== null &&
       "code" in error &&
-      error.code === "P2002"
+      error.code === "P2025"
     ) {
       return NextResponse.json(
-        { success: false, error: "Este e-mail já está cadastrado." },
-        { status: 409 }
+        { success: false, error: "Convidado não encontrado." },
+        { status: 404 }
       );
     }
 
     return NextResponse.json(
-      { success: false, error: "Ocorreu um erro ao cadastrar o convidado." },
+      { success: false, error: "Falha ao atualizar o convidado." },
       { status: 500 }
     );
   }
-} 
+}
