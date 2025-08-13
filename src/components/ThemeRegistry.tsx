@@ -58,6 +58,14 @@ const darkTheme = createTheme({
     borderRadius: 24,
   },
   components: {
+    // Remover arredondamento do AppBar (herda de Paper por padrão)
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+        }
+      }
+    },
     // Customizações para botões seguindo o design system
     MuiButton: {
       styleOverrides: {

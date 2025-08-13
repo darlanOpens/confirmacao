@@ -265,7 +265,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   return (
     <>
       {!hideAppBar && (
-        <AppBar position="static" color="default" elevation={1}>
+        <AppBar position="static" color="default" elevation={1} sx={{ borderRadius: 0 }}>
           <Toolbar sx={{ justifyContent: 'center', py: 1, position: 'relative' }}>
             <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
               <Image 
@@ -290,7 +290,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
         </AppBar>
       )}
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ mb: 4, p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
+        <Box sx={{ mb: 4, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
           <Typography variant="h5" component="h1" gutterBottom>
             Central de Confirmações – Brunch Experience
           </Typography>

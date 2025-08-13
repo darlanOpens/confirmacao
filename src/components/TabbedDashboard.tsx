@@ -87,7 +87,7 @@ export default function TabbedDashboard({ guests, preselections }: TabbedDashboa
   return (
     <Box sx={{ width: '100%' }}>
       {/* AppBar unificada */}
-      <AppBar position="static" color="default" elevation={1}>
+      <AppBar position="static" color="default" elevation={1} sx={{ borderRadius: 0 }}>
         <Toolbar sx={{ justifyContent: 'center', py: 1, position: 'relative' }}>
           <Box sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
             <Image 

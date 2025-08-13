@@ -159,7 +159,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Header */}
-      <Box sx={{ mb: 4, p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
+      <Box sx={{ mb: 4, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
         <Typography variant="h5" component="h1" gutterBottom>
           Pré-seleção de Contatos
         </Typography>
