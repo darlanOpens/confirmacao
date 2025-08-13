@@ -622,6 +622,34 @@ export default function GuestPage({ guests: initialGuests }: GuestPageProps) {
                     <Typography><strong>Telefone:</strong> {guest.telefone}</Typography>
                     <Typography><strong>Cargo:</strong> {guest.cargo}</Typography>
                     <Typography><strong>Convidado por:</strong> {guest.convidado_por}</Typography>
+                    
+                    {/* Novos campos opcionais - só aparecem quando preenchidos */}
+                    {guest.nome_preferido && (
+                      <Typography><strong>Nome preferido:</strong> {guest.nome_preferido}</Typography>
+                    )}
+                    {guest.linkedin_url && (
+                      <Typography>
+                        <strong>LinkedIn:</strong>{' '}
+                        <a href={guest.linkedin_url} target="_blank" rel="noopener noreferrer" style={{ color: '#0066cc' }}>
+                          {guest.linkedin_url}
+                        </a>
+                      </Typography>
+                    )}
+                    {guest.tamanho_empresa && (
+                      <Typography><strong>Tamanho da empresa:</strong> {guest.tamanho_empresa}</Typography>
+                    )}
+                    {guest.setor_atuacao && (
+                      <Typography><strong>Setor de atuação:</strong> {guest.setor_atuacao}</Typography>
+                    )}
+                    {guest.produtos_servicos && (
+                      <Typography><strong>Produtos/Serviços:</strong> {guest.produtos_servicos}</Typography>
+                    )}
+                    {guest.faturamento_anual && (
+                      <Typography><strong>Faturamento anual:</strong> {guest.faturamento_anual}</Typography>
+                    )}
+                    {guest.modelo_negocio && (
+                      <Typography><strong>Modelo de negócio:</strong> {guest.modelo_negocio}</Typography>
+                    )}
                   </Box>
                 </AccordionDetails>
               </Accordion>

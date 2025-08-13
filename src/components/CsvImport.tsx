@@ -62,12 +62,19 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
           O arquivo deve conter as seguintes colunas como cabeçalho, na ordem exata:
         </Typography>
         <List dense>
-          <ListItem><ListItemText primary="nome" /></ListItem>
-          <ListItem><ListItemText primary="email" /></ListItem>
-          <ListItem><ListItemText primary="telefone" /></ListItem>
-          <ListItem><ListItemText primary="empresa" /></ListItem>
-          <ListItem><ListItemText primary="cargo" /></ListItem>
-          <ListItem><ListItemText primary="convidado_por" /></ListItem>
+          <ListItem><ListItemText primary="nome (obrigatório)" /></ListItem>
+          <ListItem><ListItemText primary="email (obrigatório)" /></ListItem>
+          <ListItem><ListItemText primary="telefone (obrigatório)" /></ListItem>
+          <ListItem><ListItemText primary="empresa (obrigatório)" /></ListItem>
+          <ListItem><ListItemText primary="cargo (obrigatório)" /></ListItem>
+          <ListItem><ListItemText primary="convidado_por (obrigatório)" /></ListItem>
+          <ListItem><ListItemText primary="nome_preferido (opcional)" /></ListItem>
+          <ListItem><ListItemText primary="linkedin_url (opcional)" /></ListItem>
+          <ListItem><ListItemText primary="tamanho_empresa (opcional)" /></ListItem>
+          <ListItem><ListItemText primary="setor_atuacao (opcional)" /></ListItem>
+          <ListItem><ListItemText primary="produtos_servicos (opcional)" /></ListItem>
+          <ListItem><ListItemText primary="faturamento_anual (opcional)" /></ListItem>
+          <ListItem><ListItemText primary="modelo_negocio (opcional)" /></ListItem>
         </List>
       </Box>
     </Box>

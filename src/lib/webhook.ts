@@ -11,6 +11,13 @@ interface WebhookPayload {
     convidado_por: string;
     status: string;
     data_cadastro: string;
+    nome_preferido?: string | null;
+    linkedin_url?: string | null;
+    tamanho_empresa?: string | null;
+    setor_atuacao?: string | null;
+    produtos_servicos?: string | null;
+    faturamento_anual?: string | null;
+    modelo_negocio?: string | null;
   };
 }
 
@@ -24,6 +31,13 @@ interface GuestData {
   convidado_por: string;
   status: string;
   data_cadastro: Date;
+  nome_preferido?: string | null;
+  linkedin_url?: string | null;
+  tamanho_empresa?: string | null;
+  setor_atuacao?: string | null;
+  produtos_servicos?: string | null;
+  faturamento_anual?: string | null;
+  modelo_negocio?: string | null;
 }
 
 export async function sendGuestAddedWebhook(guestData: GuestData): Promise<void> {
@@ -49,6 +63,13 @@ export async function sendGuestAddedWebhook(guestData: GuestData): Promise<void>
       convidado_por: guestData.convidado_por,
       status: guestData.status,
       data_cadastro: guestData.data_cadastro.toISOString(),
+      nome_preferido: guestData.nome_preferido || null,
+      linkedin_url: guestData.linkedin_url || null,
+      tamanho_empresa: guestData.tamanho_empresa || null,
+      setor_atuacao: guestData.setor_atuacao || null,
+      produtos_servicos: guestData.produtos_servicos || null,
+      faturamento_anual: guestData.faturamento_anual || null,
+      modelo_negocio: guestData.modelo_negocio || null,
     },
   };
 
