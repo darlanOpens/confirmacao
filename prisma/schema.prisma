@@ -20,5 +20,14 @@ model Guest {
   data_confirmacao DateTime?
   convite_url      String    @default("")
 
+  // Novos campos opcionais (dados de negócio/contato)
+  nome_preferido       String?
+  linkedin_url         String?
+  tamanho_empresa      String?
+  setor_atuacao        String?
+  produtos_servicos    String?
+  faturamento_anual    String?
+  modelo_negocio       String?
+
   @@map("guest")
 }

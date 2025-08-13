@@ -8,7 +8,21 @@ console.log('📦 API de adição de convidado carregada, webhook importado:', t
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { nome, email, telefone, empresa, cargo, convidado_por } = body;
+    const {
+      nome,
+      email,
+      telefone,
+      empresa,
+      cargo,
+      convidado_por,
+      nome_preferido,
+      linkedin_url,
+      tamanho_empresa,
+      setor_atuacao,
+      produtos_servicos,
+      faturamento_anual,
+      modelo_negocio,
+    } = body;
 
     if (!nome || !email || !telefone || !empresa || !cargo || !convidado_por) {
       return NextResponse.json(
@@ -18,17 +32,27 @@ export async function POST(request: Request) {
     }
 
     console.log('📝 Criando convidado no banco...');
-    const newGuest = await prisma.guest.create({
-      data: {
-        nome,
-        email,
-        telefone,
-        empresa,
-        cargo,
-        convidado_por,
-        convite_url: buildInviteUrl(email, convidado_por, process.env.INVITE_BASE_URL),
-      },
-    });
+    const maybe = (key: string, value: unknown) =>
+      typeof value !== "undefined" && value !== null ? { [key]: value } : {};
+
+    const data = {
+      nome,
+      email,
+      telefone,
+      empresa,
+      cargo,
+      convidado_por,
+      convite_url: buildInviteUrl(email, convidado_por, process.env.INVITE_BASE_URL),
+      ...maybe("nome_preferido", nome_preferido),
+      ...maybe("linkedin_url", linkedin_url),
+      ...maybe("tamanho_empresa", tamanho_empresa),
+      ...maybe("setor_atuacao", setor_atuacao),
+      ...maybe("produtos_servicos", produtos_servicos),
+      ...maybe("faturamento_anual", faturamento_anual),
+      ...maybe("modelo_negocio", modelo_negocio),
+    } as const;
+
+    const newGuest = await prisma.guest.create({ data });
     console.log('✅ Convidado criado com sucesso:', newGuest.id);
 
     // Dispara webhook de forma assíncrona (não bloqueia a resposta)

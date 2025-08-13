@@ -2,33 +2,37 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
 
-// Força a re-compilação
-// Editar um convidado
+// Editar um convidado pelo e-mail
 export async function PUT(
   request: Request,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ email: string }> }
 ) {
   try {
     const params = await context.params;
-    const id = parseInt(params.id, 10);
+    const rawEmail = params.email;
+    const email = decodeURIComponent(rawEmail);
+
     const body = await request.json();
-  const { nome, email, telefone, empresa, cargo, convidado_por } = body;
-  const {
-    nome_preferido,
-    linkedin_url,
-    tamanho_empresa,
-    setor_atuacao,
-    produtos_servicos,
-    faturamento_anual,
-    modelo_negocio,
-  } = body;
+    const {
+      nome,
+      telefone,
+      empresa,
+      cargo,
+      convidado_por,
+      nome_preferido,
+      linkedin_url,
+      tamanho_empresa,
+      setor_atuacao,
+      produtos_servicos,
+      faturamento_anual,
+      modelo_negocio,
+    } = body;
 
     const maybe = (key: string, value: unknown) =>
       typeof value !== "undefined" && value !== null ? { [key]: value } : {};
 
     const data = {
       nome,
-      email,
       telefone,
       empresa,
       cargo,
@@ -44,12 +48,25 @@ export async function PUT(
     } as const;
 
     const updatedGuest = await prisma.guest.update({
-      where: { id },
+      where: { email },
       data,
     });
 
     return NextResponse.json({ success: true, guest: updatedGuest });
-  } catch {
+  } catch (error) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      // @ts-ignore - prisma error shape at runtime
+      error.code === "P2025"
+    ) {
+      return NextResponse.json(
+        { success: false, error: "Convidado não encontrado." },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json(
       { success: false, error: "Falha ao atualizar o convidado." },
       { status: 500 }
@@ -57,24 +74,4 @@ export async function PUT(
   }
 }
 
-// Excluir um convidado
-export async function DELETE(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
-  try {
-    const params = await context.params;
-    const id = parseInt(params.id, 10);
 
-    await prisma.guest.delete({
-      where: { id },
-    });
-
-    return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json(
-      { success: false, error: "Falha ao excluir o convidado." },
-      { status: 500 }
-    );
-  }
-} 
