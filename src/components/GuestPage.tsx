@@ -471,7 +471,30 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
               }
             }}
           >
-            <Box sx={style}>
+            <Box sx={{
+              ...style,
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(255, 255, 255, 0.25) transparent',
+              '&::-webkit-scrollbar': {
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                backgroundColor: 'transparent',
+                marginTop: '12px',
+                marginBottom: '12px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                borderRadius: '8px',
+                border: '2px solid transparent',
+                backgroundClip: 'content-box',
+              },
+              '&::-webkit-scrollbar-thumb:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.35)',
+              },
+            }}>
               <IconButton
                 aria-label="close"
                 onClick={handleCloseAddModal}

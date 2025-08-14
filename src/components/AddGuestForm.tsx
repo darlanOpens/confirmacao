@@ -13,6 +13,8 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
@@ -203,16 +205,10 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           )}
         />
 
-        <TextField
-          select
-          label="Confirmar convidado diretamente?"
-          value={confirmDirectly ? 'sim' : 'nao'}
-          onChange={(e) => setConfirmDirectly(e.target.value === 'sim')}
-          fullWidth
-        >
-          <MenuItem value="nao">Não</MenuItem>
-          <MenuItem value="sim">Sim</MenuItem>
-        </TextField>
+        <FormControlLabel
+          control={<Checkbox checked={confirmDirectly} onChange={(e) => setConfirmDirectly(e.target.checked)} />}
+          label="Confirmar convidado diretamente"
+        />
 
         {confirmDirectly && (
           <>
@@ -220,7 +216,7 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
               Confirmar sem preencher os campos extras pode prejudicar o matchmaking e a personalização da experiência.
             </Alert>
 
-            <Accordion defaultExpanded sx={{ bgcolor: 'background.paper' }}>
+            <Accordion sx={{ bgcolor: 'background.paper' }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 Campos extras (opcionais)
               </AccordionSummary>
