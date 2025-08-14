@@ -8,7 +8,19 @@ import {
   Stack,
   Autocomplete,
   createFilterOptions,
+  Alert,
+  MenuItem,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {
+  COMPANY_SIZE_OPTIONS,
+  INDUSTRY_OPTIONS,
+  REVENUE_BAND_OPTIONS,
+  BUSINESS_MODEL_OPTIONS,
+} from "@/lib/guestOptions";
 
 interface Guest {
   id: number;
@@ -47,8 +59,16 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
     empresa: "",
     cargo: "",
     convidado_por: "",
+    nome_preferido: "",
+    linkedin_url: "",
+    tamanho_empresa: "",
+    setor_atuacao: "",
+    produtos_servicos: "",
+    faturamento_anual: "",
+    modelo_negocio: "",
   });
   const [tags, setTags] = useState<string[]>([]);
+  const [confirmDirectly, setConfirmDirectly] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -92,7 +112,10 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
       const response = await fetch("/api/convidados/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          confirm_directly: confirmDirectly,
+        }),
       });
 
       console.log("Resposta da API:", response.status);
@@ -124,7 +147,15 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
           empresa: "",
           cargo: "",
           convidado_por: "",
+          nome_preferido: "",
+          linkedin_url: "",
+          tamanho_empresa: "",
+          setor_atuacao: "",
+          produtos_servicos: "",
+          faturamento_anual: "",
+          modelo_negocio: "",
         });
+        setConfirmDirectly(false);
       } else {
         showSnackbar(result.error || "Ocorreu um erro.", "error");
       }
@@ -171,6 +202,115 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
             <TextField {...params} label="Convidado Por" required />
           )}
         />
+
+        <TextField
+          select
+          label="Confirmar convidado diretamente?"
+          value={confirmDirectly ? 'sim' : 'nao'}
+          onChange={(e) => setConfirmDirectly(e.target.value === 'sim')}
+          fullWidth
+        >
+          <MenuItem value="nao">Não</MenuItem>
+          <MenuItem value="sim">Sim</MenuItem>
+        </TextField>
+
+        {confirmDirectly && (
+          <>
+            <Alert severity="warning">
+              Confirmar sem preencher os campos extras pode prejudicar o matchmaking e a personalização da experiência.
+            </Alert>
+
+            <Accordion defaultExpanded sx={{ bgcolor: 'background.paper' }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                Campos extras (opcionais)
+              </AccordionSummary>
+              <AccordionDetails>
+                <Stack spacing={2}>
+                  <TextField
+                    name="nome_preferido"
+                    label="Como você gostaria de ser chamado(a)?"
+                    value={formData.nome_preferido}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+
+                  <TextField
+                    name="linkedin_url"
+                    label="Qual seu LinkedIn? (URL)"
+                    type="url"
+                    value={formData.linkedin_url}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+
+                  <TextField
+                    name="tamanho_empresa"
+                    label="Tamanho da Empresa"
+                    select
+                    value={formData.tamanho_empresa}
+                    onChange={handleChange}
+                    fullWidth
+                  >
+                    <MenuItem value="">Tamanho da Empresa</MenuItem>
+                    {COMPANY_SIZE_OPTIONS.map((opt) => (
+                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                    ))}
+                  </TextField>
+
+                  <TextField
+                    name="setor_atuacao"
+                    label="Setor de Atuação"
+                    select
+                    value={formData.setor_atuacao}
+                    onChange={handleChange}
+                    fullWidth
+                  >
+                    <MenuItem value="">Setor de Atuação</MenuItem>
+                    {INDUSTRY_OPTIONS.map((opt) => (
+                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                    ))}
+                  </TextField>
+
+                  <TextField
+                    name="produtos_servicos"
+                    label="Principais produtos/serviços"
+                    value={formData.produtos_servicos}
+                    onChange={handleChange}
+                    fullWidth
+                  />
+
+                  <TextField
+                    name="faturamento_anual"
+                    label="Faixa de faturamento anual"
+                    select
+                    value={formData.faturamento_anual}
+                    onChange={handleChange}
+                    fullWidth
+                  >
+                    <MenuItem value="">Qual é a faixa de faturamento anual da empresa?</MenuItem>
+                    {REVENUE_BAND_OPTIONS.map((opt) => (
+                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                    ))}
+                  </TextField>
+
+                  <TextField
+                    name="modelo_negocio"
+                    label="Modelo de negócio"
+                    select
+                    value={formData.modelo_negocio}
+                    onChange={handleChange}
+                    fullWidth
+                  >
+                    <MenuItem value="">O modelo de negócio da sua empresa é principalmente voltado para</MenuItem>
+                    {BUSINESS_MODEL_OPTIONS.map((opt) => (
+                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                    ))}
+                  </TextField>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          </>
+        )}
         <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
           Adicionar Convidado
         </Button>

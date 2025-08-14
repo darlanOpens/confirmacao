@@ -676,39 +676,47 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
                       </Grid>
                     </Grid>
                   </Box>
-                  <Box>
-                    <IconButton
-                      aria-label="edit"
-                      size="small"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleOpenEditModal(guest);
-                      }}
-                    >
-                      <EditIcon fontSize="small" />
-                    </IconButton>
-                    {String(guest.status || '').toLowerCase() !== 'confirmado' && (
+                  {/* Usar span wrappers e desabilitar pointer events para evitar <button> dentro de <button> em AccordionSummary */}
+                  <Box component="span" sx={{ display: 'inline-flex', gap: 0.5 }} onClick={(e) => e.stopPropagation()}>
+                    <span>
                       <IconButton
-                        aria-label="confirm"
+                        aria-label="edit"
                         size="small"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          handleOpenConfirmModal(guest);
+                        onClick={() => {
+                          handleOpenEditModal(guest);
                         }}
                       >
-                        <CheckCircleOutlineIcon fontSize="small" />
+                        <EditIcon fontSize="small" />
                       </IconButton>
-                    )}
-                    <IconButton
-                      aria-label="delete"
-                      size="small"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleOpenDeleteModal(guest);
-                      }}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                    </span>
+                    <Tooltip title={String(guest.status || '').toLowerCase() === 'confirmado' ? 'Confirmado' : 'Confirmar'}>
+                      <span>
+                        <IconButton
+                          aria-label="confirm"
+                          size="small"
+                          onClick={() => {
+                            if (String(guest.status || '').toLowerCase() !== 'confirmado') {
+                              handleOpenConfirmModal(guest);
+                            }
+                          }}
+                          disabled={String(guest.status || '').toLowerCase() === 'confirmado'}
+                          sx={{ color: String(guest.status || '').toLowerCase() === 'confirmado' ? 'success.main' : 'inherit' }}
+                        >
+                          <CheckCircleOutlineIcon fontSize="small" />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                    <span>
+                      <IconButton
+                        aria-label="delete"
+                        size="small"
+                        onClick={() => {
+                          handleOpenDeleteModal(guest);
+                        }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </span>
                   </Box>
                 </AccordionSummary>
                 <AccordionDetails>

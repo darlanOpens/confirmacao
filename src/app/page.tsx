@@ -1,16 +1,11 @@
 import TabbedDashboard from "@/components/TabbedDashboard";
-import { headers } from 'next/headers';
 
 async function getGuests() {
   try {
     console.log("🔄 Fetching guests via API route...");
-    
-    // Get the current host from headers
-    const headersList = await headers();
-    const host = headersList.get('host') || 'localhost:3000';
-    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-    
-    const apiUrl = `${protocol}://${host}/api/convidados/list`;
+
+    // Use caminho relativo para ser agnóstico a dev/prod/reverse-proxy
+    const apiUrl = `/api/convidados/list`;
     console.log("🌐 API URL:", apiUrl);
     
     const response = await fetch(apiUrl, {
@@ -65,13 +60,8 @@ async function getGuests() {
 async function getPreselections() {
   try {
     console.log("🔄 Fetching preselections via API route...");
-    
-    // Get the current host from headers
-    const headersList = await headers();
-    const host = headersList.get('host') || 'localhost:3000';
-    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-    
-    const apiUrl = `${protocol}://${host}/api/preselecao/list`;
+
+    const apiUrl = `/api/preselecao/list`;
     console.log("🌐 Preselection API URL:", apiUrl);
     
     const response = await fetch(apiUrl, {

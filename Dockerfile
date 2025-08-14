@@ -49,6 +49,8 @@ COPY --from=builder /app/prisma ./prisma
 # Copiar script de entrada
 COPY scripts/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# Converter finais de linha CRLF para LF (evita erro "no such file or directory" em Alpine)
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh
 
 # Define DATABASE_URL padrão (será sobrescrita pelo Easypanel)
 ENV DATABASE_URL="postgresql://elga_user:elga_pass@db:5432/elga_db"
