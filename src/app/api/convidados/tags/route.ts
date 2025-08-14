@@ -12,7 +12,7 @@ export async function GET() {
 
     const uniqueTags = tags.map((tag: { convidado_por: string }) => tag.convidado_por).filter(Boolean) as string[];
 
-    return NextResponse.json(uniqueTags);
+    return NextResponse.json(uniqueTags, { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, s-maxage=0' } });
   } catch (error) {
     console.error('Error fetching tags:', error);
     return NextResponse.json({ error: 'Error fetching tags' }, { status: 500 });
