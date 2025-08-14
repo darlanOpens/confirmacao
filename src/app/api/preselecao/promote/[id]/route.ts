@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
-import { sendGuestAddedWebhook } from "@/lib/webhook";
+import { sendGuestAddedWebhook, sendPreselectionPromotedWebhook } from "@/lib/webhook";
 
 // Promover uma pré-seleção para Guest convidado
 export async function POST(
@@ -65,23 +65,26 @@ export async function POST(
       });
 
       // Marcar a pré-seleção como promovida (não remover)
-      await tx.preselection.update({
+      const updatedPreselection = await tx.preselection.update({
         where: { id },
         data: { status: "convidado" },
       });
 
-      return newGuest;
+      return { newGuest, updatedPreselection };
     });
 
-    // Disparar webhook assíncrono
-    sendGuestAddedWebhook(result).catch(error => {
+    // Disparar webhooks assíncronos
+    sendGuestAddedWebhook(result.newGuest).catch(error => {
       console.error('❌ Erro ao enviar webhook:', error);
+    });
+    sendPreselectionPromotedWebhook({ preselection: result.updatedPreselection as any, guest: result.newGuest as any }).catch(error => {
+      console.error('❌ Erro ao enviar webhook de promoção:', error);
     });
 
     return NextResponse.json(
       { 
         success: true, 
-        guest: result,
+        guest: result.newGuest,
         message: "Contato promovido com sucesso para convidados!"
       },
       { status: 201 }

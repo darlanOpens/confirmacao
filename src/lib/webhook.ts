@@ -44,7 +44,11 @@ export async function sendGuestAddedWebhook(guestData: GuestData): Promise<void>
   console.log('🔍 Iniciando envio de webhook...');
   
   // Usar a URL do webhook da variável de ambiente ou fallback para a URL existente
-  const webhookUrl = process.env.WEBHOOK_URL || "https://n8n.opens.com.br/webhook/elga-guests";
+  const webhookUrl = process.env.WEBHOOK_URL;
+  if (!webhookUrl) {
+    console.error('❌ WEBHOOK_URL não configurada. Ignorando envio do webhook de guest_added.');
+    return;
+  }
   
   const payload: WebhookPayload = {
     event: 'guest_added',
@@ -99,3 +103,83 @@ export async function sendGuestAddedWebhook(guestData: GuestData): Promise<void>
   }
 
 } 
+
+interface PreselectionData {
+  id: number;
+  nome: string;
+  email: string;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  status: string;
+  data_cadastro: Date;
+}
+
+export async function sendPreselectionPromotedWebhook(params: { preselection: PreselectionData; guest: GuestData }): Promise<void> {
+  const { preselection, guest } = params;
+
+  const webhookUrl = process.env.WEBHOOK_PRESELECTION_PROMOTED_URL;
+  if (!webhookUrl) {
+    console.error('❌ WEBHOOK_PRESELECTION_PROMOTED_URL não configurada. Ignorando envio do webhook de promoção.');
+    return;
+  }
+
+  const payload = {
+    event: 'preselection_promoted',
+    timestamp: new Date().toISOString(),
+    body: {
+      preselection: {
+        id: preselection.id,
+        nome: preselection.nome,
+        email: preselection.email,
+        telefone: preselection.telefone,
+        empresa: preselection.empresa,
+        cargo: preselection.cargo,
+        status: preselection.status,
+        data_cadastro: preselection.data_cadastro.toISOString(),
+      },
+      guest: {
+        id: guest.id,
+        nome: guest.nome,
+        email: guest.email,
+        telefone: guest.telefone,
+        empresa: guest.empresa,
+        cargo: guest.cargo,
+        convidado_por: guest.convidado_por,
+        status: guest.status,
+        data_cadastro: guest.data_cadastro.toISOString(),
+        nome_preferido: guest.nome_preferido || null,
+        linkedin_url: guest.linkedin_url || null,
+        tamanho_empresa: guest.tamanho_empresa || null,
+        setor_atuacao: guest.setor_atuacao || null,
+        produtos_servicos: guest.produtos_servicos || null,
+        faturamento_anual: guest.faturamento_anual || null,
+        modelo_negocio: guest.modelo_negocio || null,
+      }
+    }
+  } as const;
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Brunch-Experience-Guest-System/1.0',
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Webhook falhou com status: ${response.status}, resposta: ${errorText}`);
+    }
+  } catch (error) {
+    console.error('❌ Erro ao enviar webhook de promoção:', error);
+  }
+}
