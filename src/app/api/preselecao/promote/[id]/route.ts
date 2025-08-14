@@ -45,7 +45,7 @@ export async function POST(
       );
     }
 
-    // Criar Guest com dados da pré-seleção (status padrão é "pendente")
+    // Criar Guest com dados da pré-seleção (status padrão é "Convidado")
     const guestData = {
       nome: preselection.nome,
       email: preselection.email,
@@ -53,7 +53,7 @@ export async function POST(
       empresa: preselection.empresa,
       cargo: preselection.cargo,
       convidado_por,
-      status: "pendente", // Explicitamente definindo como pendente
+      status: "Convidado", // Novo padrão
       convite_url: buildInviteUrl(preselection.email, convidado_por),
     };
 
@@ -67,7 +67,7 @@ export async function POST(
       // Marcar a pré-seleção como promovida (não remover)
       const updatedPreselection = await tx.preselection.update({
         where: { id },
-        data: { status: "convidado" },
+        data: { status: "Convidado" },
       });
 
       return { newGuest, updatedPreselection };

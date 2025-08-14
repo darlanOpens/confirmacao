@@ -91,11 +91,8 @@ export default function PreselectionPage({ preselections: initialPreselections }
       try {
         const res = await fetch('/api/convidados/tags');
         const data = await res.json();
-        const saved = typeof window !== 'undefined'
-          ? (localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por'))
-          : null;
-        const merged = Array.from(new Set([...(Array.isArray(data) ? data : []), ...(saved ? [saved] : [])]));
-        setTags(merged as string[]);
+        setTags(Array.isArray(data) ? data : []);
+        const saved = typeof window !== 'undefined' ? localStorage.getItem('elga_convidado_por') : null;
         if (saved) setPromoteForm({ convidado_por: saved });
       } catch (e) {
         console.error(e);
@@ -166,8 +163,9 @@ export default function PreselectionPage({ preselections: initialPreselections }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "convidado": return "success";
-      case "pendente": return "warning";
+      case "Pré Seleção": return "error"; // vermelho claro
+      case "Convidado": return "warning"; // amarelo
+      case "Confirmado": return "success"; // verde
       default: return "default";
     }
   };
@@ -181,8 +179,8 @@ export default function PreselectionPage({ preselections: initialPreselections }
   );
 
   const totalPreselections = preselections.length;
-  const pendenteCount = preselections.filter(p => p.status === "pendente").length;
-  const convidadoCount = preselections.filter(p => p.status === "convidado").length;
+  const pendenteCount = preselections.filter(p => p.status === "Pré Seleção").length;
+  const convidadoCount = preselections.filter(p => p.status === "Convidado").length;
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -297,11 +295,11 @@ export default function PreselectionPage({ preselections: initialPreselections }
                     </Grid>
                     <Grid item xs={12} sm={3}>
                       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                        <Tooltip title={preselection.status === "convidado" ? "Já promovido" : "Promover para Convidados"}>
+             <Tooltip title={preselection.status === "Convidado" ? "Já promovido" : "Promover para Convidados"}>
                           <IconButton
                             aria-label="promote"
                             size="small"
-                            disabled={preselection.status === "convidado"}
+                  disabled={preselection.status === "Convidado"}
                             onClick={(event) => {
                               event.stopPropagation();
                               handlePromoteClick(preselection);

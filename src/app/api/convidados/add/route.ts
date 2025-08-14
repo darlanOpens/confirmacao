@@ -43,6 +43,7 @@ export async function POST(request: Request) {
       cargo,
       convidado_por,
       convite_url: buildInviteUrl(email, convidado_por),
+      status: 'Convidado',
       ...maybe("nome_preferido", nome_preferido),
       ...maybe("linkedin_url", linkedin_url),
       ...maybe("tamanho_empresa", tamanho_empresa),

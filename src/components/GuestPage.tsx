@@ -49,6 +49,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ConfirmGuestForm from "./ConfirmGuestForm";
 
 // UI type: torna novos campos opcionais (podem vir nulos ou ausentes)
 type GuestUI = Omit<
@@ -111,6 +112,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<GuestUI | null>(null);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" } | null>(null);
   const [trackingModalOpen, setTrackingModalOpen] = useState(false);
@@ -125,11 +127,8 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
       try {
         const res = await fetch('/api/convidados/tags');
         const data = await res.json();
-        const saved = typeof window !== 'undefined'
-          ? (localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por'))
-          : null;
-        const merged = Array.from(new Set([...(Array.isArray(data) ? data : []), ...(saved ? [saved] : [])]));
-        setTags(merged as string[]);
+        setTags(Array.isArray(data) ? data : []);
+        const saved = typeof window !== 'undefined' ? localStorage.getItem('elga_convidado_por') : null;
         if (saved) setTrackingConvidadoPor(saved);
       } catch (e) {
         console.error(e);
@@ -168,6 +167,15 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   };
   const handleCloseEditModal = () => {
     setEditModalOpen(false);
+    setSelectedGuest(null);
+  };
+
+  const handleOpenConfirmModal = (guest: GuestUI) => {
+    setSelectedGuest(guest);
+    setConfirmModalOpen(true);
+  };
+  const handleCloseConfirmModal = () => {
+    setConfirmModalOpen(false);
     setSelectedGuest(null);
   };
 
@@ -253,7 +261,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   };
 
   const totalGuests = guests.length;
-  const confirmedGuests = guests.filter(g => g.status === 'confirmado').length;
+  const confirmedGuests = guests.filter(g => String(g.status || '').toLowerCase() === 'confirmado').length;
   
   // Lógica de filtro (a ser aplicada depois)
   const filteredGuests = guests.filter(guest => 
@@ -516,6 +524,38 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
 
           {selectedGuest && (
             <Modal 
+              open={confirmModalOpen} 
+              onClose={handleCloseConfirmModal}
+              sx={{
+                '& .MuiBackdrop-root': {
+                  backdropFilter: 'blur(5px)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                }
+              }}
+            >
+              <Box sx={style}>
+                <IconButton
+                  aria-label="close"
+                  onClick={handleCloseConfirmModal}
+                  sx={{
+                    position: 'absolute',
+                    right: 8,
+                    top: 8,
+                    color: (theme) => theme.palette.grey[500],
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+                <Typography variant="h6" component="h2">
+                  Confirmar Convidado
+                </Typography>
+                <ConfirmGuestForm guest={selectedGuest} onClose={handleCloseConfirmModal} showSnackbar={showSnackbar} />
+              </Box>
+            </Modal>
+          )}
+
+          {selectedGuest && (
+            <Modal 
               open={editModalOpen} 
               onClose={handleCloseEditModal}
               sx={{
@@ -630,7 +670,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
                       <Grid item xs={12} sm={2}>
                         <Chip
                           label={guest.status}
-                          color={guest.status === "confirmado" ? "success" : "warning"}
+                          color={String(guest.status || '').toLowerCase() === "confirmado" ? "success" : "warning"}
                           size="small"
                         />
                       </Grid>
@@ -647,6 +687,18 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
+                    {String(guest.status || '').toLowerCase() !== 'confirmado' && (
+                      <IconButton
+                        aria-label="confirm"
+                        size="small"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleOpenConfirmModal(guest);
+                        }}
+                      >
+                        <CheckCircleOutlineIcon fontSize="small" />
+                      </IconButton>
+                    )}
                     <IconButton
                       aria-label="delete"
                       size="small"

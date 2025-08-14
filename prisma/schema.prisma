@@ -15,7 +15,7 @@ model Guest {
   empresa          String
   cargo            String
   convidado_por    String
-  status           String    @default("pendente")
+  status           String    @default("Convidado")
   data_cadastro    DateTime  @default(now())
   data_confirmacao DateTime?
   convite_url      String    @default("")
@@ -39,7 +39,7 @@ model preselection {
   telefone         String
   empresa          String
   cargo            String
-  status           String    @default("pendente") // pendente, convidado
+  status           String    @default("Pré Seleção") // Pré Seleção, Convidado
   data_cadastro    DateTime  @default(now())
 
   @@map("preselection")

@@ -55,12 +55,7 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
       try {
         const response = await fetch('/api/convidados/tags');
         const data = await response.json();
-        // Inclui possível preferido salvo em localStorage (com fallback da chave legada)
-        const saved = typeof window !== 'undefined'
-          ? (localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por'))
-          : null;
-        const merged = Array.from(new Set([...(Array.isArray(data) ? data : []), ...(saved ? [saved] : [])]));
-        setTags(merged as string[]);
+        setTags(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Failed to fetch tags', error);
       }
@@ -68,9 +63,9 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
 
     fetchTags();
 
-    // Prefill do campo a partir do localStorage (com fallback da chave legada)
+    // Prefill do campo a partir do localStorage
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('elga_convidado_por') ?? localStorage.getItem('convidado_por');
+      const saved = localStorage.getItem('elga_convidado_por');
       if (saved) {
         setFormData((prev) => ({ ...prev, convidado_por: saved }));
       }

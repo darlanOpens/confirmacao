@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       telefone,
       empresa,
       cargo,
-      status: "pendente",
+      status: "Pré Seleção",
     } as const;
 
     const newPreselection = await prisma.preselection.create({ data });

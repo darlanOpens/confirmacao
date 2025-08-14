@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     }
 
   const updatedGuest =
-    guest.status === "pendente"
+    guest.status !== "confirmado"
       ? await prisma.guest.update({
           where: { email },
           data: { status: "confirmado", data_confirmacao: new Date() },
