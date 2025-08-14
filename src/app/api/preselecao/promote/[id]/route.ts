@@ -77,7 +77,7 @@ export async function POST(
     sendGuestAddedWebhook(result.newGuest).catch(error => {
       console.error('❌ Erro ao enviar webhook:', error);
     });
-    sendPreselectionPromotedWebhook({ preselection: result.updatedPreselection as any, guest: result.newGuest as any }).catch(error => {
+    sendPreselectionPromotedWebhook({ preselection: result.updatedPreselection, guest: result.newGuest }).catch(error => {
       console.error('❌ Erro ao enviar webhook de promoção:', error);
     });
 

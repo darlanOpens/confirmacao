@@ -1,6 +1,7 @@
 interface WebhookPayload {
   event: string;
   timestamp: string;
+  nome_evento?: string | undefined;
   body: {
     id: number;
     nome: string;
@@ -53,6 +54,7 @@ export async function sendGuestAddedWebhook(guestData: GuestData): Promise<void>
   const payload: WebhookPayload = {
     event: 'guest_added',
     timestamp: new Date().toISOString(),
+    nome_evento: process.env.NOME_EVENTO,
     body: {
       id: guestData.id,
       nome: guestData.nome,
@@ -127,6 +129,7 @@ export async function sendPreselectionPromotedWebhook(params: { preselection: Pr
   const payload = {
     event: 'preselection_promoted',
     timestamp: new Date().toISOString(),
+    nome_evento: process.env.NOME_EVENTO,
     body: {
       preselection: {
         id: preselection.id,
