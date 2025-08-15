@@ -25,16 +25,17 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 Para fazer deploy usando Docker Compose:
 
 1. Configure as variáveis de ambiente (copie `.env.example` para `.env`)
-2. Se necessário, defina uma porta diferente para o banco de dados:
+2. Se necessário, defina portas diferentes para evitar conflitos:
    ```bash
-   export DB_PORT=5433  # ou qualquer porta disponível
+   export APP_PORT=3002  # porta da aplicação (padrão: 3001)
+   export DB_PORT=5433   # porta do banco (padrão: 5432)
    ```
 3. Execute o deploy:
    ```bash
    docker compose up --build -d
    ```
 
-**Nota**: Se você receber erro de porta já alocada (port 5432 already allocated), defina a variável `DB_PORT` com uma porta diferente antes do deploy.
+**Nota**: Se você receber erro de porta já alocada, defina as variáveis `APP_PORT` e/ou `DB_PORT` com portas diferentes antes do deploy.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
