@@ -13,9 +13,9 @@ export async function POST(request: Request) {
     } = body;
 
     // Validação dos campos obrigatórios
-    if (!nome || !email || !telefone || !empresa || !cargo) {
+    if (!nome || !telefone || !empresa || !cargo) {
       return NextResponse.json(
-        { success: false, error: "Nome, email, telefone, empresa e cargo são obrigatórios." },
+        { success: false, error: "Nome, telefone, empresa e cargo são obrigatórios." },
         { status: 400 }
       );
     }
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       error.code === "P2002"
     ) {
       return NextResponse.json(
-        { success: false, error: "Este e-mail já está cadastrado na pré-seleção." },
+        { success: false, error: "Este telefone já está cadastrado na pré-seleção." },
         { status: 409 }
       );
     }

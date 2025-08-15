@@ -100,7 +100,7 @@ export async function POST(
       error.code === "P2002"
     ) {
       return NextResponse.json(
-        { success: false, error: "Este e-mail já está cadastrado como convidado." },
+        { success: false, error: "Este telefone já está cadastrado como convidado." },
         { status: 409 }
       );
     }

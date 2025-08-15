@@ -1,6 +1,10 @@
+# Elga Guests - Sistema de Gerenciamento de Convidados
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
+
+### Desenvolvimento Local
 
 First, run the development server:
 
@@ -15,6 +19,22 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+### Deploy com Docker
+
+Para fazer deploy usando Docker Compose:
+
+1. Configure as variáveis de ambiente (copie `.env.example` para `.env`)
+2. Se necessário, defina uma porta diferente para o banco de dados:
+   ```bash
+   export DB_PORT=5433  # ou qualquer porta disponível
+   ```
+3. Execute o deploy:
+   ```bash
+   docker compose up --build -d
+   ```
+
+**Nota**: Se você receber erro de porta já alocada (port 5432 already allocated), defina a variável `DB_PORT` com uma porta diferente antes do deploy.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
