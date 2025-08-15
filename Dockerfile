@@ -13,8 +13,8 @@ COPY public ./public
 COPY src ./src
 COPY prisma ./prisma
 
-# Define uma DATABASE_URL padrão para o build (será sobrescrita no runtime)
-ENV DATABASE_URL="postgresql://elga_user:elga_pass@db:5432/elga_db"
+# Define uma DATABASE_URL fictícia para o build (evita erros de conexão)
+ENV DATABASE_URL="postgresql://build_user:build_pass@localhost:5432/build_db"
 
 # Aceita variáveis de ambiente para o build (importante para NEXT_PUBLIC_*)
 ARG NEXT_PUBLIC_INVITE_BASE_URL
@@ -30,7 +30,10 @@ ENV WEBHOOK_URL=$WEBHOOK_URL
 ENV WEBHOOK_PRESELECTION_PROMOTED_URL=$WEBHOOK_PRESELECTION_PROMOTED_URL
 ENV NOME_EVENTO=$NOME_EVENTO
 
+# Gera o cliente Prisma
 RUN npx prisma generate
+
+# Build da aplicação (sem tentar conectar ao banco)
 RUN npm run build
 
 # Etapa 2: imagem final de produção

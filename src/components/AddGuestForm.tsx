@@ -94,8 +94,31 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
     }
   }, []);
 
+  const formatPhoneNumber = (value: string) => {
+    // Remove todos os caracteres não numéricos
+    const numbers = value.replace(/\D/g, '');
+    
+    // Aplica a máscara (xx) x-xxxx-xxxx
+    if (numbers.length <= 2) {
+      return numbers;
+    } else if (numbers.length <= 3) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    } else if (numbers.length <= 7) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}-${numbers.slice(3)}`;
+    } else {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    if (name === 'telefone') {
+      const formattedPhone = formatPhoneNumber(value);
+      setFormData({ ...formData, [name]: formattedPhone });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleConvidadoPorChange = (event: React.SyntheticEvent, newValue: string | null) => {

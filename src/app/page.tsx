@@ -1,4 +1,8 @@
 import TabbedDashboard from "@/components/TabbedDashboard";
+import { dynamic, revalidate, apiConfig, fallbackData } from "./globals";
+
+// Exporta configurações para evitar problemas de build
+export { dynamic, revalidate };
 
 async function getGuests() {
   try {
@@ -9,13 +13,11 @@ async function getGuests() {
     console.log("🌐 API URL:", apiUrl);
     
     const response = await fetch(apiUrl, {
-      cache: 'no-store',
+      ...apiConfig,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, s-maxage=0',
-        'Pragma': 'no-cache',
+        ...apiConfig.headers,
       },
-      next: { revalidate: 0 },
     });
     
     if (!response.ok) {
@@ -52,7 +54,7 @@ async function getGuests() {
       
     } catch (fallbackError) {
       console.error("❌ Fallback also failed:", fallbackError);
-      return [];
+      return fallbackData.guests;
     }
   }
 }
@@ -65,13 +67,11 @@ async function getPreselections() {
     console.log("🌐 Preselection API URL:", apiUrl);
     
     const response = await fetch(apiUrl, {
-      cache: 'no-store',
+      ...apiConfig,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, s-maxage=0',
-        'Pragma': 'no-cache',
+        ...apiConfig.headers,
       },
-      next: { revalidate: 0 },
     });
     
     if (!response.ok) {
@@ -108,7 +108,7 @@ async function getPreselections() {
       
     } catch (fallbackError) {
       console.error("❌ Preselection fallback also failed:", fallbackError);
-      return [];
+      return fallbackData.preselections;
     }
   }
 }
