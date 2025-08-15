@@ -33,7 +33,7 @@ export async function PUT(
       empresa,
       cargo,
       convidado_por,
-      convite_url: buildInviteUrl(telefone || email, convidado_por),
+      convite_url: buildInviteUrl(telefone || email || '', convidado_por),
       ...maybe("nome_preferido", nome_preferido),
       ...maybe("linkedin_url", linkedin_url),
       ...maybe("tamanho_empresa", tamanho_empresa),

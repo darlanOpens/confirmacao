@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       empresa,
       cargo,
       convidado_por,
-      convite_url: buildInviteUrl(telefone || email, convidado_por),
+      convite_url: buildInviteUrl(telefone || email || '', convidado_por),
       status: confirm_directly ? 'confirmado' : 'Convidado',
       ...maybe("data_confirmacao", confirm_directly ? new Date() : undefined),
       ...maybe("nome_preferido", nome_preferido),

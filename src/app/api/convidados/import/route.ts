@@ -38,7 +38,7 @@ export async function POST(request: Request) {
         const createdGuest = await prisma.guest.create({
           data: {
             ...convidado,
-            convite_url: buildInviteUrl((convidado as GuestData).telefone || (convidado as GuestData).email, (convidado as GuestData).convidado_por),
+            convite_url: buildInviteUrl((convidado as GuestData).telefone || (convidado as GuestData).email || '', (convidado as GuestData).convidado_por),
           },
         });
         importResults.successCount++;

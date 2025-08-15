@@ -7,14 +7,14 @@ export function buildInviteUrl(emailOrPhone: string, convidadoPor?: string, cust
 
   try {
     const url = new URL(baseUrl);
-    url.searchParams.set('emailconf', emailOrPhone);
+    url.searchParams.set('telconf', emailOrPhone);
     if (convidadoPor && String(convidadoPor).trim() !== '') {
       url.searchParams.set('utm_source', String(convidadoPor));
     }
     return url.toString();
   } catch {
     // Fallback simples caso a baseUrl não seja uma URL válida
-    return `${baseUrl}?emailconf=${encodeURIComponent(emailOrPhone)}${convidadoPor && String(convidadoPor).trim() !== '' ? `&utm_source=${encodeURIComponent(String(convidadoPor))}` : ''}`;
+    return `${baseUrl}?telconf=${encodeURIComponent(emailOrPhone)}${convidadoPor && String(convidadoPor).trim() !== '' ? `&utm_source=${encodeURIComponent(String(convidadoPor))}` : ''}`;
   }
 }
 
