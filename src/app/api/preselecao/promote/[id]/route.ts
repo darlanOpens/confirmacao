@@ -33,14 +33,14 @@ export async function POST(
       );
     }
 
-    // Verificar se o email já existe na tabela guest
+    // Verificar se o telefone já existe na tabela guest
     const existingGuest = await prisma.guest.findUnique({
-      where: { email: preselection.email },
+      where: { telefone: preselection.telefone },
     });
 
     if (existingGuest) {
       return NextResponse.json(
-        { success: false, error: "Este e-mail já está cadastrado como convidado." },
+        { success: false, error: "Este telefone já está cadastrado como convidado." },
         { status: 409 }
       );
     }
@@ -54,7 +54,7 @@ export async function POST(
       cargo: preselection.cargo,
       convidado_por,
       status: "Convidado", // Novo padrão
-      convite_url: buildInviteUrl(preselection.email, convidado_por),
+      convite_url: buildInviteUrl(preselection.telefone, convidado_por),
     };
 
     // Usar transação para garantir consistência

@@ -173,7 +173,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
   // Filtro de pesquisa
   const filteredPreselections = preselections.filter(preselection =>
     preselection.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    preselection.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (preselection.email && preselection.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
     preselection.empresa.toLowerCase().includes(searchQuery.toLowerCase()) ||
     preselection.cargo.toLowerCase().includes(searchQuery.toLowerCase())
   );

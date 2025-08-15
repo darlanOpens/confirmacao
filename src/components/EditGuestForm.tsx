@@ -12,7 +12,7 @@ import { tokens } from '@/theme/designSystem';
 type GuestEditType = {
   id: number;
   nome: string;
-  email: string;
+  email: string | null;
   telefone: string;
   empresa: string;
   cargo: string;
@@ -50,7 +50,7 @@ export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGues
     if (guest) {
       setFormData({
         nome: guest.nome,
-        email: guest.email,
+        email: guest.email || "",
         telefone: guest.telefone,
         empresa: guest.empresa,
         cargo: guest.cargo,
@@ -101,7 +101,7 @@ export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGues
     >
       <Stack spacing={2}>
         <TextField name="nome" label="Nome Completo" value={formData.nome} onChange={handleChange} fullWidth required />
-        <TextField name="email" label="Email" type="email" value={formData.email} onChange={handleChange} fullWidth required />
+        <TextField name="email" label="Email" type="email" value={formData.email} onChange={handleChange} fullWidth />
         <TextField name="telefone" label="Telefone" value={formData.telefone} onChange={handleChange} fullWidth required />
         <TextField name="empresa" label="Empresa" value={formData.empresa} onChange={handleChange} fullWidth required />
         <TextField name="cargo" label="Cargo" value={formData.cargo} onChange={handleChange} fullWidth required />
@@ -118,4 +118,4 @@ export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGues
       </Stack>
     </Box>
   );
-} 
+}

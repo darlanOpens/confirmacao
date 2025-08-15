@@ -73,7 +73,6 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
           variant="subtitle2" 
           gutterBottom
           sx={{ 
-            color: '#FFFFFF',
             fontWeight: 600,
             mb: 1
           }}
@@ -83,7 +82,6 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
         <Typography 
           variant="body2" 
           sx={{ 
-            color: 'rgba(255,255,255,0.80)',
             mb: 2
           }}
         >
@@ -100,7 +98,6 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
                  primary="nome" 
                  sx={{ 
                    '& .MuiTypography-root': { 
-                     color: '#FFFFFF',
                      fontFamily: 'monospace',
                      fontSize: '0.9rem'
                    }
@@ -112,7 +109,6 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
                  primary="email" 
                  sx={{ 
                    '& .MuiTypography-root': { 
-                     color: '#FFFFFF',
                      fontFamily: 'monospace',
                      fontSize: '0.9rem'
                    }
@@ -124,7 +120,6 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
                  primary="telefone" 
                  sx={{ 
                    '& .MuiTypography-root': { 
-                     color: '#FFFFFF',
                      fontFamily: 'monospace',
                      fontSize: '0.9rem'
                    }
@@ -136,7 +131,6 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
                  primary="empresa" 
                  sx={{ 
                    '& .MuiTypography-root': { 
-                     color: '#FFFFFF',
                      fontFamily: 'monospace',
                      fontSize: '0.9rem'
                    }
@@ -148,7 +142,6 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
                  primary="cargo" 
                  sx={{ 
                    '& .MuiTypography-root': { 
-                     color: '#FFFFFF',
                      fontFamily: 'monospace',
                      fontSize: '0.9rem'
                    }
@@ -160,7 +153,6 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
                  primary="convidado_por" 
                  sx={{ 
                    '& .MuiTypography-root': { 
-                     color: '#FFFFFF',
                      fontFamily: 'monospace',
                      fontSize: '0.9rem'
                    }
@@ -172,4 +164,4 @@ export default function CsvImport({ showSnackbar }: CsvImportProps) {
       </Box>
     </Box>
   );
-} 
+}

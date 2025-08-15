@@ -53,4 +53,4 @@ fi
 
 # Start the application
 echo "🚀 Starting Next.js application..."
-exec npm start 
+exec npm start

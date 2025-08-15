@@ -38,7 +38,7 @@ export async function POST(request: Request) {
         const createdGuest = await prisma.guest.create({
           data: {
             ...convidado,
-            convite_url: buildInviteUrl((convidado as GuestData).email, (convidado as GuestData).convidado_por),
+            convite_url: buildInviteUrl((convidado as GuestData).email || (convidado as GuestData).telefone, (convidado as GuestData).convidado_por),
           },
         });
         importResults.successCount++;
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
         let errorMessage = "Ocorreu um erro desconhecido.";
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           if (error.code === 'P2002') {
-            errorMessage = `Convidado com email '${(convidado as GuestData).email}' já existe.`;
+            errorMessage = `Convidado com telefone '${(convidado as GuestData).telefone}' já existe.`;
           }
         } else if (error instanceof Error) {
           errorMessage = error.message;

@@ -25,9 +25,9 @@ export async function POST(request: Request) {
       modelo_negocio,
     } = body;
 
-    if (!nome || !email || !telefone || !empresa || !cargo || !convidado_por) {
+    if (!nome || !telefone || !empresa || !cargo || !convidado_por) {
       return NextResponse.json(
-        { success: false, error: "Todos os campos são obrigatórios." },
+        { success: false, error: "Nome, telefone, empresa, cargo e convidado por são obrigatórios." },
         { status: 400 }
       );
     }
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       empresa,
       cargo,
       convidado_por,
-      convite_url: buildInviteUrl(email, convidado_por),
+      convite_url: buildInviteUrl(email || telefone, convidado_por),
       status: confirm_directly ? 'confirmado' : 'Convidado',
       ...maybe("data_confirmacao", confirm_directly ? new Date() : undefined),
       ...maybe("nome_preferido", nome_preferido),
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
       error.code === "P2002"
     ) {
       return NextResponse.json(
-        { success: false, error: "Este e-mail já está cadastrado." },
+        { success: false, error: "Este telefone já está cadastrado." },
         { status: 409 }
       );
     }
@@ -84,4 +84,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-} 
+}

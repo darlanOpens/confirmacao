@@ -241,7 +241,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   };
 
   const handleCopyInviteUrl = async (guest: GuestUI) => {
-    const base = guest.convite_url || buildInviteUrl(guest.email, guest.convidado_por, config?.INVITE_BASE_URL);
+    const base = guest.convite_url || buildInviteUrl(guest.telefone, guest.convidado_por, config?.INVITE_BASE_URL);
     const url = new URL(base);
     if (guest.convidado_por && String(guest.convidado_por).trim() !== '') {
       url.searchParams.set('utm_source', String(guest.convidado_por));
@@ -266,7 +266,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   // Lógica de filtro (a ser aplicada depois)
   const filteredGuests = guests.filter(guest => 
     guest.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    guest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (guest.email && guest.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
     guest.empresa.toLowerCase().includes(searchQuery.toLowerCase())
   );
 

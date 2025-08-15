@@ -171,7 +171,7 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
       <Stack spacing={2}>
         <TextField name="nome" label="Nome Completo" value={formData.nome} onChange={handleChange} fullWidth required />
-        <TextField name="email" label="Email" type="email" value={formData.email} onChange={handleChange} fullWidth required />
+        <TextField name="email" label="Email" type="email" value={formData.email} onChange={handleChange} fullWidth />
         <TextField name="telefone" label="Telefone" value={formData.telefone} onChange={handleChange} fullWidth required />
         <TextField name="empresa" label="Empresa" value={formData.empresa} onChange={handleChange} fullWidth required />
         <TextField name="cargo" label="Cargo" value={formData.cargo} onChange={handleChange} fullWidth required />
@@ -313,4 +313,4 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
       </Stack>
     </Box>
   );
-} 
+}

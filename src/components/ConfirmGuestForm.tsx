@@ -19,7 +19,7 @@ import {
 type GuestForConfirm = {
   id: number;
   nome: string;
-  email: string;
+  email: string | null;
   telefone: string;
   empresa: string;
   cargo: string;
@@ -53,12 +53,12 @@ export default function ConfirmGuestForm({ guest, onClose, showSnackbar }: Confi
 
     try {
       // 1) Atualiza campos opcionais no cadastro do convidado (mantendo os demais dados)
-      const updateRes = await fetch(`/api/convidados/email/${encodeURIComponent(guest.email)}`, {
+      const updateRes = await fetch(`/api/convidados/telefone/${encodeURIComponent(guest.telefone)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nome: guest.nome,
-          telefone: guest.telefone,
+          email: guest.email,
           empresa: guest.empresa,
           cargo: guest.cargo,
           convidado_por: guest.convidado_por,
@@ -76,7 +76,7 @@ export default function ConfirmGuestForm({ guest, onClose, showSnackbar }: Confi
       const confirmRes = await fetch("/api/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: guest.email }),
+        body: JSON.stringify({ telefone: guest.telefone }),
       });
 
       const confirmData = await confirmRes.json();

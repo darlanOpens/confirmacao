@@ -18,7 +18,7 @@ export function useConfig() {
         } else {
           setConfig({ INVITE_BASE_URL: 'https://go.opens.com.br/brunch-vip' });
         }
-      } catch (error) {
+      } catch {
         setConfig({ INVITE_BASE_URL: 'https://go.opens.com.br/brunch-vip' });
       } finally {
         setLoading(false);

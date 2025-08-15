@@ -14,17 +14,17 @@ export async function OPTIONS() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email } = body;
+    const { telefone } = body;
 
-    if (!email) {
+    if (!telefone) {
       return NextResponse.json(
-        { success: false, error: "O e-mail é obrigatório." },
+        { success: false, error: "O telefone é obrigatório." },
         { status: 400, headers: corsHeaders }
       );
     }
 
     const guest = await prisma.guest.findUnique({
-      where: { email },
+      where: { telefone },
     });
 
     if (!guest) {
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   const updatedGuest =
     guest.status !== "confirmado"
       ? await prisma.guest.update({
-          where: { email },
+          where: { telefone },
           data: { status: "confirmado", data_confirmacao: new Date() },
         })
       : guest;
@@ -52,4 +52,4 @@ export async function POST(request: Request) {
       { status: 500, headers: corsHeaders }
     );
   }
-} 
+}

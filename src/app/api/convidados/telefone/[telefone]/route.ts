@@ -2,20 +2,20 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
 
-// Editar um convidado pelo e-mail
+// Editar um convidado pelo telefone
 export async function PUT(
   request: Request,
-  context: { params: Promise<{ email: string }> }
+  context: { params: Promise<{ telefone: string }> }
 ) {
   try {
     const params = await context.params;
-    const rawEmail = params.email;
-    const email = decodeURIComponent(rawEmail);
+    const rawTelefone = params.telefone;
+    const telefone = decodeURIComponent(rawTelefone);
 
     const body = await request.json();
     const {
       nome,
-      telefone,
+      email,
       empresa,
       cargo,
       convidado_por,
@@ -33,11 +33,11 @@ export async function PUT(
 
     const data = {
       nome,
-      telefone,
+      email,
       empresa,
       cargo,
       convidado_por,
-      convite_url: buildInviteUrl(email, convidado_por),
+      convite_url: buildInviteUrl(email || telefone, convidado_por),
       ...maybe("nome_preferido", nome_preferido),
       ...maybe("linkedin_url", linkedin_url),
       ...maybe("tamanho_empresa", tamanho_empresa),
@@ -48,7 +48,7 @@ export async function PUT(
     } as const;
 
     const updatedGuest = await prisma.guest.update({
-      where: { email },
+      where: { telefone },
       data,
     });
 

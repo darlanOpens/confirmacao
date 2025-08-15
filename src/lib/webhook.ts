@@ -5,7 +5,7 @@ interface WebhookPayload {
   body: {
     id: number;
     nome: string;
-    email: string;
+    email: string | null;
     telefone: string;
     empresa: string;
     cargo: string;
@@ -25,7 +25,7 @@ interface WebhookPayload {
 interface GuestData {
   id: number;
   nome: string;
-  email: string;
+  email: string | null;
   telefone: string;
   empresa: string;
   cargo: string;
@@ -109,7 +109,7 @@ export async function sendGuestAddedWebhook(guestData: GuestData): Promise<void>
 interface PreselectionData {
   id: number;
   nome: string;
-  email: string;
+  email: string | null;
   telefone: string;
   empresa: string;
   cargo: string;

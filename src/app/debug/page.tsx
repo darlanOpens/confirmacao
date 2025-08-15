@@ -79,7 +79,7 @@ async function debugInfo() {
     info.latestGuest = sampleGuest ? {
       id: sampleGuest.id,
       nome: sampleGuest.nome,
-      email: sampleGuest.email,
+      email: sampleGuest.email || 'N/A',
       data_cadastro: sampleGuest.data_cadastro
     } : 'No guests found';
     
@@ -141,4 +141,4 @@ export default async function DebugPage() {
       </div>
     </div>
   );
-} 
+}
