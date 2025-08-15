@@ -11,6 +11,7 @@ export async function POST(request: Request) {
       telefone,
       empresa,
       cargo,
+      convidado_por,
     } = body;
 
     // Validação dos campos obrigatórios
@@ -30,7 +31,8 @@ export async function POST(request: Request) {
       telefone: cleanTelefone,
       empresa,
       cargo,
-      convidado_por,status: "Pré Seleção",
+      ...(convidado_por && { convidado_por }),
+      status: "Pré Seleção",
     } as const;
 
     const newPreselection = await prisma.preselection.create({ data });
