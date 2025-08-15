@@ -149,7 +149,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   const handleGuestAdded = (newGuest: GuestLike) => {
     const guestWithUrl: GuestUI = {
       ...newGuest,
-      convite_url: newGuest.convite_url || buildInviteUrl(newGuest.email, newGuest.convidado_por, config?.INVITE_BASE_URL),
+      convite_url: newGuest.convite_url || buildInviteUrl(newGuest.telefone || newGuest.email, newGuest.convidado_por, config?.INVITE_BASE_URL),
     };
     setGuests(prevGuests => [guestWithUrl, ...prevGuests]);
     setAddModalOpen(false);
@@ -241,7 +241,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   };
 
   const handleCopyInviteUrl = async (guest: GuestUI) => {
-    const base = guest.convite_url || buildInviteUrl(guest.telefone, guest.convidado_por, config?.INVITE_BASE_URL);
+    const base = guest.convite_url || buildInviteUrl(guest.telefone || guest.email, guest.convidado_por, config?.INVITE_BASE_URL);
     const url = new URL(base);
     if (guest.convidado_por && String(guest.convidado_por).trim() !== '') {
       url.searchParams.set('utm_source', String(guest.convidado_por));

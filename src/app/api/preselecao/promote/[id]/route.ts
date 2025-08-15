@@ -54,7 +54,7 @@ export async function POST(
       cargo: preselection.cargo,
       convidado_por,
       status: "Convidado", // Novo padrão
-      convite_url: buildInviteUrl(preselection.telefone, convidado_por),
+      convite_url: buildInviteUrl(preselection.telefone || preselection.email, convidado_por),
     };
 
     // Usar transação para garantir consistência
