@@ -15,6 +15,7 @@ import {
   REVENUE_BAND_OPTIONS,
   BUSINESS_MODEL_OPTIONS,
 } from "@/lib/guestOptions";
+import { removePhoneMask } from "@/lib/phoneUtils";
 
 type GuestForConfirm = {
   id: number;
@@ -53,7 +54,8 @@ export default function ConfirmGuestForm({ guest, onClose, showSnackbar }: Confi
 
     try {
       // 1) Atualiza campos opcionais no cadastro do convidado (mantendo os demais dados)
-      const updateRes = await fetch(`/api/convidados/telefone/${encodeURIComponent(guest.telefone)}`, {
+      const cleanTelefone = removePhoneMask(guest.telefone);
+      const updateRes = await fetch(`/api/convidados/telefone/${encodeURIComponent(cleanTelefone)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -76,7 +78,7 @@ export default function ConfirmGuestForm({ guest, onClose, showSnackbar }: Confi
       const confirmRes = await fetch("/api/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ telefone: guest.telefone }),
+        body: JSON.stringify({ telefone: cleanTelefone }),
       });
 
       const confirmData = await confirmRes.json();

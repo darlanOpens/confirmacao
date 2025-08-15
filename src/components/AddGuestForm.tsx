@@ -23,6 +23,7 @@ import {
   REVENUE_BAND_OPTIONS,
   BUSINESS_MODEL_OPTIONS,
 } from "@/lib/guestOptions";
+import { removePhoneMask } from "@/lib/phoneUtils";
 
 interface Guest {
   id: number;
@@ -134,13 +135,17 @@ export default function AddGuestForm({ showSnackbar, onGuestAdded }: AddGuestFor
     console.log("Formulário sendo enviado...", formData);
     
     try {
+      // Remove a máscara do telefone antes de enviar
+      const dataToSend = {
+        ...formData,
+        telefone: removePhoneMask(formData.telefone),
+        confirm_directly: confirmDirectly,
+      };
+      
       const response = await fetch("/api/convidados/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          confirm_directly: confirmDirectly,
-        }),
+        body: JSON.stringify(dataToSend),
       });
 
       console.log("Resposta da API:", response.status);

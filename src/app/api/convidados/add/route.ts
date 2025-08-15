@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
 import { sendGuestAddedWebhook } from "@/lib/webhook";
+import { removePhoneMask } from "@/lib/phoneUtils";
 
 console.log('📦 API de adição de convidado carregada, webhook importado:', typeof sendGuestAddedWebhook);
 
@@ -36,14 +37,17 @@ export async function POST(request: Request) {
     const maybe = (key: string, value: unknown) =>
       typeof value !== "undefined" && value !== null ? { [key]: value } : {};
 
+    // Remove a máscara do telefone antes de salvar
+    const cleanTelefone = removePhoneMask(telefone);
+
     const data = {
       nome,
       email,
-      telefone,
+      telefone: cleanTelefone,
       empresa,
       cargo,
       convidado_por,
-      convite_url: buildInviteUrl(telefone || email || '', convidado_por),
+      convite_url: buildInviteUrl(cleanTelefone || email || '', convidado_por),
       status: confirm_directly ? 'confirmado' : 'Convidado',
       ...maybe("data_confirmacao", confirm_directly ? new Date() : undefined),
       ...maybe("nome_preferido", nome_preferido),

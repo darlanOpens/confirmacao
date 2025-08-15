@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
 import { sendGuestAddedWebhook, sendPreselectionPromotedWebhook } from "@/lib/webhook";
+import { removePhoneMask } from "@/lib/phoneUtils";
 
 // Promover uma pré-seleção para Guest convidado
 export async function POST(
@@ -33,9 +34,12 @@ export async function POST(
       );
     }
 
+    // Remove a máscara do telefone da pré-seleção
+    const cleanTelefone = removePhoneMask(preselection.telefone);
+    
     // Verificar se o telefone já existe na tabela guest
     const existingGuest = await prisma.guest.findUnique({
-      where: { telefone: preselection.telefone },
+      where: { telefone: cleanTelefone },
     });
 
     if (existingGuest) {
@@ -49,12 +53,12 @@ export async function POST(
     const guestData = {
       nome: preselection.nome,
       email: preselection.email,
-      telefone: preselection.telefone,
+      telefone: cleanTelefone,
       empresa: preselection.empresa,
       cargo: preselection.cargo,
       convidado_por,
       status: "Convidado", // Novo padrão
-      convite_url: buildInviteUrl(preselection.telefone || preselection.email || '', convidado_por),
+      convite_url: buildInviteUrl(cleanTelefone || preselection.email || '', convidado_por),
     };
 
     // Usar transação para garantir consistência

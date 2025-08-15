@@ -1,4 +1,37 @@
-# Guia de Deploy - ELGA Guests
+# ELGA Guests - Guia de Deploy
+
+Este guia contém instruções e soluções para deploy da aplicação ELGA Guests, com foco no **Easypanel**.
+
+## Deploy no Easypanel
+
+### Pré-requisitos
+1. Conta no Easypanel
+2. Banco de dados PostgreSQL configurado
+3. Repositório Git com o código
+
+### Passos para Deploy
+
+1. **Criar Nova Aplicação:**
+   - No painel do Easypanel, clique em "Create App"
+   - Escolha "From Git Repository"
+   - Conecte seu repositório GitHub/GitLab
+
+2. **Configurar Build:**
+   - Build Command: `npm run build`
+   - Start Command: `npm start`
+   - Node Version: 18 ou superior
+
+3. **Configurar Variáveis de Ambiente:**
+   - Vá em "Environment Variables"
+   - Adicione as variáveis listadas no arquivo `.env.example`
+   - **Essenciais:**
+     - `DATABASE_URL`: URL do seu banco PostgreSQL
+     - `NEXT_PUBLIC_INVITE_BASE_URL`: URL do seu app no Easypanel
+     - `NOME_EVENTO`: Nome do seu evento
+
+4. **Deploy:**
+   - Clique em "Deploy"
+   - O Easypanel executará automaticamente as migrações do Prisma
 
 ## Problemas Comuns e Soluções
 
@@ -37,48 +70,129 @@ RUN npx prisma generate
 ENV DATABASE_URL="postgresql://build_user:build_pass@localhost:5432/build_db"
 ```
 
-## Variáveis de Ambiente Necessárias
+## Configuração de Variáveis no Easypanel
 
-Copie o arquivo `.env.example` para `.env` e configure:
+### Variáveis Essenciais:
+```
+DATABASE_URL=postgresql://username:password@host:5432/database?schema=public
+NEXT_PUBLIC_INVITE_BASE_URL=https://seu-app.easypanel.host
+NOME_EVENTO=Nome do Seu Evento
+```
 
-- `DATABASE_URL`: URL de conexão com o banco PostgreSQL
-- `NEXT_PUBLIC_INVITE_BASE_URL`: URL base para convites (visível no frontend)
-- `INVITE_BASE_URL`: URL base para convites (backend)
-- `NOME_EVENTO`: Nome do evento
-- `WEBHOOK_URL`: URL do webhook (opcional)
-- `WEBHOOK_PRESELECTION_PROMOTED_URL`: URL do webhook para promoções (opcional)
+### Variáveis Opcionais:
+```
+WEBHOOK_URL=https://hooks.slack.com/services/...
+WEBHOOK_TOKEN=seu-token-webhook
+NODE_ENV=production
+PORT=3000
+NEXT_TELEMETRY_DISABLED=1
+```
 
-## Estrutura do Build
+### Como Configurar:
+1. No painel do Easypanel, vá para sua aplicação
+2. Clique em "Environment Variables"
+3. Adicione cada variável individualmente
+4. Salve e faça redeploy da aplicação
 
-1. **Etapa 1 - Builder:**
-   - Copia arquivos de configuração e schema Prisma
-   - Instala dependências
-   - Gera cliente Prisma
-   - Copia código fonte
-   - Executa build do Next.js
+## Processo de Build no Easypanel
 
-2. **Etapa 2 - Produção:**
-   - Copia artefatos do build
-   - Configura entrypoint
-   - Aguarda banco de dados
-   - Executa migrações
-   - Inicia aplicação
+O Easypanel executa automaticamente os seguintes passos:
+
+1. **Instalação de Dependências:**
+   ```bash
+   npm install
+   ```
+
+2. **Geração do Cliente Prisma:**
+   ```bash
+   npx prisma generate
+   ```
+
+3. **Execução das Migrações:**
+   ```bash
+   npx prisma migrate deploy
+   ```
+
+4. **Build da Aplicação:**
+   ```bash
+   npm run build
+   ```
+
+5. **Inicialização:**
+   ```bash
+   npm start
+   ```
 
 ## Comandos Úteis
 
+### Para Desenvolvimento Local:
 ```bash
-# Build local
-npm run build
-
-# Build para produção
-npm run build:production
+# Instalar dependências
+npm install
 
 # Gerar cliente Prisma
-npm run prisma:generate
+npx prisma generate
 
 # Executar migrações
-npm run prisma:migrate
+npx prisma migrate dev
+
+# Iniciar desenvolvimento
+npm run dev
+
+# Build local
+npm run build
 ```
+
+### Para Troubleshooting no Easypanel:
+```bash
+# Ver logs da aplicação
+# (disponível no painel do Easypanel)
+
+# Executar migrações manualmente (se necessário)
+npx prisma migrate deploy
+
+# Verificar status do banco
+npx prisma db pull
+```
+
+## Dicas Importantes para Easypanel
+
+### ✅ Checklist Pré-Deploy:
+- [ ] Banco PostgreSQL configurado e acessível
+- [ ] Variáveis de ambiente configuradas no painel
+- [ ] Repositório Git atualizado com as últimas alterações
+- [ ] Build command: `npm run build`
+- [ ] Start command: `npm start`
+- [ ] Node.js versão 18 ou superior
+
+### 🔧 Configurações Recomendadas:
+- **Auto Deploy:** Ativado (para deploy automático a cada push)
+- **Health Check:** `/api/health` (se disponível)
+- **Port:** 3000 (padrão do Next.js)
+- **Memory:** Mínimo 512MB recomendado
+
+### 🚨 Problemas Comuns no Easypanel:
+
+1. **Erro de Conexão com Banco:**
+   - Verifique se a `DATABASE_URL` está correta
+   - Confirme se o banco está acessível externamente
+   - Teste a conexão usando um cliente PostgreSQL
+
+2. **Build Falha:**
+   - Verifique os logs de build no painel
+   - Confirme se todas as dependências estão no `package.json`
+   - Verifique se o Node.js está na versão correta
+
+3. **Aplicação não Inicia:**
+   - Verifique se o comando start está correto: `npm start`
+   - Confirme se a porta 3000 está sendo usada
+   - Verifique os logs de runtime no painel
+
+### 📝 Logs e Monitoramento:
+- Acesse os logs através do painel do Easypanel
+- Monitore o uso de memória e CPU
+- Configure alertas se disponível
+- Use `console.log` para debug (visível nos logs)
 
 ## Troubleshooting
 

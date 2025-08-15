@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { removePhoneMask } from "@/lib/phoneUtils";
 
 export async function POST(request: Request) {
   try {
@@ -20,13 +21,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // Remove a máscara do telefone antes de salvar
+    const cleanTelefone = removePhoneMask(telefone);
+
     const data = {
       nome,
       email,
-      telefone,
+      telefone: cleanTelefone,
       empresa,
       cargo,
-      status: "Pré Seleção",
+      convidado_por,status: "Pré Seleção",
     } as const;
 
     const newPreselection = await prisma.preselection.create({ data });

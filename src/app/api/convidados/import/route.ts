@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { buildInviteUrl } from "@/lib/invite";
 import { sendGuestAddedWebhook } from "@/lib/webhook";
+import { removePhoneMask } from "@/lib/phoneUtils";
 
 interface GuestData {
   nome: string;
@@ -35,10 +36,14 @@ export async function POST(request: Request) {
 
     for (const convidado of convidados) {
       try {
+        // Remove a máscara do telefone antes de salvar
+        const cleanTelefone = removePhoneMask((convidado as GuestData).telefone);
+        
         const createdGuest = await prisma.guest.create({
           data: {
             ...convidado,
-            convite_url: buildInviteUrl((convidado as GuestData).telefone || (convidado as GuestData).email || '', (convidado as GuestData).convidado_por),
+            telefone: cleanTelefone,
+            convite_url: buildInviteUrl(cleanTelefone || (convidado as GuestData).email || '', (convidado as GuestData).convidado_por),
           },
         });
         importResults.successCount++;

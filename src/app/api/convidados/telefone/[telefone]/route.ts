@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
+import { removePhoneMask } from "@/lib/phoneUtils";
 
 // Editar um convidado pelo telefone
 export async function PUT(
@@ -10,7 +11,7 @@ export async function PUT(
   try {
     const params = await context.params;
     const rawTelefone = params.telefone;
-    const telefone = decodeURIComponent(rawTelefone);
+    const telefone = removePhoneMask(decodeURIComponent(rawTelefone));
 
     const body = await request.json();
     const {

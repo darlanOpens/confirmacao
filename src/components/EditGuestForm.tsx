@@ -8,6 +8,7 @@ import {
   Stack,
 } from "@mui/material";
 import { tokens } from '@/theme/designSystem';
+import { removePhoneMask } from "@/lib/phoneUtils";
 
 type GuestEditType = {
   id: number;
@@ -88,10 +89,17 @@ export default function EditGuestForm({ guest, onClose, showSnackbar }: EditGues
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Remove a máscara do telefone antes de enviar
+    const dataToSend = {
+      ...formData,
+      telefone: removePhoneMask(formData.telefone),
+    };
+    
     const response = await fetch(`/api/convidados/${guest.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(dataToSend),
     });
 
     const result = await response.json();
