@@ -55,12 +55,13 @@ export default function ConfirmGuestForm({ guest, onClose, showSnackbar }: Confi
     try {
       // 1) Atualiza campos opcionais no cadastro do convidado (mantendo os demais dados)
       const cleanTelefone = removePhoneMask(guest.telefone);
-      const updateRes = await fetch(`/api/convidados/telefone/${encodeURIComponent(cleanTelefone)}`, {
+      const updateRes = await fetch(`/api/convidados/${encodeURIComponent(String(guest.id))}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nome: guest.nome,
           email: guest.email,
+          telefone: cleanTelefone,
           empresa: guest.empresa,
           cargo: guest.cargo,
           convidado_por: guest.convidado_por,
@@ -74,11 +75,11 @@ export default function ConfirmGuestForm({ guest, onClose, showSnackbar }: Confi
         return;
       }
 
-      // 2) Confirma presença
+      // 2) Confirma presença (preferir confirmar por ID para evitar divergências de formatação do telefone)
       const confirmRes = await fetch("/api/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ telefone: cleanTelefone }),
+        body: JSON.stringify({ id: guest.id, telefone: cleanTelefone }),
       });
 
       const confirmData = await confirmRes.json();

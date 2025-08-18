@@ -11,21 +11,34 @@ export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders });
 }
 
+/**
+ * Confirma um convidado, atualizando seu status para "confirmado"
+ * Aceita busca por ID (preferível) ou por telefone (fallback)
+ */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { telefone } = body;
+    const { id, telefone } = body;
 
-    if (!telefone) {
+    // Pelo menos um identificador deve ser fornecido
+    if (!id && !telefone) {
       return NextResponse.json(
-        { success: false, error: "O telefone é obrigatório." },
+        { success: false, error: "ID ou telefone é obrigatório." },
         { status: 400, headers: corsHeaders }
       );
     }
 
-    const guest = await prisma.guest.findUnique({
-      where: { telefone },
-    });
+    // Buscar convidado por ID (preferível) ou por telefone (fallback)
+    let guest;
+    if (id) {
+      guest = await prisma.guest.findUnique({
+        where: { id: parseInt(String(id), 10) },
+      });
+    } else {
+      guest = await prisma.guest.findUnique({
+        where: { telefone },
+      });
+    }
 
     if (!guest) {
       return NextResponse.json(
@@ -34,19 +47,21 @@ export async function POST(request: Request) {
       );
     }
 
-  const updatedGuest =
-    guest.status !== "confirmado"
-      ? await prisma.guest.update({
-          where: { telefone },
-          data: { status: "confirmado", data_confirmacao: new Date() },
-        })
-      : guest;
+    // Confirmar convidado se ainda não confirmado
+    const updatedGuest =
+      guest.status !== "confirmado"
+        ? await prisma.guest.update({
+            where: { id: guest.id }, // Sempre usar ID para atualização
+            data: { status: "confirmado", data_confirmacao: new Date() },
+          })
+        : guest;
 
-  return NextResponse.json(
-    { success: true, found: true, guest: updatedGuest },
-    { status: 200, headers: corsHeaders }
-  );
-  } catch {
+    return NextResponse.json(
+      { success: true, found: true, guest: updatedGuest },
+      { status: 200, headers: corsHeaders }
+    );
+  } catch (error) {
+    console.error("Erro ao confirmar convidado:", error);
     return NextResponse.json(
       { success: false, error: "Ocorreu um erro interno." },
       { status: 500, headers: corsHeaders }
