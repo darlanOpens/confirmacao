@@ -39,7 +39,6 @@ model preselection {
   telefone         String    @unique
   empresa          String
   cargo            String
-  convidado_por    String?
   status           String    @default("Pré Seleção") // Pré Seleção, Convidado
   data_cadastro    DateTime  @default(now())
 

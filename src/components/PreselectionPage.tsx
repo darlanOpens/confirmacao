@@ -40,6 +40,7 @@ const filter = createFilterOptions<string>();
 
 export default function PreselectionPage({ preselections: initialPreselections }: PreselectionPageProps) {
   const [preselections, setPreselections] = useState<PreselectionUI[]>(initialPreselections);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [promoteModalOpen, setPromoteModalOpen] = useState(false);
