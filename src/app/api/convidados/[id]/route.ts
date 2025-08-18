@@ -26,14 +26,18 @@ export async function PUT(
     const maybe = (key: string, value: unknown) =>
       typeof value !== "undefined" && value !== null ? { [key]: value } : {};
 
+    // Normaliza email vazio para null
+    const cleanEmail: string | null = email && String(email).trim() !== "" ? String(email).trim() : null;
+    const cleanTelefone: string | null = telefone && String(telefone).trim() !== "" ? String(telefone).trim() : null;
+
     const data = {
       nome,
-      email,
-      telefone,
+      email: cleanEmail,
+      telefone: cleanTelefone || undefined,
       empresa,
       cargo,
       convidado_por,
-      convite_url: buildInviteUrl(telefone || email || '', convidado_por),
+      convite_url: buildInviteUrl((cleanTelefone || cleanEmail || ''), convidado_por),
       ...maybe("nome_preferido", nome_preferido),
       ...maybe("linkedin_url", linkedin_url),
       ...maybe("tamanho_empresa", tamanho_empresa),

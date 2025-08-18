@@ -39,15 +39,18 @@ export async function POST(request: Request) {
 
     // Remove a máscara do telefone antes de salvar
     const cleanTelefone = removePhoneMask(telefone);
+    // Normaliza email vazio para null (evita violar índice único quando vazio)
+    const cleanEmail: string | null = email && String(email).trim() !== "" ? String(email).trim() : null;
 
     const data = {
       nome,
-      email,
+      // Email opcional: usar null quando vier vazio
+      email: cleanEmail,
       telefone: cleanTelefone,
       empresa,
       cargo,
       convidado_por,
-      convite_url: buildInviteUrl(cleanTelefone || email || '', convidado_por),
+      convite_url: buildInviteUrl(cleanTelefone || cleanEmail || '', convidado_por),
       status: confirm_directly ? 'confirmado' : 'Convidado',
       ...maybe("data_confirmacao", confirm_directly ? new Date() : undefined),
       ...maybe("nome_preferido", nome_preferido),
@@ -75,6 +78,7 @@ export async function POST(request: Request) {
       typeof error === "object" &&
       error !== null &&
       "code" in error &&
+      // @ts-ignore - prisma error shape
       error.code === "P2002"
     ) {
       return NextResponse.json(

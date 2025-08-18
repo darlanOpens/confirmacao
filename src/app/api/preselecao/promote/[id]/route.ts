@@ -36,6 +36,8 @@ export async function POST(
 
     // Remove a máscara do telefone da pré-seleção
     const cleanTelefone = removePhoneMask(preselection.telefone);
+    // Normaliza email vazio para null
+    const cleanEmail: string | null = preselection.email && preselection.email.trim() !== '' ? preselection.email.trim() : null;
     
     // Verificar se o telefone já existe na tabela guest
     const existingGuest = await prisma.guest.findUnique({
@@ -52,13 +54,13 @@ export async function POST(
     // Criar Guest com dados da pré-seleção (status padrão é "Convidado")
     const guestData = {
       nome: preselection.nome,
-      email: preselection.email,
+      email: cleanEmail,
       telefone: cleanTelefone,
       empresa: preselection.empresa,
       cargo: preselection.cargo,
       convidado_por,
       status: "Convidado", // Novo padrão
-      convite_url: buildInviteUrl(cleanTelefone || preselection.email || '', convidado_por),
+      convite_url: buildInviteUrl(cleanTelefone || cleanEmail || '', convidado_por),
     };
 
     // Usar transação para garantir consistência
@@ -101,6 +103,7 @@ export async function POST(
       typeof error === "object" &&
       error !== null &&
       "code" in error &&
+      // @ts-ignore prisma shape
       error.code === "P2002"
     ) {
       return NextResponse.json(
