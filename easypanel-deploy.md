@@ -13,13 +13,12 @@ PORT=3000
 HOSTNAME=0.0.0.0
 
 # Configurações do pgAdmin (para acesso ao banco)
-PGADMIN_EMAIL=admin@seudominio.com
+PGADMIN_EMAIL=admin@admin.com
 PGADMIN_PASSWORD=senha_segura_aqui
-DOMAIN=seudominio.com
 
-# URLs da aplicação
-NEXT_PUBLIC_INVITE_BASE_URL=https://seudominio.com
-INVITE_BASE_URL=https://seudominio.com
+# URLs da aplicação (use o domínio temporário do EasyPanel)
+NEXT_PUBLIC_INVITE_BASE_URL=https://seu-app.easypanel.host
+INVITE_BASE_URL=https://seu-app.easypanel.host
 NOME_EVENTO="Seu Evento"
 ```
 
@@ -59,11 +58,11 @@ Se o serviço não estiver acessível:
 O projeto inclui pgAdmin para acesso visual ao banco de dados:
 
 1. **Configuração no EasyPanel**:
-   - Configure as variáveis `PGADMIN_EMAIL`, `PGADMIN_PASSWORD` e `DOMAIN`
-   - O pgAdmin ficará disponível em: `https://db.seudominio.com`
+   - Configure as variáveis `PGADMIN_EMAIL` e `PGADMIN_PASSWORD`
+   - O pgAdmin ficará disponível em: `https://seu-app.easypanel.host/db`
 
 2. **Primeiro Acesso**:
-   - Acesse `https://db.seudominio.com`
+   - Acesse `https://seu-app.easypanel.host/db` (substitua pelo seu domínio temporário)
    - Faça login com o email/senha configurados
    - Adicione um novo servidor com:
      - **Nome**: Elga Database
