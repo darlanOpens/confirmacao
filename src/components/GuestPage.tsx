@@ -27,6 +27,10 @@ import {
   ListItemIcon,
   Autocomplete,
   Stack,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import Grid from '@mui/material/Grid'; // Direct import for Grid
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -269,7 +273,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   };
 
   const totalGuests = guests.length;
-  const confirmedGuests = guests.filter(g => String(g.status || '').toLowerCase() === 'confirmado').length;
+  const confirmedGuests = guests.filter(g => g.status && String(g.status).toLowerCase() === 'confirmado').length;
   
   // Lógica de filtro (a ser aplicada depois)
   const filteredGuests = guests.filter(guest => {
@@ -280,11 +284,11 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
       guest.empresa.toLowerCase().includes(searchQuery.toLowerCase());
     
     // Filtro por status
-    const statusMatch = !statusFilter || guest.status === statusFilter;
+    const statusMatch = !statusFilter || (guest.status && guest.status === statusFilter);
     
     // Filtro por convidado por
     const convidadoPorMatch = !convidadoPorFilter || 
-      guest.convidado_por.toLowerCase().includes(convidadoPorFilter.toLowerCase());
+      (guest.convidado_por && guest.convidado_por.toLowerCase().includes(convidadoPorFilter.toLowerCase()));
     
     return textMatch && statusMatch && convidadoPorMatch;
   });
@@ -406,20 +410,19 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
                 }}
               />
               
-              <TextField
-                select
-                variant="outlined"
-                size="small"
-                label="Status"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                sx={{ minWidth: 150 }}
-              >
-                <option value="">Todos os status</option>
-                <option value="Convidado">Convidado</option>
-                <option value="Confirmado">Confirmado</option>
-                <option value="Pendente">Pendente</option>
-              </TextField>
+              <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>
+                <InputLabel id="status-filter-label">Status</InputLabel>
+                <Select
+                  labelId="status-filter-label"
+                  value={statusFilter}
+                  label="Status"
+                  onChange={(e) => setStatusFilter(e.target.value as string)}
+                >
+                  <MenuItem value="">Todos os status</MenuItem>
+                  <MenuItem value="Convidado">Convidado</MenuItem>
+                  <MenuItem value="Confirmado">Confirmado</MenuItem>
+                </Select>
+              </FormControl>
               
               <TextField
                 variant="outlined"
@@ -766,8 +769,8 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
                       </Grid>
                       <Grid item xs={12} sm={2}>
                         <Chip
-                          label={guest.status}
-                          color={String(guest.status || '').toLowerCase() === "confirmado" ? "success" : "warning"}
+                          label={guest.status || 'Sem status'}
+                          color={guest.status && String(guest.status).toLowerCase() === "confirmado" ? "success" : "warning"}
                           size="small"
                         />
                       </Grid>
@@ -786,18 +789,18 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
                         <EditIcon fontSize="small" />
                       </IconButton>
                     </span>
-                    <Tooltip title={String(guest.status || '').toLowerCase() === 'confirmado' ? 'Confirmado' : 'Confirmar'}>
+                    <Tooltip title={guest.status && String(guest.status).toLowerCase() === 'confirmado' ? 'Confirmado' : 'Confirmar'}>
                       <span>
                         <IconButton
                           aria-label="confirm"
                           size="small"
                           onClick={() => {
-                            if (String(guest.status || '').toLowerCase() !== 'confirmado') {
+                            if (!guest.status || String(guest.status).toLowerCase() !== 'confirmado') {
                               handleOpenConfirmModal(guest);
                             }
                           }}
-                          disabled={String(guest.status || '').toLowerCase() === 'confirmado'}
-                          sx={{ color: String(guest.status || '').toLowerCase() === 'confirmado' ? 'success.main' : 'inherit' }}
+                          disabled={Boolean(guest.status && String(guest.status).toLowerCase() === 'confirmado')}
+                          sx={{ color: guest.status && String(guest.status).toLowerCase() === 'confirmado' ? 'success.main' : 'inherit' }}
                         >
                           <CheckCircleOutlineIcon fontSize="small" />
                         </IconButton>
