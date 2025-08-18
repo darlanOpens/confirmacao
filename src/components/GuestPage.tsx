@@ -108,6 +108,8 @@ const style = {
 export default function GuestPage({ guests: initialGuests, hideAppBar = false }: GuestPageProps) {
   const [guests, setGuests] = useState<GuestUI[]>(initialGuests);
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [convidadoPorFilter, setConvidadoPorFilter] = useState<string>("");
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -143,7 +145,13 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   };
 
   const handleCloseSnackbar = () => {
-    setSnackbar(null);
+    setSnackbar({ open: false, message: "", severity: "success" });
+  };
+
+  const clearAllFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("");
+    setConvidadoPorFilter("");
   };
 
   const handleGuestAdded = (newGuest: GuestLike) => {
@@ -264,11 +272,22 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   const confirmedGuests = guests.filter(g => String(g.status || '').toLowerCase() === 'confirmado').length;
   
   // Lógica de filtro (a ser aplicada depois)
-  const filteredGuests = guests.filter(guest => 
-    guest.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (guest.email && guest.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    guest.empresa.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredGuests = guests.filter(guest => {
+    // Filtro por texto (nome, email, empresa)
+    const textMatch = 
+      guest.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (guest.email && guest.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      guest.empresa.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Filtro por status
+    const statusMatch = !statusFilter || guest.status === statusFilter;
+    
+    // Filtro por convidado por
+    const convidadoPorMatch = !convidadoPorFilter || 
+      guest.convidado_por.toLowerCase().includes(convidadoPorFilter.toLowerCase());
+    
+    return textMatch && statusMatch && convidadoPorMatch;
+  });
 
   return (
     <>
@@ -372,46 +391,101 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
           </Grid>
           
           {/* Barra de Ações */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-            <TextField 
-              variant="outlined"
-              size="small"
-              placeholder="Procurar..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{ flexGrow: 1, mr: 2 }}
-            />
-            <Button variant="contained" onClick={handleOpenAddModal} size="large" sx={{ height: '40px' }}>
-              Adicionar convidado
-            </Button>
-            <Tooltip title="Importar CSV">
-              <Button 
-                variant="outlined" 
-                onClick={handleOpenImportModal}
-                sx={{ 
-                  ml: 1,
-                  minWidth: '40px', // Largura para um botão de ícone quadrado
-                  height: '40px', // Altura para corresponder ao botão 'large'
-                  padding: '0'
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 4 }}>
+            {/* Filtros */}
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+              <TextField 
+                variant="outlined"
+                size="small"
+                placeholder="Procurar..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                sx={{ minWidth: 200 }}
+                InputProps={{
+                  startAdornment: <SearchIcon sx={{ color: 'text.secondary', mr: 1 }} />,
                 }}
+              />
+              
+              <TextField
+                select
+                variant="outlined"
+                size="small"
+                label="Status"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                sx={{ minWidth: 150 }}
               >
-                <FileUploadIcon />
+                <option value="">Todos os status</option>
+                <option value="Convidado">Convidado</option>
+                <option value="Confirmado">Confirmado</option>
+                <option value="Pendente">Pendente</option>
+              </TextField>
+              
+              <TextField
+                variant="outlined"
+                size="small"
+                placeholder="Convidado por..."
+                value={convidadoPorFilter}
+                onChange={(e) => setConvidadoPorFilter(e.target.value)}
+                sx={{ minWidth: 180 }}
+                label="Convidado por"
+              />
+              
+              {(searchQuery || statusFilter || convidadoPorFilter) && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={clearAllFilters}
+                  sx={{ height: '40px' }}
+                >
+                  Limpar filtros
+                </Button>
+              )}
+            </Box>
+            
+            {/* Botões de ação */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Button variant="contained" onClick={handleOpenAddModal} size="large" sx={{ height: '40px' }}>
+                Adicionar convidado
               </Button>
-            </Tooltip>
-            <Tooltip title="Baixar CSV">
-              <Button 
-                variant="outlined" 
-                onClick={handleDownload}
-                sx={{ 
-                  ml: 1,
-                  minWidth: '40px',
-                  height: '40px',
-                  padding: '0'
-                }}
-              >
-                <DownloadIcon />
-              </Button>
-            </Tooltip>
+              <Tooltip title="Importar CSV">
+                <Button 
+                  variant="outlined" 
+                  onClick={handleOpenImportModal}
+                  sx={{ 
+                    minWidth: '40px',
+                    height: '40px',
+                    padding: '0'
+                  }}
+                >
+                  <FileUploadIcon />
+                </Button>
+              </Tooltip>
+              <Tooltip title="Baixar CSV">
+                <Button 
+                  variant="outlined" 
+                  onClick={handleDownload}
+                  sx={{ 
+                    minWidth: '40px',
+                    height: '40px',
+                    padding: '0'
+                  }}
+                >
+                  <DownloadIcon />
+                </Button>
+              </Tooltip>
+              
+              {/* Indicador de resultados filtrados */}
+              {(searchQuery || statusFilter || convidadoPorFilter) && (
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary" 
+                  sx={{ ml: 2, fontStyle: 'italic' }}
+                >
+                  Mostrando {filteredGuests.length} de {totalGuests} convidados
+                </Typography>
+              )}
+            </Box>
           </Box>
 
           <Modal
