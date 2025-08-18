@@ -59,10 +59,10 @@ O projeto inclui pgAdmin para acesso visual ao banco de dados:
 
 1. **Configuração no EasyPanel**:
    - Configure as variáveis `PGADMIN_EMAIL` e `PGADMIN_PASSWORD`
-   - O pgAdmin ficará disponível em: `https://seu-app.easypanel.host/db`
+   - O pgAdmin ficará disponível em: `https://db-seu-app.easypanel.host`
 
 2. **Primeiro Acesso**:
-   - Acesse `https://seu-app.easypanel.host/db` (substitua pelo seu domínio temporário)
+   - Acesse `https://db-seu-app.easypanel.host` (substitua "seu-app" pelo nome do seu projeto)
    - Faça login com o email/senha configurados
    - Adicione um novo servidor com:
      - **Nome**: Elga Database
