@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
-import { sendGuestAddedWebhook } from "@/lib/webhook";
+import { sendGuestAddedWebhook, sendGuestConfirmedWebhook } from "@/lib/webhook";
 import { removePhoneMask } from "@/lib/phoneUtils";
 
 console.log('📦 API de adição de convidado carregada, webhook importado:', typeof sendGuestAddedWebhook);
@@ -70,6 +70,16 @@ export async function POST(request: Request) {
     sendGuestAddedWebhook(newGuest).catch(error => {
       console.error('❌ Erro ao enviar webhook:', error);
     });
+    
+    // Se o convidado foi confirmado diretamente, dispara o webhook de confirmação
+    if (confirm_directly) {
+      console.log('🚀 Iniciando disparo do webhook de confirmação direta...');
+      sendGuestConfirmedWebhook(newGuest).catch(error => {
+        console.error('❌ Erro ao enviar webhook de confirmação:', error);
+      });
+      console.log('📤 Webhook de confirmação disparado (assíncrono)');
+    }
+    
     console.log('📤 Webhook disparado (assíncrono)');
 
     return NextResponse.json({ success: true, guest: newGuest }, { status: 201 });

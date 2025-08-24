@@ -22,6 +22,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -45,7 +47,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [promoteModalOpen, setPromoteModalOpen] = useState(false);
   const [selectedPreselection, setSelectedPreselection] = useState<PreselectionUI | null>(null);
-  const [promoteForm, setPromoteForm] = useState({ convidado_por: "" });
+  const [promoteForm, setPromoteForm] = useState({ convidado_por: "", confirm_directly: false });
   const [tags, setTags] = useState<string[]>([]);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -83,7 +85,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
   const handleClosePromoteModal = () => {
     setPromoteModalOpen(false);
     setSelectedPreselection(null);
-    setPromoteForm({ convidado_por: "" });
+    setPromoteForm({ convidado_por: "", confirm_directly: false });
   };
 
   // Carrega tags e preferência do localStorage (mesma lógica dos outros lugares)
@@ -94,7 +96,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
         const data = await res.json();
         setTags(Array.isArray(data) ? data : []);
         const saved = typeof window !== 'undefined' ? localStorage.getItem('elga_convidado_por') : null;
-        if (saved) setPromoteForm({ convidado_por: saved });
+        if (saved) setPromoteForm({ convidado_por: saved, confirm_directly: false });
       } catch (e) {
         console.error(e);
       }
@@ -139,15 +141,20 @@ export default function PreselectionPage({ preselections: initialPreselections }
         },
         body: JSON.stringify({
           convidado_por: promoteForm.convidado_por.trim(),
+          confirm_directly: promoteForm.confirm_directly,
         }),
       });
       
       const result = await response.json();
       
       if (result.success) {
-        showSnackbar("Contato promovido com sucesso para convidados!", "success");
-        // Atualiza o status localmente para manter na lista e marcar como convidado
-        setPreselections(prev => prev.map(p => p.id === selectedPreselection.id ? { ...p, status: "convidado" } : p));
+        const successMessage = promoteForm.confirm_directly 
+          ? "Contato promovido e confirmado com sucesso!" 
+          : "Contato promovido com sucesso para convidados!";
+        showSnackbar(successMessage, "success");
+        // Atualiza o status localmente
+        const newStatus = promoteForm.confirm_directly ? "Confirmado" : "Convidado";
+        setPreselections(prev => prev.map(p => p.id === selectedPreselection.id ? { ...p, status: newStatus } : p));
         // Salva preferência no localStorage
         if (typeof window !== 'undefined' && promoteForm.convidado_por) {
           localStorage.setItem('elga_convidado_por', promoteForm.convidado_por);
@@ -400,7 +407,7 @@ export default function PreselectionPage({ preselections: initialPreselections }
                 if (newValue && newValue.startsWith('Adicionar "')) {
                   finalValue = newValue.substring('Adicionar "'.length, newValue.length - 1);
                 }
-                setPromoteForm({ convidado_por: finalValue || "" });
+                setPromoteForm(prev => ({ ...prev, convidado_por: finalValue || "" }));
               }}
               filterOptions={(options, params) => {
                 const filtered = filter(options, params);
@@ -427,6 +434,18 @@ export default function PreselectionPage({ preselections: initialPreselections }
               renderInput={(params) => (
                 <TextField {...params} label="Convidado Por" required sx={{ mt: 2 }} />
               )}
+            />
+            
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={promoteForm.confirm_directly}
+                  onChange={(e) => setPromoteForm(prev => ({ ...prev, confirm_directly: e.target.checked }))}
+                  color="primary"
+                />
+              }
+              label="Confirmar convidado diretamente"
+              sx={{ mt: 2 }}
             />
           </DialogContent>
           <DialogActions>

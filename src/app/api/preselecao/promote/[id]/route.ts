@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
-import { sendGuestAddedWebhook, sendPreselectionPromotedWebhook } from "@/lib/webhook";
+import { sendGuestAddedWebhook, sendPreselectionPromotedWebhook, sendGuestConfirmedWebhook } from "@/lib/webhook";
 import { removePhoneMask } from "@/lib/phoneUtils";
 
 // Promover uma pré-seleção para Guest convidado
@@ -13,7 +13,7 @@ export async function POST(
     const params = await context.params;
     const id = parseInt(params.id, 10);
     const body = await request.json();
-    const { convidado_por } = body;
+    const { convidado_por, confirm_directly } = body;
 
     if (!convidado_por) {
       return NextResponse.json(
@@ -51,7 +51,7 @@ export async function POST(
       );
     }
 
-    // Criar Guest com dados da pré-seleção (status padrão é "Convidado")
+    // Criar Guest com dados da pré-seleção
     const guestData = {
       nome: preselection.nome,
       email: cleanEmail,
@@ -59,7 +59,8 @@ export async function POST(
       empresa: preselection.empresa,
       cargo: preselection.cargo,
       convidado_por,
-      status: "Convidado", // Novo padrão
+      status: confirm_directly ? "Confirmado" : "Convidado",
+      data_confirmacao: confirm_directly ? new Date() : null,
       convite_url: buildInviteUrl(cleanTelefone || cleanEmail || '', convidado_por),
     };
 
@@ -86,6 +87,13 @@ export async function POST(
     sendPreselectionPromotedWebhook({ preselection: result.updatedPreselection, guest: result.newGuest }).catch(error => {
       console.error('❌ Erro ao enviar webhook de promoção:', error);
     });
+    
+    // Enviar webhook de confirmação se o convidado foi confirmado diretamente
+    if (confirm_directly) {
+      sendGuestConfirmedWebhook(result.newGuest).catch(error => {
+        console.error('❌ Erro ao enviar webhook de confirmação:', error);
+      });
+    }
 
     return NextResponse.json(
       { 

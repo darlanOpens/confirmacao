@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendGuestConfirmedWebhook } from "@/lib/webhook";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -55,6 +56,14 @@ export async function POST(request: Request) {
             data: { status: "confirmado", data_confirmacao: new Date() },
           })
         : guest;
+    
+    // Se o status foi alterado para confirmado, enviar webhook
+    if (guest.status !== "confirmado" && updatedGuest.status === "confirmado") {
+      // Enviar webhook de forma assíncrona para não bloquear a resposta
+      sendGuestConfirmedWebhook(updatedGuest).catch(error => {
+        console.error("Erro ao enviar webhook de confirmação:", error);
+      });
+    }
 
     return NextResponse.json(
       { success: true, found: true, guest: updatedGuest },

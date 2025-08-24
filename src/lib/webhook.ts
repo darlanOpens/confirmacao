@@ -12,6 +12,7 @@ interface WebhookPayload {
     convidado_por: string;
     status: string;
     data_cadastro: string;
+    data_confirmacao?: string | null;
     nome_preferido?: string | null;
     linkedin_url?: string | null;
     tamanho_empresa?: string | null;
@@ -32,6 +33,7 @@ interface GuestData {
   convidado_por: string;
   status: string;
   data_cadastro: Date;
+  data_confirmacao?: Date | null;
   nome_preferido?: string | null;
   linkedin_url?: string | null;
   tamanho_empresa?: string | null;
@@ -115,6 +117,68 @@ interface PreselectionData {
   cargo: string;
   status: string;
   data_cadastro: Date;
+}
+
+export async function sendGuestConfirmedWebhook(guestData: GuestData): Promise<void> {
+  console.log('🔍 Iniciando envio de webhook de confirmação...');
+  
+  // Usar a URL do webhook da variável de ambiente
+  const webhookUrl = process.env.WEBHOOK_GUEST_CONFIRMED_URL;
+  if (!webhookUrl) {
+    console.error('❌ WEBHOOK_GUEST_CONFIRMED_URL não configurada. Ignorando envio do webhook de confirmação.');
+    return;
+  }
+  
+  // Payload simplificado focando no body com dados essenciais
+  const payload = {
+    telefone: guestData.telefone,
+    nome: guestData.nome,
+    email: guestData.email,
+    empresa: guestData.empresa,
+    cargo: guestData.cargo,
+    convidado_por: guestData.convidado_por,
+    status: guestData.status,
+    form_title: process.env.NOME_EVENTO || 'Brunch Experience',
+    form_id: 'guest_confirmation',
+    timestamp: new Date().toISOString(),
+    data_confirmacao: guestData.data_confirmacao ? guestData.data_confirmacao.toISOString() : null,
+    nome_preferido: guestData.nome_preferido,
+    linkedin_url: guestData.linkedin_url,
+    tamanho_empresa: guestData.tamanho_empresa,
+    setor_atuacao: guestData.setor_atuacao,
+    produtos_servicos: guestData.produtos_servicos,
+    faturamento_anual: guestData.faturamento_anual,
+    modelo_negocio: guestData.modelo_negocio
+  };
+
+  try {
+    console.log('📤 Enviando webhook de confirmação...');
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Brunch-Experience-Guest-System/1.0',
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Webhook de confirmação falhou com status: ${response.status}, resposta: ${errorText}`);
+    }
+
+    console.log('✅ Webhook de confirmação enviado com sucesso!');
+  } catch (error) {
+    // Log do erro mas não falha a operação principal
+    console.error('❌ Erro ao enviar webhook de confirmação:', error);
+  }
 }
 
 export async function sendPreselectionPromotedWebhook(params: { preselection: PreselectionData; guest: GuestData }): Promise<void> {
