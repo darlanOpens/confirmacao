@@ -88,20 +88,26 @@ export default function PreselectionPage({ preselections: initialPreselections }
     setPromoteForm({ convidado_por: "", confirm_directly: false });
   };
 
-  // Carrega tags e preferência do localStorage (mesma lógica dos outros lugares)
+  // Carrega tags
   React.useEffect(() => {
     const loadTags = async () => {
       try {
         const res = await fetch('/api/convidados/tags');
         const data = await res.json();
         setTags(Array.isArray(data) ? data : []);
-        const saved = typeof window !== 'undefined' ? localStorage.getItem('elga_convidado_por') : null;
-        if (saved) setPromoteForm({ convidado_por: saved, confirm_directly: false });
       } catch (e) {
         console.error(e);
       }
     };
     loadTags();
+  }, []);
+
+  // Carrega preferência do localStorage separadamente para evitar problemas de hidratação
+  React.useEffect(() => {
+    const saved = localStorage.getItem('elga_convidado_por');
+    if (saved) {
+      setPromoteForm(prev => ({ ...prev, convidado_por: saved }));
+    }
   }, []);
 
   const handleDelete = async () => {
@@ -303,11 +309,11 @@ export default function PreselectionPage({ preselections: initialPreselections }
                     </Grid>
                     <Grid item xs={12} sm={3}>
                       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-             <Tooltip title={preselection.status === "Convidado" ? "Já promovido" : "Promover para Convidados"}>
+                        <Tooltip title={preselection.status === "Convidado" ? "Já promovido" : "Promover para Convidados"}>
                           <IconButton
                             aria-label="promote"
                             size="small"
-                  disabled={preselection.status === "Convidado"}
+                            disabled={preselection.status === "Convidado"}
                             onClick={(event) => {
                               event.stopPropagation();
                               handlePromoteClick(preselection);
@@ -336,12 +342,79 @@ export default function PreselectionPage({ preselections: initialPreselections }
                 </Box>
               </AccordionSummary>
               <AccordionDetails>
-                <Box>
-                  <Typography><strong>Email:</strong> {preselection.email}</Typography>
-                  <Typography><strong>Telefone:</strong> {preselection.telefone}</Typography>
-                  <Typography><strong>Cargo:</strong> {preselection.cargo}</Typography>
-                  <Typography><strong>Status:</strong> {preselection.status}</Typography>
-                  <Typography><strong>Data de cadastro:</strong> {new Date(preselection.data_cadastro).toLocaleDateString('pt-BR')}</Typography>
+                <Box sx={{ p: 2 }}>
+                  <Grid container spacing={3}>
+                    {/* Informações Pessoais */}
+                    <Grid item xs={12} md={6}>
+                      <Card variant="outlined" sx={{ p: 2, height: '100%' }}>
+                        <Typography variant="h6" color="primary" gutterBottom>
+                          Informações Pessoais
+                        </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                          <Box>
+                            <Typography variant="body2" color="text.secondary">Nome</Typography>
+                            <Typography variant="body1">{preselection.nome}</Typography>
+                          </Box>
+                          <Box>
+                            <Typography variant="body2" color="text.secondary">Email</Typography>
+                            <Typography variant="body1">{preselection.email}</Typography>
+                          </Box>
+                          <Box>
+                            <Typography variant="body2" color="text.secondary">Telefone</Typography>
+                            <Typography variant="body1">{preselection.telefone}</Typography>
+                          </Box>
+                        </Box>
+                      </Card>
+                    </Grid>
+                    
+                    {/* Informações Profissionais */}
+                    <Grid item xs={12} md={6}>
+                      <Card variant="outlined" sx={{ p: 2, height: '100%' }}>
+                        <Typography variant="h6" color="primary" gutterBottom>
+                          Informações Profissionais
+                        </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                          <Box>
+                            <Typography variant="body2" color="text.secondary">Empresa</Typography>
+                            <Typography variant="body1">{preselection.empresa}</Typography>
+                          </Box>
+                          <Box>
+                            <Typography variant="body2" color="text.secondary">Cargo</Typography>
+                            <Typography variant="body1">{preselection.cargo}</Typography>
+                          </Box>
+                          <Box>
+                            <Typography variant="body2" color="text.secondary">Status</Typography>
+                            <Chip
+                              label={preselection.status}
+                              color={getStatusColor(preselection.status)}
+                              size="small"
+                            />
+                          </Box>
+                        </Box>
+                      </Card>
+                    </Grid>
+                    
+                    {/* Informações do Sistema */}
+                    <Grid item xs={12}>
+                      <Card variant="outlined" sx={{ p: 2 }}>
+                        <Typography variant="h6" color="primary" gutterBottom>
+                          Informações do Sistema
+                        </Typography>
+                        <Box>
+                          <Typography variant="body2" color="text.secondary">Data de cadastro</Typography>
+                          <Typography variant="body1">
+                            {new Date(preselection.data_cadastro).toLocaleDateString('pt-BR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </Typography>
+                        </Box>
+                      </Card>
+                    </Grid>
+                  </Grid>
                 </Box>
               </AccordionDetails>
             </Accordion>
