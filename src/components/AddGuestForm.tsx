@@ -37,6 +37,10 @@ interface Guest {
   data_cadastro: Date;
   data_confirmacao: Date | null;
   convite_url?: string;
+  // Campos de check-in
+  data_checkin?: Date | null;
+  checkin_realizado?: boolean;
+  checkin_por?: string | null;
   // Novos campos opcionais vindos da API
   nome_preferido?: string | null;
   linkedin_url?: string | null;

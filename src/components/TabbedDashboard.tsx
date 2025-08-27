@@ -13,21 +13,28 @@ import Image from 'next/image';
 import LinkIcon from '@mui/icons-material/Link';
 import GuestPage from "./GuestPage";
 import PreselectionPage from "./PreselectionPage";
+import CheckinPage from "./CheckinPage";
 import { Guest } from "@prisma/client";
 import { preselection } from "@prisma/client";
 
-// UI types
-type GuestUI = Omit<
-  Guest,
-  | "nome_preferido"
-  | "linkedin_url"
-  | "tamanho_empresa"
-  | "setor_atuacao"
-  | "produtos_servicos"
-  | "faturamento_anual"
-  | "modelo_negocio"
-> & {
+// UI types - compatível com GuestPage.tsx
+type GuestUI = {
+  id: number;
+  nome: string;
+  email: string | null;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  convidado_por: string;
+  status: string;
+  data_cadastro: Date;
+  data_confirmacao: Date | null;
   convite_url?: string;
+  // Campos de check-in
+  data_checkin?: Date | null;
+  checkin_realizado?: boolean;
+  checkin_por?: string | null;
+  // Novos campos opcionais vindos da API
   nome_preferido?: string | null;
   linkedin_url?: string | null;
   tamanho_empresa?: string | null;
@@ -35,6 +42,25 @@ type GuestUI = Omit<
   produtos_servicos?: string | null;
   faturamento_anual?: string | null;
   modelo_negocio?: string | null;
+};
+
+// Tipo simplificado para check-in - apenas dados essenciais
+type GuestWithCheckin = {
+  id: number;
+  nome: string;
+  email: string | null;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  convidado_por: string;
+  status: string;
+  data_cadastro: Date;
+  data_confirmacao: Date | null;
+  convite_url?: string;
+  // Campos de check-in
+  data_checkin?: Date | null;
+  checkin_realizado?: boolean;
+  checkin_por?: string | null;
 };
 
 type PreselectionUI = preselection & { convite_url?: string };
@@ -84,6 +110,24 @@ export default function TabbedDashboard({ guests, preselections }: TabbedDashboa
     setValue(newValue);
   };
 
+  // Converte GuestUI[] para GuestWithCheckin[] com apenas os campos essenciais
+  const guestsForCheckin: GuestWithCheckin[] = guests.map(guest => ({
+    id: guest.id,
+    nome: guest.nome,
+    email: guest.email,
+    telefone: guest.telefone,
+    empresa: guest.empresa,
+    cargo: guest.cargo,
+    convidado_por: guest.convidado_por,
+    status: guest.status,
+    data_cadastro: guest.data_cadastro,
+    data_confirmacao: guest.data_confirmacao,
+    convite_url: guest.convite_url,
+    data_checkin: guest.data_checkin,
+    checkin_realizado: guest.checkin_realizado,
+    checkin_por: guest.checkin_por,
+  }));
+
   return (
     <Box sx={{ width: '100%' }}>
       {/* AppBar unificada */}
@@ -127,6 +171,10 @@ export default function TabbedDashboard({ guests, preselections }: TabbedDashboa
               label={`Pré-seleção (${preselections.length})`} 
               {...a11yProps(1)} 
             />
+            <Tab 
+              label={`Check-in (${guests.filter(g => g.data_confirmacao !== null).length})`} 
+              {...a11yProps(2)} 
+            />
           </Tabs>
         </Box>
       </AppBar>
@@ -137,6 +185,9 @@ export default function TabbedDashboard({ guests, preselections }: TabbedDashboa
       </TabPanel>
       <TabPanel value={value} index={1}>
         <PreselectionPage preselections={preselections} />
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <CheckinPage guests={guestsForCheckin} />
       </TabPanel>
     </Box>
   );

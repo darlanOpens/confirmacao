@@ -18,6 +18,9 @@ model Guest {
   status           String    @default("Convidado")
   data_cadastro    DateTime  @default(now())
   data_confirmacao DateTime?
+  data_checkin      DateTime?
+  checkin_realizado  Boolean   @default(false)
+  checkin_por       String?
   convite_url      String    @default("")
 
   // Novos campos opcionais (dados de negócio/contato)

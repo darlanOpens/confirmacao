@@ -67,7 +67,7 @@ RUN npx prisma generate
 
 ```dockerfile
 # Define uma DATABASE_URL fictícia para o build (evita erros de conexão)
-ENV DATABASE_URL="postgresql://build_user:build_pass@localhost:5432/build_db"
+ENV DATABASE_URL="postgresql://build_user:build_pass@db:5432/build_db"
 ```
 
 ## Configuração de Variáveis no Easypanel

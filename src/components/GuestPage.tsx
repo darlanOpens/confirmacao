@@ -55,18 +55,24 @@ import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ConfirmGuestForm from "./ConfirmGuestForm";
 
-// UI type: torna novos campos opcionais (podem vir nulos ou ausentes)
-type GuestUI = Omit<
-  Guest,
-  | "nome_preferido"
-  | "linkedin_url"
-  | "tamanho_empresa"
-  | "setor_atuacao"
-  | "produtos_servicos"
-  | "faturamento_anual"
-  | "modelo_negocio"
-> & {
+// UI type: torna campos opcionais compatíveis com a API
+type GuestUI = {
+  id: number;
+  nome: string;
+  email: string | null;
+  telefone: string;
+  empresa: string;
+  cargo: string;
+  convidado_por: string;
+  status: string;
+  data_cadastro: Date;
+  data_confirmacao: Date | null;
   convite_url?: string;
+  // Campos de check-in
+  data_checkin?: Date | null;
+  checkin_realizado?: boolean;
+  checkin_por?: string | null;
+  // Novos campos opcionais vindos da API
   nome_preferido?: string | null;
   linkedin_url?: string | null;
   tamanho_empresa?: string | null;
@@ -273,7 +279,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   };
 
   const totalGuests = guests.length;
-  const confirmedGuests = guests.filter(g => g.status && String(g.status).toLowerCase() === 'confirmado').length;
+  const confirmedGuests = guests.filter(g => g.status && String(g.status).toLowerCase() === 'convidado').length;
   
   // Lógica de filtro (a ser aplicada depois)
   const filteredGuests = guests.filter(guest => {
@@ -283,12 +289,13 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
       (guest.email && guest.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
       guest.empresa.toLowerCase().includes(searchQuery.toLowerCase());
     
-    // Filtro por status
-    const statusMatch = !statusFilter || (guest.status && guest.status === statusFilter);
+    // Filtro por status (case-insensitive)
+    const statusMatch = !statusFilter || 
+      (guest.status && guest.status.toLowerCase() === statusFilter.toLowerCase());
     
-    // Filtro por convidado por
+    // Filtro por convidado por (case-insensitive)
     const convidadoPorMatch = !convidadoPorFilter || 
-      (guest.convidado_por && guest.convidado_por.toLowerCase().includes(convidadoPorFilter.toLowerCase()));
+      (guest.convidado_por && guest.convidado_por.toLowerCase() === convidadoPorFilter.toLowerCase());
     
     return textMatch && statusMatch && convidadoPorMatch;
   });
@@ -420,19 +427,25 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
                 >
                   <MenuItem value="">Todos os status</MenuItem>
                   <MenuItem value="Convidado">Convidado</MenuItem>
-                  <MenuItem value="Confirmado">Confirmado</MenuItem>
                 </Select>
               </FormControl>
               
-              <TextField
-                variant="outlined"
-                size="small"
-                placeholder="Convidado por..."
-                value={convidadoPorFilter}
-                onChange={(e) => setConvidadoPorFilter(e.target.value)}
-                sx={{ minWidth: 180 }}
-                label="Convidado por"
-              />
+              <FormControl variant="outlined" size="small" sx={{ minWidth: 180 }}>
+                <InputLabel id="convidado-por-filter-label">Convidado por</InputLabel>
+                <Select
+                  labelId="convidado-por-filter-label"
+                  value={convidadoPorFilter}
+                  label="Convidado por"
+                  onChange={(e) => setConvidadoPorFilter(e.target.value as string)}
+                >
+                  <MenuItem value="">Todos</MenuItem>
+                  {Array.from(new Set(guests.map(g => g.convidado_por).filter(Boolean))).map((convidadoPor) => (
+                    <MenuItem key={convidadoPor} value={convidadoPor}>
+                      {convidadoPor}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               
               {(searchQuery || statusFilter || convidadoPorFilter) && (
                 <Button
@@ -770,7 +783,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
                       <Grid item xs={12} sm={2}>
                         <Chip
                           label={guest.status || 'Sem status'}
-                          color={guest.status && String(guest.status).toLowerCase() === "confirmado" ? "success" : "warning"}
+                          color={guest.status && String(guest.status).toLowerCase() === "convidado" ? "success" : "warning"}
                           size="small"
                         />
                       </Grid>

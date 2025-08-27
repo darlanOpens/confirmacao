@@ -29,9 +29,9 @@ services:
     ports:
       - "${DB_PORT:-5432}:5432"
     environment:
-      - POSTGRES_USER=elga_user
-      - POSTGRES_PASSWORD=elga_pass
-      - POSTGRES_DB=elga_db
+      - POSTGRES_USER=${DB_USER:-elga_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-elga_pass}
+      - POSTGRES_DB=${DB_NAME:-elga_db}
     volumes:
       - db_data:/var/lib/postgresql/data
 

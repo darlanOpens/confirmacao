@@ -17,8 +17,14 @@ export const prisma =
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
-// Test connection on startup
+// Test connection on startup (only in runtime, not build time)
 async function testConnection() {
+  // Skip connection test during build time
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    console.log('🔄 Skipping database connection test during build...')
+    return
+  }
+
   try {
     console.log('🔄 Testing Prisma connection...')
     await prisma.$queryRaw`SELECT 1 as test`
@@ -29,5 +35,7 @@ async function testConnection() {
   }
 }
 
-// Test connection immediately
-testConnection() 
+// Test connection only if not in build phase
+if (process.env.NEXT_PHASE !== 'phase-production-build') {
+  testConnection()
+} 
