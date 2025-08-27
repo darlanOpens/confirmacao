@@ -181,6 +181,81 @@ export async function sendGuestConfirmedWebhook(guestData: GuestData): Promise<v
   }
 }
 
+// Interface específica para dados de check-in
+interface CheckinData extends GuestData {
+  data_checkin: Date | null;
+  checkin_realizado: boolean;
+  checkin_por?: string | null;
+}
+
+export async function sendGuestCheckinWebhook(guestData: CheckinData): Promise<void> {
+  console.log('🔍 Iniciando envio de webhook de check-in...');
+  
+  // Usar a URL do webhook de check-in da variável de ambiente
+  const webhookUrl = process.env.WEBHOOK_CHECKIN_URL;
+  if (!webhookUrl) {
+    console.error('❌ WEBHOOK_CHECKIN_URL não configurada. Ignorando envio do webhook de check-in.');
+    return;
+  }
+  
+  const payload = {
+    event: 'guest_checkin',
+    timestamp: new Date().toISOString(),
+    nome_evento: process.env.NOME_EVENTO,
+    body: {
+      id: guestData.id,
+      nome: guestData.nome,
+      email: guestData.email,
+      telefone: guestData.telefone,
+      empresa: guestData.empresa,
+      cargo: guestData.cargo,
+      convidado_por: guestData.convidado_por,
+      status: guestData.status,
+      data_cadastro: guestData.data_cadastro.toISOString(),
+      data_confirmacao: guestData.data_confirmacao ? guestData.data_confirmacao.toISOString() : null,
+      data_checkin: guestData.data_checkin ? guestData.data_checkin.toISOString() : null,
+      checkin_realizado: guestData.checkin_realizado,
+      checkin_por: guestData.checkin_por,
+      nome_preferido: guestData.nome_preferido || null,
+      linkedin_url: guestData.linkedin_url || null,
+      tamanho_empresa: guestData.tamanho_empresa || null,
+      setor_atuacao: guestData.setor_atuacao || null,
+      produtos_servicos: guestData.produtos_servicos || null,
+      faturamento_anual: guestData.faturamento_anual || null,
+      modelo_negocio: guestData.modelo_negocio || null,
+    },
+  };
+
+  try {
+    console.log('📤 Enviando webhook de check-in...');
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Brunch-Experience-Guest-System/1.0',
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Webhook de check-in falhou com status: ${response.status}, resposta: ${errorText}`);
+    }
+
+    console.log('✅ Webhook de check-in enviado com sucesso!');
+  } catch (error) {
+    // Log do erro mas não falha a operação principal
+    console.error('❌ Erro ao enviar webhook de check-in:', error);
+  }
+}
+
 export async function sendPreselectionPromotedWebhook(params: { preselection: PreselectionData; guest: GuestData }): Promise<void> {
   const { preselection, guest } = params;
 

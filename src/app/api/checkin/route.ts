@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendGuestCheckinWebhook } from "@/lib/webhook";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { guestId } = body;
+    const { guestId, checkinBy = "Sistema", notes } = body;
 
     if (!guestId) {
       return NextResponse.json(
@@ -44,16 +45,34 @@ export async function POST(request: Request) {
       where: { id: parseInt(guestId) },
       data: {
         checkin_realizado: true,
-        data_checkin: new Date()
+        data_checkin: new Date(),
+        checkin_por: checkinBy
       }
     });
 
-    console.log(`✅ Check-in realizado para ${updatedGuest.nome} (ID: ${updatedGuest.id})`);
+    console.log(`✅ Check-in realizado para ${updatedGuest.nome} (ID: ${updatedGuest.id}) por ${checkinBy}`);
+
+    // Enviar webhook de check-in de forma assíncrona
+    setImmediate(() => {
+      sendGuestCheckinWebhook({
+        ...updatedGuest,
+        data_checkin: updatedGuest.data_checkin,
+        checkin_realizado: updatedGuest.checkin_realizado || false,
+        checkin_por: updatedGuest.checkin_por
+      }).catch(error => {
+        console.error('❌ Erro ao enviar webhook de check-in:', error);
+      });
+    });
 
     return NextResponse.json({
       success: true,
       guest: updatedGuest,
-      message: `Check-in realizado com sucesso para ${updatedGuest.nome}`
+      message: `Check-in realizado com sucesso para ${updatedGuest.nome}`,
+      checkin_details: {
+        realizado_por: checkinBy,
+        data_checkin: updatedGuest.data_checkin,
+        notes: notes || null
+      }
     });
 
   } catch (error) {

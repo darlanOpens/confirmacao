@@ -82,6 +82,9 @@ NOME_EVENTO=Nome do Seu Evento
 ### Variáveis Opcionais:
 ```
 WEBHOOK_URL=https://hooks.slack.com/services/...
+WEBHOOK_CHECKIN_URL=https://seu-webhook-de-checkin.com/endpoint
+WEBHOOK_GUEST_CONFIRMED_URL=https://seu-webhook-de-confirmacao.com/endpoint
+WEBHOOK_PRESELECTION_PROMOTED_URL=https://seu-webhook-de-promocao.com/endpoint
 WEBHOOK_TOKEN=seu-token-webhook
 NODE_ENV=production
 PORT=3000
@@ -193,6 +196,83 @@ npx prisma db pull
 - Monitore o uso de memória e CPU
 - Configure alertas se disponível
 - Use `console.log` para debug (visível nos logs)
+
+## APIs de Check-in
+
+### Check-in de Participante
+**Endpoint:** `POST /api/checkin`
+
+**Body:**
+```json
+{
+  "guestId": 123,
+  "checkinBy": "Nome do Operador",
+  "notes": "Observações opcionais"
+}
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "success": true,
+  "guest": { /* dados do participante */ },
+  "message": "Check-in realizado com sucesso para João Silva",
+  "checkin_details": {
+    "realizado_por": "Nome do Operador",
+    "data_checkin": "2025-08-27T13:30:00.000Z",
+    "notes": "Observações opcionais"
+  }
+}
+```
+
+### Desfazer Check-in
+**Endpoint:** `POST /api/checkin/undo`
+
+**Body:**
+```json
+{
+  "guestId": 123,
+  "undoneBy": "Nome do Operador",
+  "reason": "Motivo para desfazer"
+}
+```
+
+### Listar Participantes Confirmados
+**Endpoint:** `GET /api/checkin?search=termo_busca`
+
+### Webhook de Check-in
+
+Quando um check-in é realizado, o sistema enviará automaticamente um webhook para a URL configurada em `WEBHOOK_CHECKIN_URL` com o seguinte payload:
+
+```json
+{
+  "event": "guest_checkin",
+  "timestamp": "2025-08-27T13:30:00.000Z",
+  "nome_evento": "Nome do Evento",
+  "body": {
+    "id": 123,
+    "nome": "João Silva",
+    "email": "joao@exemplo.com",
+    "telefone": "+5511999999999",
+    "empresa": "Empresa XYZ",
+    "cargo": "Desenvolvedor",
+    "convidado_por": "Maria Santos",
+    "status": "Confirmado",
+    "data_cadastro": "2025-08-20T10:00:00.000Z",
+    "data_confirmacao": "2025-08-22T14:30:00.000Z",
+    "data_checkin": "2025-08-27T13:30:00.000Z",
+    "checkin_realizado": true,
+    "checkin_por": "Operador do Evento",
+    "nome_preferido": "João",
+    "linkedin_url": "https://linkedin.com/in/joao",
+    "tamanho_empresa": "50-100",
+    "setor_atuacao": "Tecnologia",
+    "produtos_servicos": "Software",
+    "faturamento_anual": "1M-5M",
+    "modelo_negocio": "B2B"
+  }
+}
+```
 
 ## Troubleshooting
 
