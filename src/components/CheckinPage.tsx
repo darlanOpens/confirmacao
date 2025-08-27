@@ -17,8 +17,6 @@ import {
   Avatar,
   Divider,
   CircularProgress,
-  Badge,
-  LinearProgress,
 } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import SearchIcon from '@mui/icons-material/Search';
@@ -28,10 +26,6 @@ import BusinessIcon from '@mui/icons-material/Business';
 import WorkIcon from '@mui/icons-material/Work';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import PeopleIcon from '@mui/icons-material/People';
-import CheckIcon from '@mui/icons-material/Check';
-import PendingIcon from '@mui/icons-material/Pending';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { Guest } from "@prisma/client";
 
 // Tipo simplificado para check-in - apenas dados essenciais
@@ -180,174 +174,107 @@ export default function CheckinPage({ guests: initialGuests }: CheckinPageProps)
           Check-in do Evento
         </Typography>
         
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          {/* Total Confirmados */}
-          <Grid item xs={12} sm={6} md={3}>
+        <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Grid item xs={6} sm={3}>
             <Card sx={{ 
               bgcolor: 'background.paper',
-              border: '2px solid',
-              borderColor: 'grey.200',
-              borderRadius: 3,
-              transition: 'all 0.3s ease',
-              '&:hover': { 
-                borderColor: 'primary.light',
-                transform: 'translateY(-2px)',
-                boxShadow: 3 
-              }
+              border: '1px solid',
+              borderColor: 'grey.300',
+              boxShadow: 'none'
             }}>
-              <CardContent sx={{ p: 3 }}>
-                <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'grey.100', color: 'text.primary' }}>
-                    <PeopleIcon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600 }}>
-                      Total Confirmados
-                    </Typography>
-                    <Typography variant="h3" component="div" sx={{ 
-                      fontWeight: 700, 
-                      color: 'text.primary',
-                      lineHeight: 1
-                    }}>
-                      {stats.total}
-                    </Typography>
-                  </Box>
-                </Stack>
-                <Typography variant="body2" color="text.secondary">
-                  Participantes confirmados no evento
+              <CardContent sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="h4" component="div" sx={{ 
+                  fontWeight: 600, 
+                  color: 'text.primary',
+                  mb: 0.5
+                }}>
+                  {stats.total}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ 
+                  textTransform: 'uppercase',
+                  fontSize: '0.7rem',
+                  fontWeight: 500
+                }}>
+                  Confirmados
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
 
-          {/* Check-in Realizados */}
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={3}>
             <Card sx={{ 
-              bgcolor: 'success.50',
-              border: '2px solid',
-              borderColor: 'success.200',
-              borderRadius: 3,
-              transition: 'all 0.3s ease',
-              '&:hover': { 
-                borderColor: 'success.main',
-                transform: 'translateY(-2px)',
-                boxShadow: 3 
-              }
+              bgcolor: 'background.paper',
+              border: '1px solid',
+              borderColor: 'success.main',
+              boxShadow: 'none'
             }}>
-              <CardContent sx={{ p: 3 }}>
-                <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'success.main', color: 'white' }}>
-                    <CheckIcon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="overline" color="success.dark" sx={{ fontWeight: 600 }}>
-                      Check-in Feito
-                    </Typography>
-                    <Typography variant="h3" component="div" sx={{ 
-                      fontWeight: 700, 
-                      color: 'success.dark',
-                      lineHeight: 1
-                    }}>
-                      {stats.checkedIn}
-                    </Typography>
-                  </Box>
-                </Stack>
-                <Typography variant="body2" color="success.dark">
-                  Participantes que já fizeram check-in
+              <CardContent sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="h4" component="div" sx={{ 
+                  fontWeight: 600, 
+                  color: 'success.main',
+                  mb: 0.5
+                }}>
+                  {stats.checkedIn}
+                </Typography>
+                <Typography variant="caption" color="success.main" sx={{ 
+                  textTransform: 'uppercase',
+                  fontSize: '0.7rem',
+                  fontWeight: 500
+                }}>
+                  Check-in
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
 
-          {/* Pendentes */}
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={3}>
             <Card sx={{ 
-              bgcolor: 'warning.50',
-              border: '2px solid',
-              borderColor: 'warning.200',
-              borderRadius: 3,
-              transition: 'all 0.3s ease',
-              '&:hover': { 
-                borderColor: 'warning.main',
-                transform: 'translateY(-2px)',
-                boxShadow: 3 
-              }
+              bgcolor: 'background.paper',
+              border: '1px solid',
+              borderColor: 'warning.main',
+              boxShadow: 'none'
             }}>
-              <CardContent sx={{ p: 3 }}>
-                <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'warning.main', color: 'white' }}>
-                    <PendingIcon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="overline" color="warning.dark" sx={{ fontWeight: 600 }}>
-                      Aguardando
-                    </Typography>
-                    <Typography variant="h3" component="div" sx={{ 
-                      fontWeight: 700, 
-                      color: 'warning.dark',
-                      lineHeight: 1
-                    }}>
-                      {stats.pending}
-                    </Typography>
-                  </Box>
-                </Stack>
-                <Typography variant="body2" color="warning.dark">
-                  Ainda não fizeram check-in
+              <CardContent sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="h4" component="div" sx={{ 
+                  fontWeight: 600, 
+                  color: 'warning.main',
+                  mb: 0.5
+                }}>
+                  {stats.pending}
+                </Typography>
+                <Typography variant="caption" color="warning.main" sx={{ 
+                  textTransform: 'uppercase',
+                  fontSize: '0.7rem',
+                  fontWeight: 500
+                }}>
+                  Pendente
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
 
-          {/* Taxa de Check-in */}
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={3}>
             <Card sx={{ 
-              bgcolor: 'info.50',
-              border: '2px solid',
-              borderColor: 'info.200',
-              borderRadius: 3,
-              transition: 'all 0.3s ease',
-              '&:hover': { 
-                borderColor: 'info.main',
-                transform: 'translateY(-2px)',
-                boxShadow: 3 
-              }
+              bgcolor: 'background.paper',
+              border: '1px solid',
+              borderColor: 'primary.main',
+              boxShadow: 'none'
             }}>
-              <CardContent sx={{ p: 3 }}>
-                <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'info.main', color: 'white' }}>
-                    <TrendingUpIcon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="overline" color="info.dark" sx={{ fontWeight: 600 }}>
-                      Taxa de Presença
-                    </Typography>
-                    <Typography variant="h3" component="div" sx={{ 
-                      fontWeight: 700, 
-                      color: 'info.dark',
-                      lineHeight: 1
-                    }}>
-                      {stats.total > 0 ? Math.round((stats.checkedIn / stats.total) * 100) : 0}%
-                    </Typography>
-                  </Box>
-                </Stack>
-                <Box sx={{ mt: 1 }}>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={stats.total > 0 ? (stats.checkedIn / stats.total) * 100 : 0}
-                    sx={{ 
-                      height: 8, 
-                      borderRadius: 4,
-                      bgcolor: 'info.100',
-                      '& .MuiLinearProgress-bar': {
-                        bgcolor: 'info.main',
-                        borderRadius: 4
-                      }
-                    }}
-                  />
-                  <Typography variant="caption" color="info.dark" sx={{ mt: 0.5, display: 'block' }}>
-                    {stats.checkedIn} de {stats.total} participantes
-                  </Typography>
-                </Box>
+              <CardContent sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="h4" component="div" sx={{ 
+                  fontWeight: 600, 
+                  color: 'primary.main',
+                  mb: 0.5
+                }}>
+                  {stats.total > 0 ? Math.round((stats.checkedIn / stats.total) * 100) : 0}%
+                </Typography>
+                <Typography variant="caption" color="primary.main" sx={{ 
+                  textTransform: 'uppercase',
+                  fontSize: '0.7rem',
+                  fontWeight: 500
+                }}>
+                  Taxa
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
