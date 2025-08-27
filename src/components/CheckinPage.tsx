@@ -174,39 +174,143 @@ export default function CheckinPage({ guests: initialGuests }: CheckinPageProps)
           Check-in do Evento
         </Typography>
         
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={12} sm={4}>
-            <Card sx={{ bgcolor: 'primary.main', color: 'white' }}>
-              <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                <Typography variant="h3" component="div" sx={{ fontWeight: 'bold' }}>
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid item xs={6} sm={3}>
+            <Card sx={{ 
+              bgcolor: 'grey.50', 
+              border: '1px solid',
+              borderColor: 'grey.200',
+              boxShadow: 'none',
+              '&:hover': { boxShadow: 1 }
+            }}>
+              <CardContent sx={{ textAlign: 'center', py: 3, px: 2 }}>
+                <Typography 
+                  variant="h2" 
+                  component="div" 
+                  sx={{ 
+                    fontWeight: 300, 
+                    color: 'text.primary',
+                    fontSize: { xs: '2rem', sm: '2.5rem' }
+                  }}
+                >
                   {stats.total}
                 </Typography>
-                <Typography variant="body2">
-                  Total Confirmados
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'text.secondary',
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}
+                >
+                  Confirmados
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Card sx={{ bgcolor: 'success.main', color: 'white' }}>
-              <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                <Typography variant="h3" component="div" sx={{ fontWeight: 'bold' }}>
+          <Grid item xs={6} sm={3}>
+            <Card sx={{ 
+              bgcolor: 'success.50', 
+              border: '1px solid',
+              borderColor: 'success.200',
+              boxShadow: 'none',
+              '&:hover': { boxShadow: 1 }
+            }}>
+              <CardContent sx={{ textAlign: 'center', py: 3, px: 2 }}>
+                <Typography 
+                  variant="h2" 
+                  component="div" 
+                  sx={{ 
+                    fontWeight: 300, 
+                    color: 'success.main',
+                    fontSize: { xs: '2rem', sm: '2.5rem' }
+                  }}
+                >
                   {stats.checkedIn}
                 </Typography>
-                <Typography variant="body2">
-                  Check-in Realizado
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'success.dark',
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}
+                >
+                  Check-in
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Card sx={{ bgcolor: 'warning.main', color: 'white' }}>
-              <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                <Typography variant="h3" component="div" sx={{ fontWeight: 'bold' }}>
+          <Grid item xs={6} sm={3}>
+            <Card sx={{ 
+              bgcolor: 'warning.50', 
+              border: '1px solid',
+              borderColor: 'warning.200',
+              boxShadow: 'none',
+              '&:hover': { boxShadow: 1 }
+            }}>
+              <CardContent sx={{ textAlign: 'center', py: 3, px: 2 }}>
+                <Typography 
+                  variant="h2" 
+                  component="div" 
+                  sx={{ 
+                    fontWeight: 300, 
+                    color: 'warning.main',
+                    fontSize: { xs: '2rem', sm: '2.5rem' }
+                  }}
+                >
                   {stats.pending}
                 </Typography>
-                <Typography variant="body2">
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'warning.dark',
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}
+                >
                   Pendente
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Card sx={{ 
+              bgcolor: 'info.50', 
+              border: '1px solid',
+              borderColor: 'info.200',
+              boxShadow: 'none',
+              '&:hover': { boxShadow: 1 }
+            }}>
+              <CardContent sx={{ textAlign: 'center', py: 3, px: 2 }}>
+                <Typography 
+                  variant="h2" 
+                  component="div" 
+                  sx={{ 
+                    fontWeight: 300, 
+                    color: 'info.main',
+                    fontSize: { xs: '2rem', sm: '2.5rem' }
+                  }}
+                >
+                  {stats.total > 0 ? Math.round((stats.checkedIn / stats.total) * 100) : 0}%
+                </Typography>
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'info.dark',
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}
+                >
+                  Taxa
                 </Typography>
               </CardContent>
             </Card>
