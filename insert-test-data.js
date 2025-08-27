@@ -48,16 +48,7 @@ async function insertTestData() {
         status: 'Confirmado',
         convite_url: 'http://localhost:3001/convite/4'
       },
-      {
-        nome: 'Marcos Pereira',
-        email: 'marcos.pereira@email.com',
-        telefone: '11555555555',
-        empresa: 'Finance Corp',
-        cargo: 'Analista Financeiro',
-        convidado_por: 'Roberto Santos',
-        status: 'Cancelado',
-        convite_url: 'http://localhost:3001/convite/5'
-      },
+
       {
         nome: 'Patricia Lima',
         email: 'patricia.lima@email.com',
@@ -88,16 +79,7 @@ async function insertTestData() {
         status: 'Convidado',
         convite_url: 'http://localhost:3001/convite/8'
       },
-      {
-        nome: 'Lucas Mendes',
-        email: 'lucas.mendes@email.com',
-        telefone: '11111111111',
-        empresa: 'Startup Tech',
-        cargo: 'Founder',
-        convidado_por: 'Maria Santos',
-        status: 'Cancelado',
-        convite_url: 'http://localhost:3001/convite/9'
-      },
+
       {
         nome: 'Beatriz Santos',
         email: 'beatriz.santos@email.com',
@@ -195,7 +177,7 @@ async function insertTestData() {
 
     console.log('\n🎉 Todos os dados de teste foram inseridos com sucesso!');
     console.log('\n📊 Resumo dos dados inseridos:');
-    console.log('- 10 Convidados (diversos status)');
+    console.log('- 8 Convidados (diversos status)');
     console.log('- 5 Pré-seleções');
     console.log('- 3 Check-ins realizados');
 

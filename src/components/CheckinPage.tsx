@@ -74,7 +74,9 @@ export default function CheckinPage({ guests: initialGuests }: CheckinPageProps)
 
   // Filtrar apenas participantes confirmados
   const confirmedGuests = useMemo(() => {
-    return guests.filter(guest => guest.data_confirmacao !== null);
+    return guests.filter(guest => 
+      guest.status && String(guest.status).toLowerCase() === 'confirmado'
+    );
   }, [guests]);
 
   // Filtrar participantes baseado na busca
