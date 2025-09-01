@@ -13,7 +13,8 @@ export async function GET() {
     const fields = [
       'id', 'nome', 'email', 'telefone', 'empresa', 'cargo', 'convidado_por', 'status', 'data_cadastro', 'data_confirmacao', 'convite_url',
       'nome_preferido', 'linkedin_url', 'tamanho_empresa', 'setor_atuacao', 
-      'produtos_servicos', 'faturamento_anual', 'modelo_negocio'
+      'produtos_servicos', 'faturamento_anual', 'modelo_negocio',
+      'data_checkin', 'checkin_realizado', 'checkin_por'
     ];
     const json2csv = new Parser({ fields });
     const csv = json2csv.parse(guests);
