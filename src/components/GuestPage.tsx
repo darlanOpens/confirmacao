@@ -104,6 +104,7 @@ const style = {
 export default function GuestPage({ guests: initialGuests, hideAppBar = false }: GuestPageProps) {
   const [guests, setGuests] = useState<GuestUI[]>(initialGuests);
   const [searchQuery, setSearchQuery] = useState("");
+  const [convidadoPorFilter, setConvidadoPorFilter] = useState<string>("");
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -253,11 +254,16 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   const confirmedGuests = guests.filter(g => g.status === 'confirmado').length;
   
   // Lógica de filtro (a ser aplicada depois)
-  const filteredGuests = guests.filter(guest => 
-    guest.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    guest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    guest.empresa.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredGuests = guests.filter(guest => {
+    const matchesSearch = 
+      guest.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      guest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      guest.empresa.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesConvidadoPor = !convidadoPorFilter || guest.convidado_por === convidadoPorFilter;
+    
+    return matchesSearch && matchesConvidadoPor;
+  });
 
   return (
     <>
@@ -361,14 +367,31 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
           </Grid>
           
           {/* Barra de Ações */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, gap: 2 }}>
             <TextField 
               variant="outlined"
               size="small"
               placeholder="Procurar..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{ flexGrow: 1, mr: 2 }}
+              sx={{ flexGrow: 1 }}
+            />
+            <Autocomplete
+              value={convidadoPorFilter}
+              onChange={(event, newValue) => setConvidadoPorFilter(newValue || "")}
+              options={tags}
+                             renderInput={(params) => (
+                 <TextField
+                   {...params}
+                   label="Responsável"
+                   size="small"
+                   sx={{ minWidth: 200 }}
+                 />
+               )}
+              clearOnBlur
+              selectOnFocus
+              handleHomeEndKeys
+              sx={{ minWidth: 200 }}
             />
             <Button variant="contained" onClick={handleOpenAddModal} size="large" sx={{ height: '40px' }}>
               Adicionar convidado
@@ -378,7 +401,6 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
                 variant="outlined" 
                 onClick={handleOpenImportModal}
                 sx={{ 
-                  ml: 1,
                   minWidth: '40px', // Largura para um botão de ícone quadrado
                   height: '40px', // Altura para corresponder ao botão 'large'
                   padding: '0'
@@ -392,7 +414,6 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
                 variant="outlined" 
                 onClick={handleDownload}
                 sx={{ 
-                  ml: 1,
                   minWidth: '40px',
                   height: '40px',
                   padding: '0'
