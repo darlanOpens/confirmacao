@@ -13,6 +13,7 @@ Copie o arquivo `.env.example` para `.env` e configure as seguintes variáveis:
 DB_PORT=5434                    # Porta externa do PostgreSQL (padrão: 5434)
 
 # Configurações da Aplicação
+APP_PORT=3001                   # Porta externa da aplicação (padrão: 3001)
 NEXT_PUBLIC_INVITE_BASE_URL=    # URL base para convites
 INVITE_BASE_URL=               # URL base para convites (backend)
 WEBHOOK_URL=                   # URL do webhook
@@ -21,16 +22,17 @@ DATABASE_URL=                  # URL de conexão com o banco de dados
 
 ### Resolução de Conflitos de Porta
 
-Se a porta 5434 já estiver em uso, você pode alterar a variável `DB_PORT` para uma porta disponível:
+Se as portas 5434 (banco) ou 3001 (aplicação) já estiverem em uso, você pode alterar as variáveis:
 
 ```bash
-DB_PORT=5435  # Usar porta 5435 em vez de 5434
+DB_PORT=5435   # Usar porta 5435 para o banco
+APP_PORT=3002 # Usar porta 3002 para a aplicação
 ```
 
 Ou usar o script PowerShell:
 
 ```powershell
-.\deploy.ps1 5435  # Deploy com porta 5435
+.\deploy.ps1 5435 3002  # Deploy com porta 5435 para banco e 3002 para app
 ```
 
 ## Getting Started
@@ -57,6 +59,20 @@ docker compose up --build
 ## Deploy
 
 O projeto está configurado para deploy no Easypanel com suporte a variáveis de ambiente configuráveis.
+
+### Deploy no Easypanel
+
+1. **Configure as variáveis de ambiente** no painel do Easypanel:
+   - `DB_PORT`: Porta do banco de dados (ex: 5435)
+   - `APP_PORT`: Porta da aplicação (ex: 3002)
+   - `NEXT_PUBLIC_INVITE_BASE_URL`: URL base para convites
+   - `INVITE_BASE_URL`: URL base para convites (backend)
+   - `WEBHOOK_URL`: URL do webhook
+   - `DATABASE_URL`: URL de conexão com o banco
+
+2. **Resolução de conflitos**: Se houver conflito de portas, altere os valores de `DB_PORT` e `APP_PORT` para portas disponíveis.
+
+3. **Referência**: Use o arquivo `easypanel.env.example` como base para as configurações.
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
