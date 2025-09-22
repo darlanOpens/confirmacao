@@ -11,28 +11,24 @@ O docker-compose foi atualizado para permitir configuração flexível do banco 
 | `DB_USER` | Usuário do PostgreSQL | `elga_user` | `elga_prod_user` |
 | `DB_PASSWORD` | Senha do PostgreSQL | `elga_pass` | `SenhaForte123!` |
 | `DB_NAME` | Nome do banco de dados | `elga_db` | `elga_prod_db` |
-| `DB_PORT` | Porta externa do banco | `5434` | `5434` |
-| `DB_EXTERNAL_ACCESS` | IP de binding | `127.0.0.1` | `0.0.0.0` |
+| `DB_PORT` | Porta do banco | `5434` | `5434` ou outra livre |
 
-## 🚀 Como Configurar Acesso Externo
+## 🚀 Como Configurar em Produção
 
 ### 1. Configure as Variáveis de Ambiente
 
-Crie um arquivo `.env.production` (ou edite o `.env` existente):
+No Easypanel ou no servidor, configure estas variáveis:
 
 ```env
-# Credenciais personalizadas
+# Credenciais personalizadas (IMPORTANTE: mude os valores padrão!)
 DB_USER=elga_prod_user
 DB_PASSWORD=SuaSenhaForte123!
 DB_NAME=elga_prod_db
 
-# Porta externa (certifique-se que está livre)
+# Porta do PostgreSQL
 DB_PORT=5434
 
-# IMPORTANTE: Permite acesso externo
-DB_EXTERNAL_ACCESS=0.0.0.0
-
-# URL de conexão para a aplicação
+# URL de conexão para a aplicação (gerada automaticamente)
 DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
 ```
 
@@ -52,11 +48,12 @@ docker compose up -d
 sudo ufw allow from SEU_IP_LOCAL to any port 5434
 ```
 
-### 4. Teste a Conexão Externa
+### 4. Teste a Conexão
 
-Do seu computador local:
+Após o deploy, teste a conexão com o banco:
 
 ```bash
+# Conectar ao banco em produção
 psql -h 191.101.18.181 -p 5434 -U elga_prod_user -d elga_prod_db
 ```
 
