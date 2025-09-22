@@ -82,6 +82,7 @@ type GuestLike = {
   data_cadastro: Date;
   data_confirmacao: Date | null;
   convite_url?: string;
+  edition_id?: number | null;
 };
 
 interface GuestPageProps {
@@ -148,6 +149,7 @@ export default function GuestPage({ guests: initialGuests, hideAppBar = false }:
   const handleGuestAdded = (newGuest: GuestLike) => {
     const guestWithUrl: GuestUI = {
       ...newGuest,
+      edition_id: newGuest.edition_id || null,
       convite_url: newGuest.convite_url || buildInviteUrl(newGuest.email, newGuest.convidado_por, config?.INVITE_BASE_URL),
     };
     setGuests(prevGuests => [guestWithUrl, ...prevGuests]);

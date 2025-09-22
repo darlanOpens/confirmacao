@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Box, Tabs, Tab, Chip, Stack, Typography, Alert } from "@mui/material";
+import { Box, Tabs, Tab, Chip, Stack, Typography } from "@mui/material";
 import { Guest } from "@prisma/client";
 import { preselection } from "@prisma/client";
 import GuestPage from "./GuestPage";
@@ -56,7 +56,6 @@ interface TabbedDashboardProps {
 export default function TabbedDashboard({ guests, preselections }: TabbedDashboardProps) {
   const [value, setValue] = useState(0);
   const [activeEdition, setActiveEdition] = useState<EventEdition | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -77,7 +76,7 @@ export default function TabbedDashboard({ guests, preselections }: TabbedDashboa
     } catch (error) {
       console.error('Erro ao carregar edição ativa:', error);
     } finally {
-      setLoading(false);
+      // Loading completed
     }
   };
 

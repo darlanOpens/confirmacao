@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
+import { getOrCreateActiveEdition } from "@/lib/edition";
 
 // Editar um convidado pelo e-mail
 export async function PUT(
@@ -47,8 +48,26 @@ export async function PUT(
       ...maybe("modelo_negocio", modelo_negocio),
     } as const;
 
+    // Obter edição ativa
+    const activeEdition = await getOrCreateActiveEdition();
+
+    // Primeiro buscar o convidado
+    const existingGuest = await prisma.guest.findFirst({
+      where: {
+        email,
+        edition_id: activeEdition.id
+      }
+    });
+
+    if (!existingGuest) {
+      return NextResponse.json(
+        { success: false, error: "Convidado não encontrado nesta edição." },
+        { status: 404 }
+      );
+    }
+
     const updatedGuest = await prisma.guest.update({
-      where: { email },
+      where: { id: existingGuest.id },
       data,
     });
 

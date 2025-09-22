@@ -57,7 +57,12 @@ export default function EventManager() {
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
   const [newEventName, setNewEventName] = useState("");
   const [newEventDescription, setNewEventDescription] = useState("");
-  const [archiveData, setArchiveData] = useState<any>(null);
+  const [archiveData, setArchiveData] = useState<{
+    guestsCsv: string;
+    preselectionsCsv: string;
+    guestsCount: number;
+    preselectionsCount: number;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 

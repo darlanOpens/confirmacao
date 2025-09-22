@@ -46,7 +46,7 @@ export async function POST(request: Request) {
       error.code === "P2002"
     ) {
       return NextResponse.json(
-        { success: false, error: "Este e-mail já está cadastrado na pré-seleção." },
+        { success: false, error: "Este e-mail já está cadastrado na pré-seleção desta edição." },
         { status: 409 }
       );
     }

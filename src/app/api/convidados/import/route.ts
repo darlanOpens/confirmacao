@@ -54,7 +54,7 @@ export async function POST(request: Request) {
         let errorMessage = "Ocorreu um erro desconhecido.";
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           if (error.code === 'P2002') {
-            errorMessage = `Convidado com email '${(convidado as GuestData).email}' já existe.`;
+            errorMessage = `Convidado com email '${(convidado as GuestData).email}' já existe nesta edição.`;
           }
         } else if (error instanceof Error) {
           errorMessage = error.message;

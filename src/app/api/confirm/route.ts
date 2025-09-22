@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getOrCreateActiveEdition } from "@/lib/edition";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,8 +24,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const guest = await prisma.guest.findUnique({
-      where: { email },
+    // Obter edição ativa
+    const activeEdition = await getOrCreateActiveEdition();
+
+    const guest = await prisma.guest.findFirst({
+      where: {
+        email,
+        edition_id: activeEdition.id
+      },
     });
 
     if (!guest) {
@@ -37,7 +44,7 @@ export async function POST(request: Request) {
   const updatedGuest =
     guest.status === "pendente"
       ? await prisma.guest.update({
-          where: { email },
+          where: { id: guest.id },
           data: { status: "confirmado", data_confirmacao: new Date() },
         })
       : guest;
