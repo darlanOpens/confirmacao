@@ -1,6 +1,6 @@
 services:
   app:
-    build: 
+    build:
       context: .
       args:
         - NEXT_PUBLIC_INVITE_BASE_URL=${NEXT_PUBLIC_INVITE_BASE_URL}
@@ -12,18 +12,22 @@ services:
       - NEXT_PUBLIC_INVITE_BASE_URL=${NEXT_PUBLIC_INVITE_BASE_URL}
       - INVITE_BASE_URL=${INVITE_BASE_URL}
       - WEBHOOK_URL=${WEBHOOK_URL}
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://${DB_USER:-elga_user}:${DB_PASSWORD:-elga_pass}@db:5432/${DB_NAME:-elga_db}}
     depends_on:
       - db
 
   db:
     image: postgres:15-alpine
     ports:
-      - "${DB_PORT:-5434}:5432"
+      # DB_EXTERNAL_ACCESS controla se o banco é acessível externamente
+      # Use 0.0.0.0 para acesso externo ou 127.0.0.1 para apenas local
+      - "${DB_EXTERNAL_ACCESS:-127.0.0.1}:${DB_PORT:-5434}:5432"
     environment:
-      - POSTGRES_USER=elga_user
-      - POSTGRES_PASSWORD=elga_pass
-      - POSTGRES_DB=elga_db
+      - POSTGRES_USER=${DB_USER:-elga_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-elga_pass}
+      - POSTGRES_DB=${DB_NAME:-elga_db}
+      # Configurações adicionais de segurança
+      - POSTGRES_HOST_AUTH_METHOD=md5
     volumes:
       - db_data:/var/lib/postgresql/data
 
