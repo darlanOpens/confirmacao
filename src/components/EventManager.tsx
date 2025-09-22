@@ -33,6 +33,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import PeopleIcon from '@mui/icons-material/People';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 interface EventEdition {
   id: number;
@@ -55,6 +57,7 @@ export default function EventManager() {
   const [loading, setLoading] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
+  const [eventsListOpen, setEventsListOpen] = useState(false);
   const [newEventName, setNewEventName] = useState("");
   const [newEventDescription, setNewEventDescription] = useState("");
   const [archiveData, setArchiveData] = useState<{
@@ -226,10 +229,30 @@ export default function EventManager() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <EventIcon />
-        Gerenciamento de Eventos
-      </Typography>
+      {/* Header com título e botão de edição alinhado à direita */}
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+        <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <EventIcon />
+          Gerenciamento de Eventos
+        </Typography>
+
+        <Tooltip title="Ver todos os eventos">
+          <IconButton
+            color="primary"
+            onClick={() => setEventsListOpen(true)}
+            sx={{
+              border: '2px solid',
+              borderColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: 'primary.main',
+                color: 'white',
+              }
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      </Stack>
 
       {/* Mensagens de erro/sucesso */}
       {error && (
@@ -243,145 +266,52 @@ export default function EventManager() {
         </Alert>
       )}
 
-      {/* Card da Edição Ativa */}
+      {/* Card do Evento Ativo - Simplificado */}
       {activeEdition && (
-        <Card sx={{ mb: 3, backgroundColor: '#f0f7ff' }}>
+        <Card sx={{ backgroundColor: '#f0f7ff', border: '2px solid #1976d2' }}>
           <CardContent>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box>
-                <Typography variant="h5" gutterBottom>
-                  Evento Atual: {activeEdition.nome}
-                </Typography>
-                <Typography color="text.secondary">
-                  Iniciado em: {new Date(activeEdition.data_inicio).toLocaleDateString('pt-BR')}
-                </Typography>
-                {activeEdition._count && (
-                  <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
-                    <Chip
-                      icon={<PeopleIcon />}
-                      label={`${activeEdition._count.guests} convidados`}
-                      color="primary"
-                      size="small"
-                    />
-                    <Chip
-                      icon={<ListAltIcon />}
-                      label={`${activeEdition._count.preselections} pré-seleções`}
-                      size="small"
-                    />
-                  </Stack>
-                )}
-              </Box>
-              <Stack direction="row" spacing={2}>
-                <Tooltip title="Finalizar evento e arquivar dados">
-                  <Button
-                    variant="contained"
-                    color="warning"
-                    startIcon={<ArchiveIcon />}
-                    onClick={handleArchiveEvent}
-                    disabled={loading}
-                  >
-                    Finalizar e Arquivar
-                  </Button>
-                </Tooltip>
-              </Stack>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                {activeEdition.nome}
+              </Typography>
+              <Chip
+                label="ATIVO"
+                color="success"
+                size="small"
+                sx={{ fontWeight: 'bold' }}
+              />
+            </Stack>
+
+            {activeEdition.descricao && (
+              <Typography color="text.secondary" sx={{ mb: 2 }}>
+                {activeEdition.descricao}
+              </Typography>
+            )}
+
+            <Stack direction="row" spacing={3} alignItems="center">
+              <Typography variant="body2" color="text.secondary">
+                Iniciado em: {new Date(activeEdition.data_inicio).toLocaleDateString('pt-BR')}
+              </Typography>
+
+              {activeEdition._count && (
+                <Stack direction="row" spacing={2}>
+                  <Chip
+                    icon={<PeopleIcon />}
+                    label={`${activeEdition._count.guests} convidados`}
+                    color="primary"
+                    size="small"
+                  />
+                  <Chip
+                    icon={<ListAltIcon />}
+                    label={`${activeEdition._count.preselections} pré-seleções`}
+                    size="small"
+                  />
+                </Stack>
+              )}
             </Stack>
           </CardContent>
         </Card>
       )}
-
-      {/* Ações Rápidas */}
-      <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddCircleOutlineIcon />}
-          onClick={() => setCreateDialogOpen(true)}
-          disabled={loading}
-        >
-          Novo Evento
-        </Button>
-      </Stack>
-
-      {/* Lista de Edições */}
-      <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
-        Histórico de Eventos
-      </Typography>
-
-      <Grid container spacing={2}>
-        {editions.map((edition) => (
-          <Grid item xs={12} md={6} lg={4} key={edition.id}>
-            <Card
-              sx={{
-                opacity: edition.arquivado ? 0.7 : 1,
-                border: edition.ativo ? '2px solid #1976d2' : 'none',
-              }}
-            >
-              <CardContent>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Typography variant="h6">
-                    {edition.nome}
-                  </Typography>
-                  {edition.ativo && (
-                    <Chip
-                      label="Ativo"
-                      color="primary"
-                      size="small"
-                      icon={<CheckCircleIcon />}
-                    />
-                  )}
-                  {edition.arquivado && (
-                    <Chip
-                      label="Arquivado"
-                      size="small"
-                    />
-                  )}
-                </Stack>
-
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                  {edition.descricao}
-                </Typography>
-
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  Início: {new Date(edition.data_inicio).toLocaleDateString('pt-BR')}
-                </Typography>
-
-                {edition.data_fim && (
-                  <Typography variant="body2">
-                    Fim: {new Date(edition.data_fim).toLocaleDateString('pt-BR')}
-                  </Typography>
-                )}
-
-                {edition._count && (
-                  <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                    <Chip
-                      size="small"
-                      label={`${edition._count.guests} convidados`}
-                    />
-                    <Chip
-                      size="small"
-                      label={`${edition._count.preselections} pré-seleções`}
-                      variant="outlined"
-                    />
-                  </Stack>
-                )}
-              </CardContent>
-
-              {!edition.ativo && !edition.arquivado && (
-                <CardActions>
-                  <Button
-                    size="small"
-                    startIcon={<SwapHorizIcon />}
-                    onClick={() => handleSwitchEdition(edition.id)}
-                    disabled={loading}
-                  >
-                    Ativar
-                  </Button>
-                </CardActions>
-              )}
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
 
       {/* Dialog para criar novo evento */}
       <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)}>
@@ -414,6 +344,123 @@ export default function EventManager() {
           </Button>
           <Button onClick={handleCreateEvent} variant="contained" disabled={loading}>
             {loading ? <CircularProgress size={24} /> : 'Criar'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog para listar todos os eventos */}
+      <Dialog
+        open={eventsListOpen}
+        onClose={() => setEventsListOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6">Todos os Eventos</Typography>
+          <Stack direction="row" spacing={1}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddCircleOutlineIcon />}
+              onClick={() => {
+                setEventsListOpen(false);
+                setCreateDialogOpen(true);
+              }}
+              size="small"
+            >
+              Novo Evento
+            </Button>
+            {activeEdition && (
+              <Button
+                variant="contained"
+                color="warning"
+                startIcon={<ArchiveIcon />}
+                onClick={() => {
+                  setEventsListOpen(false);
+                  handleArchiveEvent();
+                }}
+                size="small"
+              >
+                Arquivar Atual
+              </Button>
+            )}
+          </Stack>
+        </DialogTitle>
+        <DialogContent dividers>
+          <List>
+            {editions.map((edition) => (
+              <ListItem
+                key={edition.id}
+                sx={{
+                  borderRadius: 1,
+                  mb: 1,
+                  backgroundColor: edition.ativo ? '#e3f2fd' : edition.arquivado ? '#f5f5f5' : 'transparent',
+                  border: edition.ativo ? '2px solid #1976d2' : '1px solid #e0e0e0',
+                }}
+              >
+                <ListItemText
+                  primary={
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <Typography variant="subtitle1" fontWeight={edition.ativo ? 'bold' : 'normal'}>
+                        {edition.nome}
+                      </Typography>
+                      {edition.ativo && (
+                        <Chip label="ATIVO" color="success" size="small" />
+                      )}
+                      {edition.arquivado && (
+                        <Chip label="ARQUIVADO" size="small" />
+                      )}
+                    </Stack>
+                  }
+                  secondary={
+                    <Box>
+                      {edition.descricao && (
+                        <Typography variant="body2" color="text.secondary">
+                          {edition.descricao}
+                        </Typography>
+                      )}
+                      <Typography variant="body2">
+                        Início: {new Date(edition.data_inicio).toLocaleDateString('pt-BR')}
+                        {edition.data_fim && ` | Fim: ${new Date(edition.data_fim).toLocaleDateString('pt-BR')}`}
+                      </Typography>
+                      {edition._count && (
+                        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                          <Chip
+                            size="small"
+                            label={`${edition._count.guests} convidados`}
+                          />
+                          <Chip
+                            size="small"
+                            label={`${edition._count.preselections} pré-seleções`}
+                            variant="outlined"
+                          />
+                        </Stack>
+                      )}
+                    </Box>
+                  }
+                />
+                {!edition.ativo && !edition.arquivado && (
+                  <ListItemSecondaryAction>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<SwapHorizIcon />}
+                      onClick={() => {
+                        handleSwitchEdition(edition.id);
+                        setEventsListOpen(false);
+                      }}
+                    >
+                      Ativar
+                    </Button>
+                  </ListItemSecondaryAction>
+                )}
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEventsListOpen(false)}>
+            Fechar
           </Button>
         </DialogActions>
       </Dialog>
