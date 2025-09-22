@@ -82,29 +82,23 @@ export default function TabbedDashboard({ guests, preselections }: TabbedDashboa
 
   return (
     <Box sx={{ width: '100%' }}>
-      {/* Banner da Edição Ativa */}
+      {/* Banner da Edição Ativa - Minimalista */}
       {activeEdition && (
         <Box sx={{
           px: 3,
-          py: 2,
-          backgroundColor: '#f0f7ff',
-          borderBottom: '2px solid #1976d2'
+          py: 1,
+          backgroundColor: '#f8f9fa',
+          borderBottom: '1px solid #e0e0e0'
         }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Stack direction="row" alignItems="center" spacing={2}>
-              <EventIcon color="primary" />
-              <Typography variant="h6">
-                Evento Atual: <strong>{activeEdition.nome}</strong>
-              </Typography>
-              <Chip
-                icon={<CheckCircleIcon />}
-                label="Ativo"
-                color="primary"
-                size="small"
-              />
-            </Stack>
-            <Typography variant="body2" color="text.secondary">
-              Iniciado em: {new Date(activeEdition.data_inicio).toLocaleDateString('pt-BR')}
+          <Stack direction="row" alignItems="center" justifyContent="center">
+            <Chip
+              icon={<CheckCircleIcon />}
+              label={activeEdition.nome}
+              color="primary"
+              size="small"
+            />
+            <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>
+              Iniciado em {new Date(activeEdition.data_inicio).toLocaleDateString('pt-BR')}
             </Typography>
           </Stack>
         </Box>

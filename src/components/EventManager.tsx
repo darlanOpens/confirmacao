@@ -228,32 +228,7 @@ export default function EventManager() {
   }, [createDialogOpen, activeEdition]);
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header com título e botão de edição alinhado à direita */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <EventIcon />
-          Gerenciamento de Eventos
-        </Typography>
-
-        <Tooltip title="Ver todos os eventos">
-          <IconButton
-            color="primary"
-            onClick={() => setEventsListOpen(true)}
-            sx={{
-              border: '2px solid',
-              borderColor: 'primary.main',
-              '&:hover': {
-                backgroundColor: 'primary.main',
-                color: 'white',
-              }
-            }}
-          >
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
-      </Stack>
-
+    <Box sx={{ p: 2 }}>
       {/* Mensagens de erro/sucesso */}
       {error && (
         <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
@@ -266,52 +241,39 @@ export default function EventManager() {
         </Alert>
       )}
 
-      {/* Card do Evento Ativo - Simplificado */}
-      {activeEdition && (
-        <Card sx={{ backgroundColor: '#f0f7ff', border: '2px solid #1976d2' }}>
-          <CardContent>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                {activeEdition.nome}
-              </Typography>
-              <Chip
-                label="ATIVO"
-                color="success"
-                size="small"
-                sx={{ fontWeight: 'bold' }}
-              />
-            </Stack>
+      {/* Botões de ação simples */}
+      <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 3 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddCircleOutlineIcon />}
+          onClick={() => setCreateDialogOpen(true)}
+          disabled={loading}
+        >
+          Novo Evento
+        </Button>
 
-            {activeEdition.descricao && (
-              <Typography color="text.secondary" sx={{ mb: 2 }}>
-                {activeEdition.descricao}
-              </Typography>
-            )}
+        {activeEdition && (
+          <Button
+            variant="contained"
+            color="warning"
+            startIcon={<ArchiveIcon />}
+            onClick={handleArchiveEvent}
+            disabled={loading}
+          >
+            Arquivar Evento Atual
+          </Button>
+        )}
 
-            <Stack direction="row" spacing={3} alignItems="center">
-              <Typography variant="body2" color="text.secondary">
-                Iniciado em: {new Date(activeEdition.data_inicio).toLocaleDateString('pt-BR')}
-              </Typography>
-
-              {activeEdition._count && (
-                <Stack direction="row" spacing={2}>
-                  <Chip
-                    icon={<PeopleIcon />}
-                    label={`${activeEdition._count.guests} convidados`}
-                    color="primary"
-                    size="small"
-                  />
-                  <Chip
-                    icon={<ListAltIcon />}
-                    label={`${activeEdition._count.preselections} pré-seleções`}
-                    size="small"
-                  />
-                </Stack>
-              )}
-            </Stack>
-          </CardContent>
-        </Card>
-      )}
+        <Button
+          variant="outlined"
+          startIcon={<VisibilityIcon />}
+          onClick={() => setEventsListOpen(true)}
+          disabled={loading}
+        >
+          Ver Todos os Eventos
+        </Button>
+      </Stack>
 
       {/* Dialog para criar novo evento */}
       <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)}>
@@ -355,108 +317,60 @@ export default function EventManager() {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">Todos os Eventos</Typography>
-          <Stack direction="row" spacing={1}>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddCircleOutlineIcon />}
-              onClick={() => {
-                setEventsListOpen(false);
-                setCreateDialogOpen(true);
-              }}
-              size="small"
-            >
-              Novo Evento
-            </Button>
-            {activeEdition && (
-              <Button
-                variant="contained"
-                color="warning"
-                startIcon={<ArchiveIcon />}
-                onClick={() => {
-                  setEventsListOpen(false);
-                  handleArchiveEvent();
-                }}
-                size="small"
-              >
-                Arquivar Atual
-              </Button>
-            )}
-          </Stack>
-        </DialogTitle>
+        <DialogTitle>Histórico de Eventos</DialogTitle>
         <DialogContent dividers>
-          <List>
-            {editions.map((edition) => (
-              <ListItem
-                key={edition.id}
-                sx={{
-                  borderRadius: 1,
-                  mb: 1,
-                  backgroundColor: edition.ativo ? '#e3f2fd' : edition.arquivado ? '#f5f5f5' : 'transparent',
-                  border: edition.ativo ? '2px solid #1976d2' : '1px solid #e0e0e0',
-                }}
-              >
-                <ListItemText
-                  primary={
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Typography variant="subtitle1" fontWeight={edition.ativo ? 'bold' : 'normal'}>
-                        {edition.nome}
-                      </Typography>
-                      {edition.ativo && (
-                        <Chip label="ATIVO" color="success" size="small" />
-                      )}
-                      {edition.arquivado && (
-                        <Chip label="ARQUIVADO" size="small" />
-                      )}
-                    </Stack>
-                  }
-                  secondary={
-                    <Box>
-                      {edition.descricao && (
-                        <Typography variant="body2" color="text.secondary">
-                          {edition.descricao}
+          {editions.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
+              Nenhum evento encontrado
+            </Typography>
+          ) : (
+            <List>
+              {editions.map((edition) => (
+                <ListItem
+                  key={edition.id}
+                  sx={{
+                    borderBottom: '1px solid #e0e0e0',
+                    '&:last-child': { borderBottom: 'none' }
+                  }}
+                >
+                  <ListItemText
+                    primary={
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Typography variant="subtitle1" fontWeight={edition.ativo ? 'bold' : 'normal'}>
+                          {edition.nome}
                         </Typography>
-                      )}
-                      <Typography variant="body2">
-                        Início: {new Date(edition.data_inicio).toLocaleDateString('pt-BR')}
-                        {edition.data_fim && ` | Fim: ${new Date(edition.data_fim).toLocaleDateString('pt-BR')}`}
+                        {edition.ativo && (
+                          <Chip label="ATIVO" color="success" size="small" />
+                        )}
+                        {edition.arquivado && (
+                          <Chip label="ARQUIVADO" size="small" variant="outlined" />
+                        )}
+                      </Stack>
+                    }
+                    secondary={
+                      <Typography variant="body2" color="text.secondary">
+                        {new Date(edition.data_inicio).toLocaleDateString('pt-BR')} •
+                        {edition._count && ` ${edition._count.guests} convidados`}
                       </Typography>
-                      {edition._count && (
-                        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                          <Chip
-                            size="small"
-                            label={`${edition._count.guests} convidados`}
-                          />
-                          <Chip
-                            size="small"
-                            label={`${edition._count.preselections} pré-seleções`}
-                            variant="outlined"
-                          />
-                        </Stack>
-                      )}
-                    </Box>
-                  }
-                />
-                {!edition.ativo && !edition.arquivado && (
-                  <ListItemSecondaryAction>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      startIcon={<SwapHorizIcon />}
-                      onClick={() => {
-                        handleSwitchEdition(edition.id);
-                        setEventsListOpen(false);
-                      }}
-                    >
-                      Ativar
-                    </Button>
-                  </ListItemSecondaryAction>
-                )}
-              </ListItem>
-            ))}
-          </List>
+                    }
+                  />
+                  {!edition.ativo && !edition.arquivado && (
+                    <ListItemSecondaryAction>
+                      <Button
+                        size="small"
+                        onClick={() => {
+                          handleSwitchEdition(edition.id);
+                          setEventsListOpen(false);
+                        }}
+                      >
+                        Ativar
+                      </Button>
+                    </ListItemSecondaryAction>
+                  )}
+                </ListItem>
+              ))}
+            </List>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEventsListOpen(false)}>
