@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { buildInviteUrl } from "@/lib/invite";
 import { sendGuestAddedWebhook } from "@/lib/webhook";
+import { getOrCreateActiveEdition } from "@/lib/edition";
 
 interface GuestData {
   nome: string;
@@ -28,6 +29,9 @@ export async function POST(request: Request) {
       );
     }
 
+    // Obter ou criar edição ativa
+    const activeEdition = await getOrCreateActiveEdition();
+
     const importResults = {
       successCount: 0,
       errors: [] as { guest: GuestData; error:string }[],
@@ -39,6 +43,7 @@ export async function POST(request: Request) {
           data: {
             ...convidado,
             convite_url: buildInviteUrl((convidado as GuestData).email, (convidado as GuestData).convidado_por, process.env.INVITE_BASE_URL),
+            edition_id: activeEdition.id, // Associar à edição ativa
           },
         });
         importResults.successCount++;

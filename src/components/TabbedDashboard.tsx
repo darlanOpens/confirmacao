@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Box, Tabs, Tab } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Box, Tabs, Tab, Chip, Stack, Typography, Alert } from "@mui/material";
 import { Guest } from "@prisma/client";
 import { preselection } from "@prisma/client";
 import GuestPage from "./GuestPage";
 import PreselectionPage from "./PreselectionPage";
+import EventManager from "./EventManager";
+import EventIcon from '@mui/icons-material/Event';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -36,6 +39,15 @@ function a11yProps(index: number) {
   };
 }
 
+interface EventEdition {
+  id: number;
+  nome: string;
+  descricao: string | null;
+  data_inicio: string;
+  ativo: boolean;
+  arquivado: boolean;
+}
+
 interface TabbedDashboardProps {
   guests: Guest[];
   preselections: preselection[];
@@ -43,30 +55,85 @@ interface TabbedDashboardProps {
 
 export default function TabbedDashboard({ guests, preselections }: TabbedDashboardProps) {
   const [value, setValue] = useState(0);
+  const [activeEdition, setActiveEdition] = useState<EventEdition | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
+  // Carregar edição ativa ao montar o componente
+  useEffect(() => {
+    loadActiveEdition();
+  }, []);
+
+  const loadActiveEdition = async () => {
+    try {
+      const response = await fetch('/api/events/active');
+      const data = await response.json();
+      if (data.success) {
+        setActiveEdition(data.edition);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar edição ativa:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box sx={{ width: '100%' }}>
+      {/* Banner da Edição Ativa */}
+      {activeEdition && (
+        <Box sx={{
+          px: 3,
+          py: 2,
+          backgroundColor: '#f0f7ff',
+          borderBottom: '2px solid #1976d2'
+        }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <EventIcon color="primary" />
+              <Typography variant="h6">
+                Evento Atual: <strong>{activeEdition.nome}</strong>
+              </Typography>
+              <Chip
+                icon={<CheckCircleIcon />}
+                label="Ativo"
+                color="primary"
+                size="small"
+              />
+            </Stack>
+            <Typography variant="body2" color="text.secondary">
+              Iniciado em: {new Date(activeEdition.data_inicio).toLocaleDateString('pt-BR')}
+            </Typography>
+          </Stack>
+        </Box>
+      )}
+
       {/* Tabs de navegação */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 2 }}>
-        <Tabs 
-          value={value} 
-          onChange={handleChange} 
+        <Tabs
+          value={value}
+          onChange={handleChange}
           aria-label="dashboard tabs"
           indicatorColor="primary"
           textColor="primary"
           centered
         >
-          <Tab 
-            label={`Convidados (${guests.length})`} 
-            {...a11yProps(0)} 
+          <Tab
+            label={`Convidados (${guests.length})`}
+            {...a11yProps(0)}
           />
-          <Tab 
-            label={`Pré-seleção (${preselections.length})`} 
-            {...a11yProps(1)} 
+          <Tab
+            label={`Pré-seleção (${preselections.length})`}
+            {...a11yProps(1)}
+          />
+          <Tab
+            label="Gerenciar Eventos"
+            icon={<EventIcon />}
+            iconPosition="start"
+            {...a11yProps(2)}
           />
         </Tabs>
       </Box>
@@ -77,6 +144,9 @@ export default function TabbedDashboard({ guests, preselections }: TabbedDashboa
       </TabPanel>
       <TabPanel value={value} index={1}>
         <PreselectionPage preselections={preselections} />
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <EventManager />
       </TabPanel>
     </Box>
   );

@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getOrCreateActiveEdition } from "@/lib/edition";
 
 export async function GET() {
   try {
+    // Obter ou criar edição ativa
+    const activeEdition = await getOrCreateActiveEdition();
+
+    // Buscar convidados da edição ativa
     const guests = await prisma.guest.findMany({
+      where: {
+        edition_id: activeEdition.id
+      },
       orderBy: {
         data_cadastro: 'desc',
       },

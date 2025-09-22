@@ -7,10 +7,27 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model EventEdition {
+  id           Int       @id @default(autoincrement())
+  nome         String    // Ex: "Janeiro 2025", "Fevereiro 2025"
+  descricao    String?   // Descrição opcional do evento
+  data_inicio  DateTime  @default(now())
+  data_fim     DateTime?
+  ativo        Boolean   @default(true) // Apenas uma edição pode estar ativa
+  arquivado    Boolean   @default(false) // Indica se foi arquivado
+  criado_em    DateTime  @default(now())
+
+  // Relacionamentos
+  guests       Guest[]
+  preselections preselection[]
+
+  @@map("event_edition")
+}
+
 model Guest {
   id               Int       @id @default(autoincrement())
   nome             String
-  email            String    @unique
+  email            String
   telefone         String
   empresa          String
   cargo            String
@@ -29,18 +46,30 @@ model Guest {
   faturamento_anual    String?
   modelo_negocio       String?
 
+  // Relacionamento com EventEdition
+  edition_id       Int?
+  edition          EventEdition? @relation(fields: [edition_id], references: [id])
+
+  // Índice único por email E edition_id (permite mesmo email em edições diferentes)
+  @@unique([email, edition_id])
   @@map("guest")
 }
 
 model preselection {
   id               Int       @id @default(autoincrement())
   nome             String
-  email            String    @unique
+  email            String
   telefone         String
   empresa          String
   cargo            String
   status           String    @default("pendente") // pendente, convidado
   data_cadastro    DateTime  @default(now())
 
+  // Relacionamento com EventEdition
+  edition_id       Int?
+  edition          EventEdition? @relation(fields: [edition_id], references: [id])
+
+  // Índice único por email E edition_id (permite mesmo email em edições diferentes)
+  @@unique([email, edition_id])
   @@map("preselection")
 }

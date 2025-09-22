@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
 import { sendGuestAddedWebhook } from "@/lib/webhook";
+import { getOrCreateActiveEdition } from "@/lib/edition";
 
 // Promover uma pré-seleção para Guest convidado
 export async function POST(
@@ -33,14 +34,20 @@ export async function POST(
       );
     }
 
-    // Verificar se o email já existe na tabela guest
-    const existingGuest = await prisma.guest.findUnique({
-      where: { email: preselection.email },
+    // Obter ou criar edição ativa
+    const activeEdition = await getOrCreateActiveEdition();
+
+    // Verificar se o email já existe na tabela guest para a mesma edição
+    const existingGuest = await prisma.guest.findFirst({
+      where: {
+        email: preselection.email,
+        edition_id: activeEdition.id
+      },
     });
 
     if (existingGuest) {
       return NextResponse.json(
-        { success: false, error: "Este e-mail já está cadastrado como convidado." },
+        { success: false, error: "Este e-mail já está cadastrado como convidado nesta edição." },
         { status: 409 }
       );
     }
@@ -55,6 +62,7 @@ export async function POST(
       convidado_por,
       status: "pendente", // Explicitamente definindo como pendente
       convite_url: buildInviteUrl(preselection.email, convidado_por),
+      edition_id: activeEdition.id, // Associar à edição ativa
     };
 
     // Usar transação para garantir consistência

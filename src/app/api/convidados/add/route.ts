@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildInviteUrl } from "@/lib/invite";
 import { sendGuestAddedWebhook } from "@/lib/webhook";
+import { getOrCreateActiveEdition } from "@/lib/edition";
 
 console.log('📦 API de adição de convidado carregada, webhook importado:', typeof sendGuestAddedWebhook);
 
@@ -31,6 +32,9 @@ export async function POST(request: Request) {
       );
     }
 
+    // Obter ou criar edição ativa
+    const activeEdition = await getOrCreateActiveEdition();
+
     console.log('📝 Criando convidado no banco...');
     const maybe = (key: string, value: unknown) =>
       typeof value !== "undefined" && value !== null ? { [key]: value } : {};
@@ -43,6 +47,7 @@ export async function POST(request: Request) {
       cargo,
       convidado_por,
       convite_url: buildInviteUrl(email, convidado_por, process.env.INVITE_BASE_URL),
+      edition_id: activeEdition.id, // Associar à edição ativa
       ...maybe("nome_preferido", nome_preferido),
       ...maybe("linkedin_url", linkedin_url),
       ...maybe("tamanho_empresa", tamanho_empresa),

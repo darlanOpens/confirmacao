@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getOrCreateActiveEdition } from "@/lib/edition";
 
 export async function POST(request: Request) {
   try {
@@ -21,6 +22,9 @@ export async function POST(request: Request) {
       );
     }
 
+    // Obter ou criar edição ativa
+    const activeEdition = await getOrCreateActiveEdition();
+
     const data = {
       nome,
       email,
@@ -28,6 +32,7 @@ export async function POST(request: Request) {
       empresa,
       cargo,
       status: status || "pendente",
+      edition_id: activeEdition.id, // Associar à edição ativa
     } as const;
 
     const newPreselection = await prisma.preselection.create({ data });
